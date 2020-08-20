@@ -42,7 +42,7 @@ public class GrupoUsuarioController {
 	private PermissaoService permissaoService;
 
 	@GetMapping
-	@PreAuthorize("hasAnyRole('CONSULTA_GRUPOS')")
+//	@PreAuthorize("hasAnyRole('CONSULTA_GRUPOS')")
 	public ResponseEntity<Page<GrupoUsuarioResponse>> consultaGrupos(Pageable page) {
 		Page<GrupoUsuario> entity = service.consulta(page);
 		
