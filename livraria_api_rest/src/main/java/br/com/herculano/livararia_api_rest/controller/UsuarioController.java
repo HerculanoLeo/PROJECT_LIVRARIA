@@ -1,15 +1,14 @@
 package br.com.herculano.livararia_api_rest.controller;
 
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,14 +27,10 @@ import br.com.herculano.livararia_api_rest.controller.request.UsuarioUpdateReque
 import br.com.herculano.livararia_api_rest.controller.request.ValidaCodigoRequest;
 import br.com.herculano.livararia_api_rest.controller.response.TrocaSenhaResponse;
 import br.com.herculano.livararia_api_rest.controller.response.UsuarioResponse;
-import br.com.herculano.livararia_api_rest.entity.GrupoUsuario;
 import br.com.herculano.livararia_api_rest.entity.TrocaSenha;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
-import br.com.herculano.livararia_api_rest.exception.custom.ConfirmPasswordException;
-import br.com.herculano.livararia_api_rest.exception.custom.EmptyGrupoUsuarioException;
-import br.com.herculano.livararia_api_rest.service.GrupoUsuarioService;
+import br.com.herculano.livararia_api_rest.event.CreatedEvent;
 import br.com.herculano.livararia_api_rest.service.PermissaoService;
-import br.com.herculano.livararia_api_rest.service.TrocaSenhaService;
 import br.com.herculano.livararia_api_rest.service.UsuarioService;
 
 @RestController
@@ -49,10 +44,7 @@ public class UsuarioController {
 	private PermissaoService permissaoService;
 
 	@Autowired
-	private GrupoUsuarioService grupoUsuarioService;
-	
-	@Autowired
-	private TrocaSenhaService trocaSenhaService;
+	private ApplicationEventPublisher publisher;
 
 	@GetMapping
 	public ResponseEntity<Page<UsuarioResponse>> consultaUsuarios(Pageable page) {
@@ -71,154 +63,69 @@ public class UsuarioController {
 
 	@GetMapping("/{idUsuario}")
 	public ResponseEntity<UsuarioResponse> consultaPorIdUsuario(@PathVariable Integer idUsuario) {
-		Optional<Usuario> optional = service.findById(idUsuario);
+		Usuario entity = service.consultaPorId(idUsuario);
 
-		if (optional.isPresent()) {
-			Usuario usuario = optional.get();
+		entity.setPermissoes(permissaoService.consultaPorIdUsuario(entity.getId()));
 
-			usuario.setPermissoes(permissaoService.consultaPorIdUsuario(usuario.getId()));
-
-			UsuarioResponse entity = new UsuarioResponse(usuario);
-
-			return ResponseEntity.ok(entity);
-		} else {
-			throw new EntityNotFoundException("idUsario: " + idUsuario + " not exist.");
-		}
+		return ResponseEntity.ok(new UsuarioResponse(entity));
 	}
 
 	@PostMapping
-	public ResponseEntity<?> cadastraUsuario(@RequestBody @Validated UsuarioRequest request, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<?> cadastraUsuario(@RequestBody @Validated UsuarioRequest request,
+			HttpServletResponse response) {
 
-		if (request.getSenha().equals(request.getConfirmeSenha())) {
+		Usuario entity = service.cadastra(request);
 
-			Usuario entity = new Usuario(request);
+		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
 
-			service.save(entity);
-
-			URI uri = uriBuilder.path("/{id}").buildAndExpand(entity.getId()).toUri();
-
-			return ResponseEntity.created(uri).build();
-
-		} else {
-			throw new ConfirmPasswordException("Confirm Password does not match Password");
-		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(new UsuarioResponse(entity));
 	}
 
 	@PutMapping("/{idUsuario}")
-	public ResponseEntity<?> atualizaUsuario(@RequestBody UsuarioUpdateRequest request, @PathVariable Integer idUsuario ,UriComponentsBuilder uriBuilder ) {
-		
-		Optional<Usuario> optional = service.findById(idUsuario);
-		
-		if (optional.isPresent()) { 
-			
-			Usuario entity = optional.get();
-			
-			entity.setNome(request.getNome());
-			
-			service.save(entity);
-			
-			URI uri = uriBuilder.path("/{id}").buildAndExpand(entity.getId()).toUri();
+	public ResponseEntity<?> atualizaUsuario(@RequestBody UsuarioUpdateRequest request, @PathVariable Integer idUsuario,
+			HttpServletResponse response) {
 
-			return ResponseEntity.created(uri).build();
-		} else {
-			throw new EntityNotFoundException("idUsario: " + idUsuario + " not exist.");
-		}
+		Usuario entity = service.atualiza(idUsuario, request);
+
+		return ResponseEntity.status(HttpStatus.OK).body(new UsuarioResponse(entity));
 	}
 
 	@PutMapping("/{idUsuario}/grupo")
-	public ResponseEntity<?> adicionaGrupoUsuario(@RequestBody List<Integer> idsGrupoUsuario, @PathVariable Integer idUsuario, UriComponentsBuilder uriBuilder) {
-	
-		if (idsGrupoUsuario.isEmpty()) {
-			throw new EmptyGrupoUsuarioException("Empty Grupo Usuario not valid.");
-		}
+	public ResponseEntity<?> adicionaGrupoUsuario(@RequestBody List<Integer> idsGrupoUsuario,
+			@PathVariable Integer idUsuario, HttpServletResponse response) {
 
-		Optional<Usuario> optionalUsuario = service.findById(idUsuario);
+		Usuario entity = service.cadastraGrupoUsuarioPorIds(idUsuario, idsGrupoUsuario);
 
-		if (optionalUsuario.isPresent()) {
+		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
 
-			List<GrupoUsuario> gruposUsuario = new ArrayList<GrupoUsuario>();
-
-			for (Integer idGrupoUsuario : idsGrupoUsuario) {
-
-				Optional<GrupoUsuario> grupoUsuario = grupoUsuarioService.findById(idGrupoUsuario);
-
-				if (grupoUsuario.isPresent()) {
-					gruposUsuario.add(grupoUsuario.get());
-				} else {
-					throw new EntityNotFoundException("idGrupoUsuario: " + idGrupoUsuario + " not exist.");
-				}
-			}
-
-			Usuario entity = optionalUsuario.get();
-
-			entity.setGrupoUsuario(gruposUsuario);
-
-			service.save(entity);
-
-			URI uri = uriBuilder.path("/{id}").buildAndExpand(entity.getId()).toUri();
-
-			return ResponseEntity.created(uri).build();
-		} else {
-			throw new EntityNotFoundException("idUsario: " + idUsuario + " not exist.");
-		}
+		return ResponseEntity.status(HttpStatus.OK).body(entity);
 	}
-	
+
 	@PostMapping("/trocaSenha")
-	public ResponseEntity<?> trocaSenha(@RequestBody UsuarioTrocaSenhaRequest request, UriComponentsBuilder uirBuilder) {
+	public ResponseEntity<?> trocaSenha(@RequestBody UsuarioTrocaSenhaRequest request,
+			UriComponentsBuilder uirBuilder) {
+		
+		service.trocaSenha(request);
 
-		Optional<Usuario> optionalUsuario = service.consultaPorEmail(request.getEmail());
-		
-		if(!optionalUsuario.isPresent()) {
-			throw new EntityNotFoundException("Email: " + request.getEmail() + " not exist.");
-		}
-		
-		if(request.getNovaSenha() != null){
-			if (request.getSenhaAntiga().equals(request.getConfirmaSenha())) {
-				trocaSenhaService.trocaSenhaAntiga(optionalUsuario.get(), request);
-			} else {
-				throw new ConfirmPasswordException("Confirm Password does not match Password");
-			}
-		} else if (request.getSenhaAntiga() == null || request.getConfirmaSenha() == null) {
-			trocaSenhaService.geraCodido(optionalUsuario.get());
-		} else {
-			throw new ConfirmPasswordException("Empty new password not valid");
-		} 
-		
 		return ResponseEntity.ok().build();
 	}
-	
-	
+
 	@PostMapping("/trocaSenha/validaCodigo")
-	public ResponseEntity<TrocaSenhaResponse> trocaSenha(@RequestBody ValidaCodigoRequest request, UriComponentsBuilder uirBuilder) {
+	public ResponseEntity<TrocaSenhaResponse> trocaSenha(@RequestBody ValidaCodigoRequest request,
+			HttpServletResponse response) {
+		
+		TrocaSenha entity = service.validaCodigo(request);
 
-		Optional<Usuario> optionalUsuario = service.consultaPorEmail(request.getEmail());
-		
-		if(!optionalUsuario.isPresent()) {
-			throw new EntityNotFoundException("Email: " + request.getEmail() + " not exist.");
-		}
-		
-		TrocaSenha trocaSenha = trocaSenhaService.validaCodigo(request.getCodigo(), request.getEmail());
-		
-		return ResponseEntity.ok(new TrocaSenhaResponse(trocaSenha));
+		return ResponseEntity.ok(new TrocaSenhaResponse(entity));
 	}
-	
-	
+
 	@PostMapping("/trocaSenha/codigo")
-	public ResponseEntity<?> trocaSenhaComCodigo(@RequestBody TrocaSenhaComCodigoRequest request, UriComponentsBuilder uirBuilder) {
-		
-		Optional<Usuario> optionalUsuario = service.consultaPorEmail(request.getEmail());
-		
-		if(!optionalUsuario.isPresent()) {
-			throw new EntityNotFoundException("Email: " + request.getEmail() + " not exist.");
-		}
-		
-		if (request.getNovaSenha().equals(request.getConfirmaSenha())) {
-			trocaSenhaService.trocaSenhaComCodigo(request, optionalUsuario.get());
-		}else {
-			throw new ConfirmPasswordException("Confirm Password does not match Password");
-		}
-		
+	public ResponseEntity<?> trocaSenhaComCodigo(@RequestBody TrocaSenhaComCodigoRequest request,
+			HttpServletResponse response) {
+
+		service.trocaSenhaComCodigo(request);
+
 		return ResponseEntity.ok().build();
 	}
-	
+
 }

@@ -3,10 +3,11 @@ package br.com.herculano.livararia_api_rest.service;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.herculano.livararia_api_rest.entity.GrupoUsuario;
 import br.com.herculano.livararia_api_rest.entity.Permissao;
 import br.com.herculano.livararia_api_rest.repository.jpaRepository.PermissaoRepository;
 
@@ -22,12 +23,14 @@ public class PermissaoService extends ServiceTemplate<Permissao, PermissaoReposi
 		return getRepository().consultaPorIdUsuario(idCliente);
 	}
 
-	public List<GrupoUsuario> consultaGrupoUsuarios(List<Integer> idsGrupoUsuario) {
-		return null;
-	}
+	public Permissao consultaPorCodigo(String codigo) {
+		Optional<Permissao> optional = getRepository().findByCodigo(codigo);
 
-	public Optional<Permissao> consultaPorCodigo(String codigo) {
-		return getRepository().findByCodigo(codigo);
+		if (!optional.isPresent()) {
+			throw new EntityNotFoundException(codigo + " not exist.");
+		}
+		
+		return optional.get();
 	}
 
 }

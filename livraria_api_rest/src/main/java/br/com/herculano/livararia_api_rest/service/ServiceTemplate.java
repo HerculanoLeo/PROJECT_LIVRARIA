@@ -31,7 +31,7 @@ public class ServiceTemplate<E, JPA> {
 	public Page<E> consulta(Pageable page) {
 		return repository.findAll(page);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public Optional<E> findById(Integer id) {
 		return repository.findById(id);
@@ -39,16 +39,16 @@ public class ServiceTemplate<E, JPA> {
 
 	@SuppressWarnings("unchecked")
 	public E consultaPorId(Integer id) {
-		
+
 		Optional optional = repository.findById(id);
-		
+
 		if (!optional.isPresent()) {
 			throw new EntityNotFoundException("");
 		}
-		
+
 		return (E) optional.get();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected JPA getRepository() {
 		return (JPA) repository;

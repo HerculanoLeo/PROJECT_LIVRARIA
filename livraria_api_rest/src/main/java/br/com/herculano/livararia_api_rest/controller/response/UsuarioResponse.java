@@ -1,8 +1,6 @@
 package br.com.herculano.livararia_api_rest.controller.response;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -14,11 +12,11 @@ public class UsuarioResponse {
 	private String email;
 	private Collection<? extends GrantedAuthority> perfil;
 
-	public UsuarioResponse(Usuario usuario) {
-		this.id = usuario.getId();
-		this.nome = usuario.getNome();
-		this.email = usuario.getEmail();
-		this.perfil = usuario.getAuthorities();
+	public UsuarioResponse(Usuario entity) {
+		this.id = entity.getId();
+		this.nome = entity.getNome();
+		this.email = entity.getEmail();
+		this.perfil = entity.getAuthorities();
 	}
 
 	public Integer getId() {
@@ -35,9 +33,5 @@ public class UsuarioResponse {
 
 	public Collection<? extends GrantedAuthority> getPerfil() {
 		return perfil;
-	}
-
-	public static List<UsuarioResponse> converter(List<Usuario> usuarios) {
-		return usuarios.stream().map(UsuarioResponse::new).collect(Collectors.toList());
 	}
 }
