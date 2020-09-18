@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class AuthToken {
 
-	private String tipo = "Bearer ";
+	private String tipo = "bearer ";
 	private String token;
 	private Date expireToken;
 	private UsuarioResponse usuario;

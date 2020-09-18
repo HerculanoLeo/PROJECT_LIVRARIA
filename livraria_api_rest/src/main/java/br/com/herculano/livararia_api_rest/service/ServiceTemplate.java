@@ -2,7 +2,8 @@ package br.com.herculano.livararia_api_rest.service;
 
 import java.util.Optional;
 
-import org.springframework.data.domain.Example;
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @SuppressWarnings("rawtypes")
 public class ServiceTemplate<E, JPA> {
 
-	private JpaRepository repository;
+	protected JpaRepository repository;
 
 	public ServiceTemplate(JpaRepository repository) {
 		this.repository = repository;
@@ -30,20 +31,27 @@ public class ServiceTemplate<E, JPA> {
 	public Page<E> consulta(Pageable page) {
 		return repository.findAll(page);
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	public Page<E> consultaPorFiltro(E filterEntity, Pageable page) {
-		return repository.findAll(Example.of(filterEntity), page);
+	public Optional<E> findById(Integer id) {
+		return repository.findById(id);
 	}
 
 	@SuppressWarnings("unchecked")
-	public Optional<E> consultaPorId(Integer id) {
-		return repository.findById(id);
+	public E consultaPorId(Integer id) {
+		
+		Optional optional = repository.findById(id);
+		
+		if (!optional.isPresent()) {
+			throw new EntityNotFoundException("");
+		}
+		
+		return (E) optional.get();
 	}
 	
 	@SuppressWarnings("unchecked")
 	protected JPA getRepository() {
-		return (JPA) this.repository;
+		return (JPA) repository;
 	}
 
 }

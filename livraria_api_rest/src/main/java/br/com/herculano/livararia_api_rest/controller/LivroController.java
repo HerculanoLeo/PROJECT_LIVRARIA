@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,7 +42,6 @@ public class LivroController {
 	private AutorService autorService;
 
 	@GetMapping
-	@PreAuthorize("hasAnyRole('CONSULTA_LIVROS')")
 	public ResponseEntity<Page<LivroResponse>> consultaLivros(Pageable page) {
 		Page<Livro> entities = service.consulta(page);
 
@@ -51,7 +49,6 @@ public class LivroController {
 	}
 
 	@PostMapping
-	@PreAuthorize("hasAnyRole('CADASTRAR_LIVRO')")
 	public ResponseEntity<LivroResponse> cadastrarLivro(@RequestBody @Validated LivroRequest request,
 			UriComponentsBuilder uriBuilder) {
 
@@ -73,21 +70,13 @@ public class LivroController {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAnyRole('CONSULTA_LIVRO_POR_ID')")
 	public ResponseEntity<LivroResponse> consultaPorId(@PathVariable Integer id, UriComponentsBuilder uirBuilder) {
-		Optional<Livro> optional = service.consultaPorId(id);
+		Livro entity = service.consultaPorId(id);
 
-		if (optional.isPresent()) {
-			LivroResponse livroDTO = new LivroResponse(optional.get());
-
-			return ResponseEntity.ok(livroDTO);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		return ResponseEntity.ok(new LivroResponse(entity));
 	}
 
 	@PutMapping("/{idLivro}")
-	@PreAuthorize("hasAnyRole('ATUALIZAR_LIVRO')")
 	public ResponseEntity<LivroResponse> atulizarLivro(@RequestBody @Validated LivroRequest request,
 			@PathVariable Integer idLivro, UriComponentsBuilder uriBuilder) {
 
@@ -109,7 +98,6 @@ public class LivroController {
 	}
 
 	@GetMapping("/{idLivro}/autor")
-	@PreAuthorize("hasAnyRole('CONSULTA_AUTORES_POR_ID_LIVRO')")
 	public ResponseEntity<List<AutorResponse>> buscaAutoresPorIdLivro(@PathVariable Integer idLivro,
 			UriComponentsBuilder uriBuilder) {
 		List<Autor> entities = autorService.consultaPorIdLivro(idLivro);
@@ -118,15 +106,14 @@ public class LivroController {
 	}
 
 	@PutMapping("/{idLivro}/autor/{idAutor}")
-	@PreAuthorize("hasAnyRole('LIVRO_ADICIONAR_AUTOR')")
 	public ResponseEntity<LivroResponse> adicionaAutor(@RequestBody @PathVariable Integer idLivro,
 			@PathVariable Integer idAutor, UriComponentsBuilder uriBuilder) {
-		Optional<Livro> optional = service.consultaPorId(idLivro);
+		Optional<Livro> optional = service.findById(idLivro);
 
 		if (optional.isPresent()) {
 			Livro entity = optional.get();
 
-			Optional<Autor> optionalAutor = autorService.consultaPorId(idAutor);
+			Optional<Autor> optionalAutor = autorService.findById(idAutor);
 
 			if (optionalAutor.isPresent()) {
 				entity.getAutores().add(optionalAutor.get());
@@ -144,13 +131,12 @@ public class LivroController {
 	}
 
 	@DeleteMapping("/{idLivro}")
-	@PreAuthorize("hasAnyRole('DELETE_LIVRO')")
 	ResponseEntity<LivroResponse> deleteLivro(@PathVariable Integer idLivro, UriComponentsBuilder uriBuilder) {
-		Optional<Livro> optional = service.consultaPorId(idLivro);
-		
+		Optional<Livro> optional = service.findById(idLivro);
+
 		if (optional.isPresent()) {
 			service.delete(optional.get());
-			
+
 			return ResponseEntity.ok().build();
 		} else {
 			throw new EntityNotFoundException("idLivro: " + idLivro + " not exist.");
@@ -158,11 +144,10 @@ public class LivroController {
 	}
 
 	@DeleteMapping("/{idLivro}/autor/{idAutor}")
-	@PreAuthorize("hasAnyRole('LIVRO_DELETE_AUTOR')")
 	public ResponseEntity<LivroResponse> deleteAutor(@RequestBody @PathVariable Integer idLivro,
 			@PathVariable Integer idAutor, UriComponentsBuilder uriBuilder) {
 
-		Optional<Livro> optional = service.consultaPorId(idLivro);
+		Optional<Livro> optional = service.findById(idLivro);
 
 		if (optional.isPresent()) {
 			Livro entity = optional.get();
@@ -181,7 +166,7 @@ public class LivroController {
 		if (!request.getIdsAutor().isEmpty()) {
 			for (Integer id : request.getIdsAutor()) {
 
-				Optional<Autor> optionalAutor = autorService.consultaPorId(id);
+				Optional<Autor> optionalAutor = autorService.findById(id);
 
 				if (!optionalAutor.isPresent()) {
 					throw new EntityNotFoundException("idAutor: " + id + " not exist.");
@@ -194,7 +179,7 @@ public class LivroController {
 
 	private void validaLivro(LivroRequest request, Integer idLivro, List<Autor> autores) {
 
-		Optional<Livro> optionalLivro = service.consultaPorId(idLivro);
+		Optional<Livro> optionalLivro = service.findById(idLivro);
 
 		if (!optionalLivro.isPresent()) {
 			throw new EntityNotFoundException("idLivro: " + idLivro + " not exist.");

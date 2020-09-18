@@ -4,14 +4,15 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -34,44 +36,48 @@ import br.com.herculano.livararia_api_rest.service.PermissaoService;
 @RestController
 @RequestMapping("/grupo")
 public class GrupoUsuarioController {
-	
+
 	@Autowired
 	private GrupoUsuarioService service;
 
 	@Autowired
 	private PermissaoService permissaoService;
 
+	@Autowired
+	private ApplicationEventPublisher publisher;
+
 	@GetMapping
-//	@PreAuthorize("hasAnyRole('CONSULTA_GRUPOS')")
-	public ResponseEntity<Page<GrupoUsuarioResponse>> consultaGrupos(Pageable page) {
-		Page<GrupoUsuario> entity = service.consulta(page);
-		
+	public ResponseEntity<Page<GrupoUsuarioResponse>> consultaGruposPorFiltro(
+			@RequestParam(name = "nomeGrupo", required = false) String nomeGrupo,
+			@RequestParam(name = "nomePermissoes", required = false) List<String> nomePermissoes, Pageable page) {
+
+		GrupoUsuario filterEntity = new GrupoUsuario();
+		filterEntity.setNome(nomeGrupo);
+
+		if (nomePermissoes != null) {
+			filterEntity.setPermissoes(nomePermissoes.stream().map(Permissao::new).collect(Collectors.toList()));
+		}
+
+		Page<GrupoUsuario> entity = service.consultaPorFiltro(filterEntity, page);
+
 		return ResponseEntity.ok(entity.map(GrupoUsuarioResponse::new));
 	}
 
 	@GetMapping("/permissoes")
-	@PreAuthorize("hasAnyRole('CONSULTA_PERMISSOES')")
 	public ResponseEntity<Page<PermissaoResponse>> consultaPermissoes(Pageable page) {
 		Page<Permissao> entity = permissaoService.consulta(page);
 
 		return ResponseEntity.ok(entity.map(PermissaoResponse::new));
 	}
 
-	
 	@GetMapping("/{idGrupoUsuario}")
-	@PreAuthorize("hasAnyRole('CONSULTA_GRUPO_POR_ID')")
 	public ResponseEntity<GrupoUsuario> consultaGrupoUsuarioPorId(@PathVariable Integer idGrupoUsuario) {
-		Optional<GrupoUsuario> optional = service.consultaPorId(idGrupoUsuario);
-		
-		if(optional.isPresent()) {
-			return ResponseEntity.ok(optional.get());
-		} else {
-			throw new EntityNotFoundException("idGrupoUsuario: " + idGrupoUsuario + " not exist.");
-		}
+		GrupoUsuario entity = service.consultaPorId(idGrupoUsuario);
+
+		return ResponseEntity.ok(entity);
 	}
 
 	@PostMapping
-	@PreAuthorize("hasAnyRole('CADASTRAR_GRUPO')")
 	public ResponseEntity<?> cadastraGrupo(@RequestBody GrupoUsuarioRequest request, UriComponentsBuilder uriBuilder) {
 
 		List<Permissao> permissoes = new ArrayList<Permissao>();
@@ -91,7 +97,6 @@ public class GrupoUsuarioController {
 	}
 
 	@PutMapping("/{idGrupoUsuario}")
-	@PreAuthorize("hasAnyRole('ATUALIZAR_GRUPO')")
 	public ResponseEntity<?> atualizaGrupo(@RequestBody GrupoUsuarioRequest request,
 			@PathVariable Integer idGrupoUsuario, UriComponentsBuilder uriBuilder) {
 
@@ -111,29 +116,18 @@ public class GrupoUsuarioController {
 
 		return ResponseEntity.created(uri).build();
 	}
-	
-	@DeleteMapping("/{idGrupoUsuario}")
-	@PreAuthorize("hasAnyRole('DELETE_GRUPO')")
-	public ResponseEntity<?> deletarGrupo(@PathVariable Integer idGrupoUsuario) {
-		
-		Optional<GrupoUsuario> optionalGrupoUsuario = service.consultaPorId(idGrupoUsuario);
 
-		if (!optionalGrupoUsuario.isPresent()) {
-			throw new EntityNotFoundException("idGrupoUsuario: " + idGrupoUsuario + " not exist.");
-		}
-		
-		service.delete(optionalGrupoUsuario.get());
-		
+	@DeleteMapping("/{idGrupoUsuario}")
+	public ResponseEntity<?> deletarGrupo(@PathVariable Integer idGrupoUsuario) {
+
+		service.delete(idGrupoUsuario);
+
 		return ResponseEntity.ok().build();
 	}
 
-	private void validaGrupoUsuario(GrupoUsuarioRequest request, List<Permissao> permissoes, Integer idGrupoUsuario) {
-		
-		Optional<GrupoUsuario> optionalGrupoUsuario = service.consultaPorId(idGrupoUsuario);
+	private void validaGrupoUsuario(GrupoUsuarioRequest request, List<Permissao> permissoes, Integer id) {
 
-		if (!optionalGrupoUsuario.isPresent()) {
-			throw new EntityNotFoundException("idGrupoUsuario: " + idGrupoUsuario + " not exist.");
-		}
+		GrupoUsuario entity = service.consultaPorId(id);
 
 		validaGrupoUsuario(request, permissoes);
 	}

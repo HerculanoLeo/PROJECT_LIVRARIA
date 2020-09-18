@@ -25,7 +25,7 @@ public class UsuarioDetailsService implements UserDetailsService {
 		Optional<Usuario> optionalUsuario = usuarioRepository.findByEmail(username);
 		
 		if (!optionalUsuario.isPresent()) {
-			throw new UsernameNotFoundException("Usuario " + username + " não foi encontrado");
+			throw new UsernameNotFoundException("User " + username + " not found.");
 		}
 		
 		Usuario entity = optionalUsuario.get();

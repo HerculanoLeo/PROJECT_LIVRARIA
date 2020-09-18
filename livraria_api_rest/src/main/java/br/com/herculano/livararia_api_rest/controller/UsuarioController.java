@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,7 +55,6 @@ public class UsuarioController {
 	private TrocaSenhaService trocaSenhaService;
 
 	@GetMapping
-	@PreAuthorize("hasAnyRole('CONSULTA_USUARIO')")
 	public ResponseEntity<Page<UsuarioResponse>> consultaUsuarios(Pageable page) {
 		Page<Usuario> entities = service.consulta(page);
 
@@ -72,9 +70,8 @@ public class UsuarioController {
 	}
 
 	@GetMapping("/{idUsuario}")
-	@PreAuthorize("hasAnyRole('CONSULTA_USUARIO_POR_ID')")
 	public ResponseEntity<UsuarioResponse> consultaPorIdUsuario(@PathVariable Integer idUsuario) {
-		Optional<Usuario> optional = service.consultaPorId(idUsuario);
+		Optional<Usuario> optional = service.findById(idUsuario);
 
 		if (optional.isPresent()) {
 			Usuario usuario = optional.get();
@@ -90,7 +87,6 @@ public class UsuarioController {
 	}
 
 	@PostMapping
-	@PreAuthorize("hasAnyRole('CADASTRAR_USUARIO')")
 	public ResponseEntity<?> cadastraUsuario(@RequestBody @Validated UsuarioRequest request, UriComponentsBuilder uriBuilder) {
 
 		if (request.getSenha().equals(request.getConfirmeSenha())) {
@@ -109,10 +105,9 @@ public class UsuarioController {
 	}
 
 	@PutMapping("/{idUsuario}")
-	@PreAuthorize("hasAnyRole('ATUALIZAR_USUARIO')")
 	public ResponseEntity<?> atualizaUsuario(@RequestBody UsuarioUpdateRequest request, @PathVariable Integer idUsuario ,UriComponentsBuilder uriBuilder ) {
 		
-		Optional<Usuario> optional = service.consultaPorId(idUsuario);
+		Optional<Usuario> optional = service.findById(idUsuario);
 		
 		if (optional.isPresent()) { 
 			
@@ -131,14 +126,13 @@ public class UsuarioController {
 	}
 
 	@PutMapping("/{idUsuario}/grupo")
-	@PreAuthorize("hasAnyRole('CADASTRAR_USUARIO_GRUPOS')")
 	public ResponseEntity<?> adicionaGrupoUsuario(@RequestBody List<Integer> idsGrupoUsuario, @PathVariable Integer idUsuario, UriComponentsBuilder uriBuilder) {
 	
 		if (idsGrupoUsuario.isEmpty()) {
 			throw new EmptyGrupoUsuarioException("Empty Grupo Usuario not valid.");
 		}
 
-		Optional<Usuario> optionalUsuario = service.consultaPorId(idUsuario);
+		Optional<Usuario> optionalUsuario = service.findById(idUsuario);
 
 		if (optionalUsuario.isPresent()) {
 
@@ -146,7 +140,7 @@ public class UsuarioController {
 
 			for (Integer idGrupoUsuario : idsGrupoUsuario) {
 
-				Optional<GrupoUsuario> grupoUsuario = grupoUsuarioService.consultaPorId(idGrupoUsuario);
+				Optional<GrupoUsuario> grupoUsuario = grupoUsuarioService.findById(idGrupoUsuario);
 
 				if (grupoUsuario.isPresent()) {
 					gruposUsuario.add(grupoUsuario.get());
