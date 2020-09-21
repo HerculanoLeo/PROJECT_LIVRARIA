@@ -6,17 +6,20 @@ import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import br.com.herculano.livararia_api_rest.constants.system_message.MessageTemplate;
+import br.com.herculano.livararia_api_rest.constants.system_message.PermissaoMessage;
 import br.com.herculano.livararia_api_rest.entity.Permissao;
 import br.com.herculano.livararia_api_rest.repository.jpaRepository.PermissaoRepository;
 
 @Service
-public class PermissaoService extends ServiceTemplate<Permissao, PermissaoRepository>{
+public class PermissaoService extends ServiceTemplate<Permissao, PermissaoRepository, PermissaoMessage>{
 
 	@Autowired
-	public PermissaoService(PermissaoRepository repository) {
-		super(repository);
+	public PermissaoService(PermissaoRepository repository, @Qualifier("PermissaoMessage") PermissaoMessage message) {
+		super(repository, message);
 	}
 
 	public List<Permissao> consultaPorIdUsuario(Integer idCliente) {
@@ -27,7 +30,9 @@ public class PermissaoService extends ServiceTemplate<Permissao, PermissaoReposi
 		Optional<Permissao> optional = getRepository().findByCodigo(codigo);
 
 		if (!optional.isPresent()) {
-			throw new EntityNotFoundException(codigo + " not exist.");
+			Object[] args = { codigo };
+			
+			throw new EntityNotFoundException(MessageTemplate.getCodigo(getMessage().getNotFound(), args));
 		}
 		
 		return optional.get();

@@ -7,6 +7,6 @@ public class ValidaCodigoRequest {
 
 	private String email;
 	
-	private String codigo;
+	private String code;
 	
 }

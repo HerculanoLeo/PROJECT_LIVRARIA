@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import br.com.herculano.livararia_api_rest.constants.system_message.LivroMessage;
 import br.com.herculano.livararia_api_rest.controller.request.LivroRequest;
 import br.com.herculano.livararia_api_rest.controller.response.LivroResponse;
 import br.com.herculano.livararia_api_rest.entity.Autor;
@@ -15,14 +17,15 @@ import br.com.herculano.livararia_api_rest.entity.Livro;
 import br.com.herculano.livararia_api_rest.repository.jpaRepository.LivroRepository;
 
 @Service
-public class LivroService extends ServiceTemplate<Livro, LivroRepository> {
+public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroMessage> {
 
 	@Autowired
 	private AutorService autorService;
+	
 
 	@Autowired
-	public LivroService(LivroRepository repository) {
-		super(repository);
+	public LivroService(LivroRepository repository, @Qualifier("LivroMessage") LivroMessage message) {
+		super(repository, message);
 	}
 
 	public Livro cadastra(LivroRequest request) {

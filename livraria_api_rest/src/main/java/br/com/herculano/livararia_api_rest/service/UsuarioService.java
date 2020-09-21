@@ -7,32 +7,28 @@ import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import br.com.herculano.livararia_api_rest.controller.request.TrocaSenhaComCodigoRequest;
+import br.com.herculano.livararia_api_rest.constants.system_message.MessageTemplate;
+import br.com.herculano.livararia_api_rest.constants.system_message.UsuarioMessage;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioTrocaSenhaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioUpdateRequest;
-import br.com.herculano.livararia_api_rest.controller.request.ValidaCodigoRequest;
 import br.com.herculano.livararia_api_rest.entity.GrupoUsuario;
-import br.com.herculano.livararia_api_rest.entity.TrocaSenha;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.exception.custom.ConfirmPasswordException;
 import br.com.herculano.livararia_api_rest.exception.custom.EmptyGrupoUsuarioException;
 import br.com.herculano.livararia_api_rest.repository.jpaRepository.UsuarioRepository;
 
 @Service
-public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository> {
+public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, UsuarioMessage> {
 
 	@Autowired
 	private GrupoUsuarioService grupoUsuarioService;
 
 	@Autowired
-	private TrocaSenhaService trocaSenhaService;
-
-	@Autowired
-	public UsuarioService(UsuarioRepository repository) {
-		super(repository);
+	public UsuarioService(UsuarioRepository repository, @Qualifier("UsuarioMessage") UsuarioMessage message) {
+		super(repository, message);
 	}
 
 	public Usuario cadastra(UsuarioRequest request) {
@@ -43,7 +39,7 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository> 
 
 			return entity;
 		} else {
-			throw new ConfirmPasswordException("Confirm Password does not match Password");
+			throw new ConfirmPasswordException(MessageTemplate.getCodigo(getMessage().getPasswordNotMatch(), null));
 		}
 	}
 
@@ -61,7 +57,9 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository> 
 		Optional<Usuario> optionalUsuario = getRepository().findByEmail(email);
 
 		if (!optionalUsuario.isPresent()) {
-			throw new EntityNotFoundException("Email: " + email + " not exist.");
+			Object[] args = {email};
+			
+			throw new EntityNotFoundException(MessageTemplate.getCodigo(getMessage().getEmailNotFound(), args));
 		}
 
 		return optionalUsuario.get();
@@ -70,7 +68,7 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository> 
 	public Usuario cadastraGrupoUsuarioPorIds(Integer idUsuario, List<Integer> idsGrupoUsuario) {
 
 		if (idsGrupoUsuario.isEmpty()) {
-			throw new EmptyGrupoUsuarioException("Empty Grupo Usuario not valid.");
+			throw new EmptyGrupoUsuarioException(MessageTemplate.getCodigo(getMessage().getEmptyGroupUser(), null));
 		}
 
 		Usuario entity = super.consultaPorId(idUsuario);
@@ -91,47 +89,4 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository> 
 		return entity;
 	}
 
-	public void trocaSenha(UsuarioTrocaSenhaRequest request) {
-		Usuario entity = consultaPorEmail(request.getEmail());
-
-		if (request.getNovaSenha() != null) {
-			
-			if (request.getSenhaAntiga().equals(request.getConfirmaSenha())) {
-				
-				trocaSenhaService.trocaSenhaAntiga(entity, request);
-				
-			} else {
-				
-				throw new ConfirmPasswordException("Confirm Password does not match Password");
-			}
-			
-		} else if (request.getSenhaAntiga() == null || request.getConfirmaSenha() == null) {
-			
-			trocaSenhaService.geraCodido(entity);
-			
-		} else {
-			
-			throw new ConfirmPasswordException("Empty new password not valid");
-			
-		}
-
-	}
-
-	public TrocaSenha validaCodigo(ValidaCodigoRequest request) {
-		Usuario usuario = consultaPorEmail(request.getEmail());
-
-		TrocaSenha entity = trocaSenhaService.validaCodigo(request.getCodigo(), usuario.getEmail());
-		
-		return entity;
-	}
-
-	public void trocaSenhaComCodigo(TrocaSenhaComCodigoRequest request) {
-		Usuario entity = consultaPorEmail(request.getEmail());
-
-		if (request.getNovaSenha().equals(request.getConfirmaSenha())) {
-			trocaSenhaService.trocaSenhaComCodigo(request, entity);
-		} else {
-			throw new ConfirmPasswordException("Confirm Password does not match Password");
-		}
-	}
 }

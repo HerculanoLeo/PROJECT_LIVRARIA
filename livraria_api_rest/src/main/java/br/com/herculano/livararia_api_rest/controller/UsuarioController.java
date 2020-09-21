@@ -31,6 +31,7 @@ import br.com.herculano.livararia_api_rest.entity.TrocaSenha;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.event.CreatedEvent;
 import br.com.herculano.livararia_api_rest.service.PermissaoService;
+import br.com.herculano.livararia_api_rest.service.TrocaSenhaService;
 import br.com.herculano.livararia_api_rest.service.UsuarioService;
 
 @RestController
@@ -42,6 +43,9 @@ public class UsuarioController {
 
 	@Autowired
 	private PermissaoService permissaoService;
+	
+	@Autowired
+	private TrocaSenhaService trocaSenhaService;
 
 	@Autowired
 	private ApplicationEventPublisher publisher;
@@ -105,7 +109,7 @@ public class UsuarioController {
 	public ResponseEntity<?> trocaSenha(@RequestBody UsuarioTrocaSenhaRequest request,
 			UriComponentsBuilder uirBuilder) {
 		
-		service.trocaSenha(request);
+		trocaSenhaService.trocaSenha(request);
 
 		return ResponseEntity.ok().build();
 	}
@@ -114,7 +118,7 @@ public class UsuarioController {
 	public ResponseEntity<TrocaSenhaResponse> trocaSenha(@RequestBody ValidaCodigoRequest request,
 			HttpServletResponse response) {
 		
-		TrocaSenha entity = service.validaCodigo(request);
+		TrocaSenha entity = trocaSenhaService.validaCodigo(request);
 
 		return ResponseEntity.ok(new TrocaSenhaResponse(entity));
 	}
@@ -123,7 +127,7 @@ public class UsuarioController {
 	public ResponseEntity<?> trocaSenhaComCodigo(@RequestBody TrocaSenhaComCodigoRequest request,
 			HttpServletResponse response) {
 
-		service.trocaSenhaComCodigo(request);
+		trocaSenhaService.trocaSenhaComCodigo(request);
 
 		return ResponseEntity.ok().build();
 	}

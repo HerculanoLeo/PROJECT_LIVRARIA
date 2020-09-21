@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import br.com.herculano.livararia_api_rest.constants.system_message.GrupoUsuarioMessage;
 import br.com.herculano.livararia_api_rest.controller.request.GrupoUsuarioCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.GrupoUsuarioConsultaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.PermissaoRequest;
@@ -16,14 +18,14 @@ import br.com.herculano.livararia_api_rest.entity.Permissao;
 import br.com.herculano.livararia_api_rest.repository.jpaRepository.GrupoUsuarioRepository;
 
 @Service
-public class GrupoUsuarioService extends ServiceTemplate<GrupoUsuario, GrupoUsuarioRepository>{
+public class GrupoUsuarioService extends ServiceTemplate<GrupoUsuario, GrupoUsuarioRepository, GrupoUsuarioMessage>{
 
 	@Autowired
 	private PermissaoService permissaoService;
 	
 	@Autowired
-	public GrupoUsuarioService(GrupoUsuarioRepository repository) {
-		super(repository);
+	public GrupoUsuarioService(GrupoUsuarioRepository repository, @Qualifier("GrupoUsuarioMessage") GrupoUsuarioMessage message) {
+		super(repository, message);
 	}
 
 	public GrupoUsuario cadastra(GrupoUsuarioCadastroRequest request) {
