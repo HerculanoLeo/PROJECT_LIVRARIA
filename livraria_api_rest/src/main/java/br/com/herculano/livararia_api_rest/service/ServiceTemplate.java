@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import br.com.herculano.livararia_api_rest.constants.system_message.ComumMessage;
+import br.com.herculano.livararia_api_rest.constants.system_message.CommonMessage;
 import br.com.herculano.livararia_api_rest.constants.system_message.MessageTemplate;
 
 @SuppressWarnings("rawtypes")
@@ -51,7 +51,7 @@ public class ServiceTemplate<E, JPA, M extends MessageTemplate> {
 		if (!optional.isPresent()) {
 			Object[] args = {id};
 			
-			throw new EntityNotFoundException(ComumMessage.getCodigo(message.getNotFound(), args));
+			throw new EntityNotFoundException(CommonMessage.getCodigo(message.getNotFound(), args));
 		}
 
 		return (E) optional.get();

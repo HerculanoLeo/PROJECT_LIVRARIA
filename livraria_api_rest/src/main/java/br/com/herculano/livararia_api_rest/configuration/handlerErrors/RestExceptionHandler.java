@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import br.com.herculano.livararia_api_rest.constants.system_message.ComumMessage;
+import br.com.herculano.livararia_api_rest.constants.system_message.CommonMessage;
 import br.com.herculano.livararia_api_rest.exception.custom.ConfirmPasswordException;
 import br.com.herculano.livararia_api_rest.exception.custom.EmptyGrupoUsuarioException;
 import br.com.herculano.livararia_api_rest.exception.custom.TrocaSenhaException;
@@ -29,12 +29,12 @@ import br.com.herculano.livararia_api_rest.exception.custom.TrocaSenhaException;
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@Autowired
-	private ComumMessage message;
+	private CommonMessage message;
 
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		String error = ComumMessage.getCodigo(message.getJsonMalformed(), null);
+		String error = CommonMessage.getCodigo(message.getJsonMalformed(), null);
 		return buildResponseEntity(new ApiError(status, error, ex));
 	}
 
@@ -42,7 +42,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		ApiError api = new ApiError(HttpStatus.BAD_REQUEST);
-		api.setMessage(ComumMessage.getCodigo(message.getValidationError(), null));
+		api.setMessage(CommonMessage.getCodigo(message.getValidationError(), null));
 		api.addValidationErrors(ex.getBindingResult().getFieldErrors());
 		api.addValidationError(ex.getBindingResult().getGlobalErrors());
 		return buildResponseEntity(api);
@@ -74,10 +74,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		String error = "";
 
 		if (ex instanceof InternalAuthenticationServiceException) {
-			error = ComumMessage.getCodigo(message.getUserNotFound(), null);
+			error = CommonMessage.getCodigo(message.getUserNotFound(), null);
 
 		} else if (ex instanceof BadCredentialsException) {
-			error = ComumMessage.getCodigo(message.getUserOrPasswordIncorrect(), null);
+			error = CommonMessage.getCodigo(message.getUserOrPasswordIncorrect(), null);
 		}
 
 		return buildResponseEntity(new ApiError(HttpStatus.UNAUTHORIZED, error, ex));

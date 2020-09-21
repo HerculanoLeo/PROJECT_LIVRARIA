@@ -2,8 +2,8 @@ package br.com.herculano.livararia_api_rest.constants.system_message;
 
 import org.springframework.stereotype.Component;
 
-@Component(value = "ComumMessage")
-public class ComumMessage extends MessageTemplate {
+@Component(value = "CommonMessage")
+public class CommonMessage extends MessageTemplate {
 
 	private final String NOT_FOUND = "comum.notfound";
 	private final String JSON_MALFORMED = "comum.jsonMalformed";
