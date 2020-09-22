@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.herculano.livararia_api_rest.controller.request.TrocaSenhaComCodigoRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioRequest;
+import br.com.herculano.livararia_api_rest.controller.request.UsuarioCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioTrocaSenhaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioUpdateRequest;
 import br.com.herculano.livararia_api_rest.controller.request.ValidaCodigoRequest;
@@ -75,7 +75,7 @@ public class UsuarioController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> cadastraUsuario(@RequestBody @Validated UsuarioRequest request,
+	public ResponseEntity<?> cadastraUsuario(@RequestBody @Validated UsuarioCadastroRequest request,
 			HttpServletResponse response) {
 
 		Usuario entity = service.cadastra(request);

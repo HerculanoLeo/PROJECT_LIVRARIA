@@ -39,6 +39,8 @@ public class GrupoUsuarioRepositoryImpl implements GrupoUsuarioRepositoryCustom 
 		}
 
 		queryStr += where;
+		
+		queryStr += " ORDER BY gru.id ASC";
 
 		Long totalResgistros = RepositoryUtils.totalRegistros(queryStr, em);
 		queryStr += RepositoryUtils.adicionarPaginacao(page);

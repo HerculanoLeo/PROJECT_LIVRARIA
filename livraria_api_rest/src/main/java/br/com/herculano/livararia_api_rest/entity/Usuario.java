@@ -19,7 +19,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioRequest;
+import br.com.herculano.livararia_api_rest.controller.request.UsuarioCadastroRequest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -51,7 +51,7 @@ public class Usuario implements UserDetails {
 						@JoinColumn (name = "id_grupo_usuario", referencedColumnName = "id"))
 	private List<GrupoUsuario> grupoUsuario;
 	
-	public Usuario(UsuarioRequest request) {
+	public Usuario(UsuarioCadastroRequest request) {
 		this.nome = request.getNome();
 		this.email = request.getEmail();
 		this.senha = this.encoder.encode(request.getSenha());

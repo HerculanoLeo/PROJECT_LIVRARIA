@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import br.com.herculano.livararia_api_rest.constants.system_message.LivroMessage;
-import br.com.herculano.livararia_api_rest.controller.request.LivroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.LivroCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.response.LivroResponse;
 import br.com.herculano.livararia_api_rest.entity.Autor;
 import br.com.herculano.livararia_api_rest.entity.Livro;
@@ -28,7 +28,7 @@ public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroM
 		super(repository, message);
 	}
 
-	public Livro cadastra(LivroRequest request) {
+	public Livro cadastra(LivroCadastroRequest request) {
 
 		List<Autor> autores = new ArrayList<Autor>();
 
@@ -45,7 +45,7 @@ public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroM
 		return entity;
 	}
 
-	public Livro atualizar(Integer idLivro, LivroRequest request) {
+	public Livro atualizar(Integer idLivro, LivroCadastroRequest request) {
 		Livro entity = super.consultaPorId(idLivro);
 
 		List<Autor> autores = new ArrayList<Autor>();
@@ -105,9 +105,9 @@ public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroM
 		this.getRepository().removeAutorPorId(entity.getId(), idAutor);
 	}
 
-	private void validaLivro(LivroRequest request, List<Autor> autores) {
+	private void validaLivro(LivroCadastroRequest request, List<Autor> autores) {
 
-		if (!request.getIdsAutor().isEmpty()) {
+		if (null != request.getIdsAutor() && !request.getIdsAutor().isEmpty()) {
 			for (Integer id : request.getIdsAutor()) {
 				Autor entity = autorService.consultaPorId(id);
 

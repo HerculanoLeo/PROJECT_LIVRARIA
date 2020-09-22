@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.herculano.livararia_api_rest.controller.request.AutorRequest;
+import br.com.herculano.livararia_api_rest.controller.request.AutorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.AutorConsultaRequest;
 import br.com.herculano.livararia_api_rest.controller.response.AutorResponse;
 import br.com.herculano.livararia_api_rest.entity.Autor;
 import br.com.herculano.livararia_api_rest.event.CreatedEvent;
@@ -34,8 +35,8 @@ public class AutorController {
 	private ApplicationEventPublisher publisher;
 
 	@GetMapping
-	public ResponseEntity<Page<AutorResponse>> consultaAutores(Pageable page) {
-		Page<Autor> entities = service.consulta(page);
+	public ResponseEntity<Page<AutorResponse>> consultaAutores(AutorConsultaRequest entityRequest, Pageable page) {
+		Page<Autor> entities = service.consultaPorFiltro(entityRequest, page);
 
 		ResponseEntity<Page<AutorResponse>> response = ResponseEntity.ok(entities.map(autor -> {
 			AutorResponse entity = new AutorResponse(autor);
@@ -54,7 +55,7 @@ public class AutorController {
 	}
 
 	@PostMapping
-	public ResponseEntity<AutorResponse> cadastrarAutor(@RequestBody AutorRequest entityRequest,
+	public ResponseEntity<AutorResponse> cadastrarAutor(@RequestBody AutorCadastroRequest entityRequest,
 			HttpServletResponse response) {
 		Autor entity = new Autor(entityRequest);
 
@@ -67,7 +68,7 @@ public class AutorController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<AutorResponse> atualizarAutor(@PathVariable Integer id,
-			@RequestBody AutorRequest entityRequest, HttpServletResponse response) {
+			@RequestBody AutorCadastroRequest entityRequest, HttpServletResponse response) {
 
 		AutorResponse entity = new AutorResponse(service.autilizaAutor(id, entityRequest));
 

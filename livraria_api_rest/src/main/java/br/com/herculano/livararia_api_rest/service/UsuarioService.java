@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.herculano.livararia_api_rest.constants.system_message.MessageTemplate;
 import br.com.herculano.livararia_api_rest.constants.system_message.UsuarioMessage;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioRequest;
+import br.com.herculano.livararia_api_rest.controller.request.UsuarioCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioUpdateRequest;
 import br.com.herculano.livararia_api_rest.entity.GrupoUsuario;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
@@ -31,7 +31,7 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		super(repository, message);
 	}
 
-	public Usuario cadastra(UsuarioRequest request) {
+	public Usuario cadastra(UsuarioCadastroRequest request) {
 		if (request.getSenha().equals(request.getConfirmeSenha())) {
 			Usuario entity = new Usuario(request);
 

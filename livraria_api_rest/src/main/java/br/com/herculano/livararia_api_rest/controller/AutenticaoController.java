@@ -39,7 +39,7 @@ public class AutenticaoController {
 	@PostMapping
 	public ResponseEntity<?> autenticar(@RequestBody @Valid LoginRequest request) {
 		try {
-			final Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getSenha()));
+			final Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			final Date expireToken = new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY_SECONDS);
 			final String token = jwtTokenUtil.generateToken(authentication, expireToken);

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import br.com.herculano.livararia_api_rest.controller.request.LivroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.LivroCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.response.AutorResponse;
 import br.com.herculano.livararia_api_rest.controller.response.LivroResponse;
 import br.com.herculano.livararia_api_rest.entity.Autor;
@@ -52,7 +52,7 @@ public class LivroController {
 	}
 
 	@PostMapping
-	public ResponseEntity<LivroResponse> cadastrarLivro(@RequestBody @Validated LivroRequest request,
+	public ResponseEntity<LivroResponse> cadastrarLivro(@RequestBody @Validated LivroCadastroRequest request,
 			HttpServletResponse response) {
 
 		Livro entity = service.cadastra(request);
@@ -70,7 +70,7 @@ public class LivroController {
 	}
 
 	@PutMapping("/{idLivro}")
-	public ResponseEntity<LivroResponse> atulizarLivro(@RequestBody @Validated LivroRequest request,
+	public ResponseEntity<LivroResponse> atulizarLivro(@RequestBody @Validated LivroCadastroRequest request,
 			@PathVariable Integer idLivro, HttpServletResponse response) {
 
 		Livro entity = service.atualizar(idLivro, request);
@@ -81,9 +81,9 @@ public class LivroController {
 	}
 
 	@GetMapping("/{idLivro}/autor")
-	public ResponseEntity<List<AutorResponse>> buscaAutoresPorIdLivro(@PathVariable Integer idLivro,
+	public ResponseEntity<List<AutorResponse>> buscaAutoresPorIdLivro(@PathVariable Integer idLivro, Pageable page,
 			HttpServletResponse response) {
-		List<Autor> entities = autorService.consultaPorIdLivro(idLivro);
+		Page<Autor> entities = autorService.consultaPorIdLivro(idLivro, page);
 
 		return ResponseEntity.ok(entities.stream().map(AutorResponse::new).collect(Collectors.toList()));
 	}

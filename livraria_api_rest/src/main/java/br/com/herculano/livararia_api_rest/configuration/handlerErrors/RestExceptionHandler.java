@@ -1,5 +1,7 @@
 package br.com.herculano.livararia_api_rest.configuration.handlerErrors;
 
+import java.util.List;
+
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,6 +39,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		String error = CommonMessage.getCodigo(message.getJsonMalformed(), null);
+		
 		return buildResponseEntity(new ApiError(status, error, ex));
 	}
 
@@ -43,8 +48,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		ApiError api = new ApiError(HttpStatus.BAD_REQUEST);
 		api.setMessage(CommonMessage.getCodigo(message.getValidationError(), null));
-		api.addValidationErrors(ex.getBindingResult().getFieldErrors());
-		api.addValidationError(ex.getBindingResult().getGlobalErrors());
+		List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
+		api.addValidationErrors(fieldErrors);
+		List<ObjectError> globalErrors = ex.getBindingResult().getGlobalErrors();
+		api.addValidationError(globalErrors);
 		return buildResponseEntity(api);
 	}
 

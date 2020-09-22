@@ -15,7 +15,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import br.com.herculano.livararia_api_rest.controller.request.LivroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.LivroCadastroRequest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -47,7 +47,7 @@ public class Livro {
 							columnNames = {"id_livro", "id_autor"})})
 	private List<Autor> autores;
 
-	public Livro(LivroRequest entity) {
+	public Livro(LivroCadastroRequest entity) {
 
 		this.titulo = entity.getTitulo();
 

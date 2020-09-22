@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import br.com.herculano.livararia_api_rest.constants.system_message.GrupoUsuarioMessage;
 import br.com.herculano.livararia_api_rest.controller.request.GrupoUsuarioCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.GrupoUsuarioConsultaRequest;
-import br.com.herculano.livararia_api_rest.controller.request.PermissaoRequest;
+import br.com.herculano.livararia_api_rest.controller.request.PermissaoConsultaRequest;
 import br.com.herculano.livararia_api_rest.entity.GrupoUsuario;
 import br.com.herculano.livararia_api_rest.entity.Permissao;
 import br.com.herculano.livararia_api_rest.repository.jpaRepository.GrupoUsuarioRepository;
@@ -76,7 +76,7 @@ public class GrupoUsuarioService extends ServiceTemplate<GrupoUsuario, GrupoUsua
 	private void validaPermissoes(GrupoUsuarioCadastroRequest request, List<Permissao> permissoes) {
 
 		if (request.getPermissoes() != null) {
-			for (PermissaoRequest permissao : request.getPermissoes()) {
+			for (PermissaoConsultaRequest permissao : request.getPermissoes()) {
 				Permissao entity = permissaoService.consultaPorCodigo(permissao.getAuthority());
 
 				permissoes.add(entity);

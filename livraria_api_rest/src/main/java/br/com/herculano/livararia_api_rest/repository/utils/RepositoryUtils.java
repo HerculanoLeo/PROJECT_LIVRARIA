@@ -38,9 +38,11 @@ public class RepositoryUtils {
 	}
 	
 	public static Long totalRegistros(String query, EntityManager em) {
-		String queryStr = "SEECT COUNT(count.*) FROM (" + query + ") AS count";
+		String queryStr = "SELECT COUNT(count.*) FROM (" + query + ") AS count";
 		
-		return Long.valueOf(em.createNativeQuery(queryStr).getFirstResult());
+		int firstResult = em.createNativeQuery(queryStr).getFirstResult();
+		
+		return new Long(firstResult);
 	}
 	
 }

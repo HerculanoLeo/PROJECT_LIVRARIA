@@ -4,27 +4,18 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
+import lombok.Data;
+
+@Data
 public class LoginRequest {
 	
 	@NotBlank
 	private String email;
+	
 	@NotBlank
-	private String senha;
+	private String password;
 	
-	
-	public String getEmail() {
-		return email;
-	}
-	public String getSenha() {
-		return senha;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
 	public UsernamePasswordAuthenticationToken converter() {
-		return new UsernamePasswordAuthenticationToken(email, senha);
+		return new UsernamePasswordAuthenticationToken(email, password);
 	}
 }

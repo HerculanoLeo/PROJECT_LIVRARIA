@@ -15,7 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.com.herculano.livararia_api_rest.controller.request.AutorRequest;
+import br.com.herculano.livararia_api_rest.controller.request.AutorCadastroRequest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -54,7 +54,7 @@ public class Autor {
 		this.livros = livros;
 	}
 
-	public Autor(AutorRequest entityForm) {
+	public Autor(AutorCadastroRequest entityForm) {
 		this.nome = entityForm.getNome();
 		this.dataNascimento = entityForm.getDataNascimento();
 		this.dataFalecimento = entityForm.getDataFalecimento();

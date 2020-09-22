@@ -9,6 +9,6 @@ public class GrupoUsuarioCadastroRequest {
 	
 	private String nome;
 	
-	private List<PermissaoRequest> permissoes;
+	private List<PermissaoConsultaRequest> permissoes;
 
 }
