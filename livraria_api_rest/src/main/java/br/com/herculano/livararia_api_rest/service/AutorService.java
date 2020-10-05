@@ -24,7 +24,6 @@ public class AutorService extends ServiceTemplate<Autor, AutorRepository, AutorM
 		return getRepository().consultaPorIdLivro(idLivro, page);
 	}
 
-	// TODO Auto-generated method stub
 	public Page<Autor> consultaPorFiltro(AutorConsultaRequest entity, Pageable page) {
 		return getRepository().consultaPorFiltro(entity, page);
 	}
