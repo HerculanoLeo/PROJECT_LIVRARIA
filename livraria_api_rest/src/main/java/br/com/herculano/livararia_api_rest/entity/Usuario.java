@@ -50,6 +50,12 @@ public class Usuario implements UserDetails {
 				@JoinColumn (name = "id_usuario", referencedColumnName = "id"), inverseJoinColumns = 
 						@JoinColumn (name = "id_grupo_usuario", referencedColumnName = "id"))
 	private List<GrupoUsuario> grupoUsuario;
+
+	public Usuario(String nome, String email, String senha) {
+		this.nome = nome;
+		this.email = email;
+		this.senha = this.encoder.encode(senha);
+	}
 	
 	public Usuario(UsuarioCadastroRequest request) {
 		this.nome = request.getNome();
@@ -57,12 +63,17 @@ public class Usuario implements UserDetails {
 		this.senha = this.encoder.encode(request.getSenha());
 	}
 	
-	
 	@Transient
 	private List<Permissao> permissoes;
 	
 	@Transient
 	private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+	
+	@Transient
+	private String tipo;
+	
+	@Transient 
+	private Biblioteca biblioteca;
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

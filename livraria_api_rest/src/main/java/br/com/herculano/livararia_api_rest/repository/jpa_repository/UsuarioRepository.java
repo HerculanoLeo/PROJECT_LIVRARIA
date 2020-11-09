@@ -1,4 +1,4 @@
-package br.com.herculano.livararia_api_rest.repository.jpaRepository;
+package br.com.herculano.livararia_api_rest.repository.jpa_repository;
 
 import java.util.Optional;
 

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "tb_permissoes")
+@Table(name = "tb_permissao")
 public class Permissao implements GrantedAuthority {
 
 	private static final long serialVersionUID = -3568360990613045980L;

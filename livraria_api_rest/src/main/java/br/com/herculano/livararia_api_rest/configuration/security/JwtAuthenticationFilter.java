@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import br.com.herculano.livararia_api_rest.auth.token.UsuarioDetailsService;
-import br.com.herculano.livararia_api_rest.configuration.handlerErrors.ApiError;
+import br.com.herculano.livararia_api_rest.configuration.handler_errors.ApiError;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;

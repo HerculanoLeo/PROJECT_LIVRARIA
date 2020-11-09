@@ -1,4 +1,4 @@
-package br.com.herculano.livararia_api_rest.configuration.handlerErrors;
+package br.com.herculano.livararia_api_rest.configuration.handler_errors;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

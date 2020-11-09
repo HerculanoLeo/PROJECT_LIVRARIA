@@ -15,7 +15,7 @@ import br.com.herculano.livararia_api_rest.controller.request.GrupoUsuarioConsul
 import br.com.herculano.livararia_api_rest.controller.request.PermissaoConsultaRequest;
 import br.com.herculano.livararia_api_rest.entity.GrupoUsuario;
 import br.com.herculano.livararia_api_rest.entity.Permissao;
-import br.com.herculano.livararia_api_rest.repository.jpaRepository.GrupoUsuarioRepository;
+import br.com.herculano.livararia_api_rest.repository.jpa_repository.GrupoUsuarioRepository;
 
 @Service
 public class GrupoUsuarioService extends ServiceTemplate<GrupoUsuario, GrupoUsuarioRepository, GrupoUsuarioMessage>{

@@ -30,7 +30,6 @@ export default function SignIn() {
     setSecureTextEntry(!secureTextEntry);
   }
 
-
   return (
     <View style={styles.container}>
 
@@ -220,6 +219,6 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontSize: 20,
     fontWeight: "700"
-  }
+  },
 
 })

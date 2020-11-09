@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import br.com.herculano.livararia_api_rest.constants.system_message.MessageTemplate;
 import br.com.herculano.livararia_api_rest.constants.system_message.PermissaoMessage;
 import br.com.herculano.livararia_api_rest.entity.Permissao;
-import br.com.herculano.livararia_api_rest.repository.jpaRepository.PermissaoRepository;
+import br.com.herculano.livararia_api_rest.repository.jpa_repository.PermissaoRepository;
 
 @Service
 public class PermissaoService extends ServiceTemplate<Permissao, PermissaoRepository, PermissaoMessage>{

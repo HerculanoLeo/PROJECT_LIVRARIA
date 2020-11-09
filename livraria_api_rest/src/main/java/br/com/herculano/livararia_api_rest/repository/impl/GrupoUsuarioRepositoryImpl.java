@@ -26,7 +26,7 @@ public class GrupoUsuarioRepositoryImpl implements GrupoUsuarioRepositoryCustom 
 	@SuppressWarnings("unchecked")
 	public Page<GrupoUsuario> consultaPorFiltro(GrupoUsuarioConsultaRequest filter, Pageable page) {
 		String queryStr = "SELECT DISTINCT(gru.*) FROM tb_grupo_usuario gru"
-				+ " LEFT JOIN tb_grupo_usuario_permissoes gru_per ON gru_per.id_grupo_usuario = gru.id";
+				+ " LEFT JOIN tb_grupo_usuario_permissao gru_per ON gru_per.id_grupo_usuario = gru.id";
 
 		String where = "";
 

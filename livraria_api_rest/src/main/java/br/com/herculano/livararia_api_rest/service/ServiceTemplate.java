@@ -24,8 +24,8 @@ public class ServiceTemplate<E, JPA, M extends MessageTemplate> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void save(E entity) {
-		repository.save(entity);
+	public E save(E entity) {
+		return (E) repository.save(entity);
 	}
 
 	@SuppressWarnings("unchecked")

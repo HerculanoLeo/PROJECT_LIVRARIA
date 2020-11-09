@@ -1,4 +1,4 @@
-package br.com.herculano.livararia_api_rest.configuration.handlerErrors;
+package br.com.herculano.livararia_api_rest.configuration.handler_errors;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;

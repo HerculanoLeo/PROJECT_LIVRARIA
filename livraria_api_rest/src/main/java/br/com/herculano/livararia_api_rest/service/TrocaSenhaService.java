@@ -20,7 +20,7 @@ import br.com.herculano.livararia_api_rest.entity.TrocaSenha;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.exception.custom.ConfirmPasswordException;
 import br.com.herculano.livararia_api_rest.exception.custom.TrocaSenhaException;
-import br.com.herculano.livararia_api_rest.repository.jpaRepository.TrocaSenhaRepository;
+import br.com.herculano.livararia_api_rest.repository.jpa_repository.TrocaSenhaRepository;
 
 @Service
 public class TrocaSenhaService extends ServiceTemplate<TrocaSenha, TrocaSenhaRepository, TrocaSenhaMessage> {

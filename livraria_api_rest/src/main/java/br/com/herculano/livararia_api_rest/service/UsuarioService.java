@@ -8,6 +8,8 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.herculano.livararia_api_rest.constants.system_message.MessageTemplate;
@@ -18,7 +20,7 @@ import br.com.herculano.livararia_api_rest.entity.GrupoUsuario;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.exception.custom.ConfirmPasswordException;
 import br.com.herculano.livararia_api_rest.exception.custom.EmptyGrupoUsuarioException;
-import br.com.herculano.livararia_api_rest.repository.jpaRepository.UsuarioRepository;
+import br.com.herculano.livararia_api_rest.repository.jpa_repository.UsuarioRepository;
 
 @Service
 public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, UsuarioMessage> {
@@ -87,6 +89,10 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		super.save(entity);
 
 		return entity;
+	}
+
+	public Page<Usuario> consultaOperadoresPorIdBiblioteca(Integer idBiblioteca, Pageable page) {
+		return getRepository().consultaOperadoresPorIdBiblioteca(idBiblioteca, page);
 	}
 
 }

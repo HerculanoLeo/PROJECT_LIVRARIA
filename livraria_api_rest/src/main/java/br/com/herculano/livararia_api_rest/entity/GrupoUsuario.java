@@ -27,7 +27,7 @@ public class GrupoUsuario {
 	private String nome;
 	
 	@ManyToMany
-	@JoinTable(name = "tb_grupo_usuario_permissoes", joinColumns =
+	@JoinTable(name = "tb_grupo_usuario_permissao", joinColumns =
 				@JoinColumn (name = "id_grupo_usuario", referencedColumnName = "id"), inverseJoinColumns = 
 						@JoinColumn (name = "id_permissao", referencedColumnName = "codigo"))
 	private List<Permissao> permissoes;

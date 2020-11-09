@@ -55,8 +55,7 @@ public class AutorController {
 	}
 
 	@PostMapping
-	public ResponseEntity<AutorResponse> cadastrarAutor(@RequestBody AutorCadastroRequest entityRequest,
-			HttpServletResponse response) {
+	public ResponseEntity<AutorResponse> cadastrarAutor(@RequestBody AutorCadastroRequest entityRequest, HttpServletResponse response) {
 		Autor entity = new Autor(entityRequest);
 
 		service.save(entity);
