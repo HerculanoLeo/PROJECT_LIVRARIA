@@ -1,124 +1,76 @@
 package br.com.herculano.livararia_api_rest.repository.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import br.com.herculano.livararia_api_rest.controller.request.UsuarioConsultaRequest;
+import br.com.herculano.livararia_api_rest.entity.Perfil;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.repository.custom.UsuarioRespositoryCustom;
-import br.com.herculano.livararia_api_rest.repository.utils.RepositoryUtils;
+import br.com.herculano.utilits.repository.RepositoryUtils;
 
 @Repository
 public class UsuarioRepositoryImpl implements UsuarioRespositoryCustom {
 
 	@PersistenceContext
 	private EntityManager em;
-	
-	
-	@SuppressWarnings("unchecked")
-	public Optional<Usuario> consultaPorEmailComTipo(String email) {
-		
-		String queryStr = "SELECT usu.id AS id_usuario, usu.email, usu.nome, usu.senha, bib.id AS id_biblioteca, op.id_operador AS id_operador FROM tb_usuario usu "
-				+ "LEFT JOIN tb_biblioteca bib ON bib.id_usuario_administrador = usu.id "
-				+ "LEFT JOIN tb_biblioteca_operador op ON op.id_operador = usu.id ";
-		
-		String where = RepositoryUtils.generateWhere("", " usu.email = '" + email + "'");
-		
-		queryStr += where;
-		
-		List<Object[]> rows = em.createNativeQuery(queryStr).getResultList();
-		
-		List<Usuario> entities = new ArrayList<Usuario>();
-		
-		for(Object[] row: rows) {
-			
-			Usuario entity = new Usuario();
-			
-			entity.setId((Integer) row[0]);
-			entity.setEmail((String) row[1]);
-			entity.setNome((String) row[2]);
-			entity.setSenha((String) row[3]);
-			
-			if(null != row[4]) {
-				
-				entity.setTipo("bib");
-				
-			} else if(null != row[5]) {
-				
-				entity.setTipo("op");
-				
-			} else {
-				
-				entity.setTipo("com");
-				
-			}
-			
-			entities.add(entity);
-			
-		}
-		
-		Optional<Usuario> optional = Optional.ofNullable(entities.isEmpty() ? null : entities.get(0));
-		
-		return optional;
-	}
 
-
-	@SuppressWarnings("unchecked")
 	@Override
-	public Page<Usuario> consultaOperadoresPorIdBiblioteca(Integer idBiblioteca, Pageable page) {
-		String queryStr = "SELECT usu.id AS id_usuario, usu.email, usu.nome, usu.senha, op.id_biblioteca AS id_biblioteca, op.id_operador AS id_operador "
-				+ "FROM tb_usuario usu "
-				+ "INNER JOIN tb_biblioteca_operador op ON op.id_operador = usu.id ";
+	public Page<Usuario> consultaPorFiltro(UsuarioConsultaRequest entity, Pageable page) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Usuario> cq = cb.createQuery(Usuario.class);
+		Root<Usuario> user = cq.from(Usuario.class);
+		Join<Usuario, Perfil> perfil = user.join("perfil", JoinType.INNER);
 		
-		String where = RepositoryUtils.generateWhere("", " op.id_biblioteca = '" + idBiblioteca + "'");
+		Map<String, JoinType> mapClassTypes = new HashMap<>();
+		mapClassTypes.put("perfil", JoinType.INNER);
+
+		List<Predicate> predicates = new ArrayList<>();
 		
-		queryStr += where;
-		
-		Long totalResgistros = RepositoryUtils.totalRegistros(queryStr, em);
-		queryStr += RepositoryUtils.adicionarPaginacao(page);
-		
-		List<Object[]> rows = em.createNativeQuery(queryStr).getResultList();
-		
-		List<Usuario> entities = new ArrayList<Usuario>();
-		
-		for(Object[] row: rows) {
-			
-			Usuario entity = new Usuario();
-			
-			entity.setId((Integer) row[0]);
-			entity.setEmail((String) row[1]);
-			entity.setNome((String) row[2]);
-			entity.setSenha((String) row[3]);
-			
-			if(null != row[4]) {
-				
-				entity.setTipo("bib");
-				
-			} 
-			
-			if(null != row[5]) {
-				
-				entity.setTipo("op");
-				
-			} else {
-				
-				entity.setTipo("com");
-				
-			}
-			
-			entities.add(entity);
+		if (StringUtils.isNotBlank(entity.getNome())) {
+			predicates.add(cb.like(cb.upper(user.get("nome")), "%" + entity.getNome().toUpperCase() + "%"));
 		}
+
+		if (StringUtils.isNotBlank(entity.getEmail())) {
+			predicates.add(cb.like(cb.upper(user.get("email")), "%" + entity.getEmail().toUpperCase() + "%"));
+		}
+
+		if (null != entity.getTipoUsuario()) {
+			predicates.add(cb.equal(user.get("tipoUsuario"), entity.getTipoUsuario()));
+		}
+
+		if (null != entity.getPerfil()) {
+			predicates.add(cb.like(cb.upper(perfil.get("nome")), "%" + entity.getPerfil().toUpperCase() + "%"));
+		}
+	
+		cq.select(user).where(predicates.toArray(new Predicate[predicates.size()]));
 		
+		TypedQuery<Usuario> query = em.createQuery(cq);
+
+		query.setFirstResult(Math.toIntExact(page.getOffset()));
+		query.setMaxResults(page.getPageSize());
 		
-		return new PageImpl<Usuario>(entities, page, totalResgistros);
+		List<Usuario> entities = query.getResultList();
+
+		return new PageImpl<Usuario>(entities, page, RepositoryUtils.totalRegistros(em, cb, predicates, Usuario.class, mapClassTypes));
 	}
 
 }

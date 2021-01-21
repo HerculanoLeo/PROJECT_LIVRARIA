@@ -12,10 +12,13 @@ import br.com.herculano.livararia_api_rest.controller.request.BibliotecaCadastro
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaConsultaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaOperadorCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaUpdateRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioCadastroRequest;
 import br.com.herculano.livararia_api_rest.entity.Biblioteca;
+import br.com.herculano.livararia_api_rest.entity.Perfil;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
+import br.com.herculano.livararia_api_rest.entity.UsuarioOperador;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.BibliotecaRepository;
+import br.com.herculano.livararia_api_rest.repository.jpa_repository.OperadorRepository;
+import br.com.herculano.utilits.templates.ServiceTemplate;
 
 @Service
 public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRepository, BibliotecaMessage> {
@@ -23,6 +26,12 @@ public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRep
 	@Autowired
 	private UsuarioService usuarioService;
 
+	@Autowired
+	private OperadorRepository operadorRepository;
+			
+	@Autowired
+	private PerfilService perfilService;
+	
 	@Autowired
 	public BibliotecaService(BibliotecaRepository repository, @Qualifier("BibliotecaMessage") BibliotecaMessage message) {
 		super(repository, message);
@@ -37,12 +46,7 @@ public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRep
 	}
 
 	public Biblioteca cadastra(BibliotecaCadastroRequest entityRequest) {
-		UsuarioCadastroRequest usuarioRequest = new UsuarioCadastroRequest(entityRequest.getNomeAdministrador(),
-				entityRequest.getEmail(), entityRequest.getSenha(), entityRequest.getConfirmeSenha());
-		
-		Usuario usuario = usuarioService.cadastra(usuarioRequest);
-		
-		Biblioteca entity = new Biblioteca(entityRequest, usuario);
+		Biblioteca entity = new Biblioteca(entityRequest);
 		
 		entity = save(entity);
 		
@@ -52,28 +56,35 @@ public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRep
 	public Biblioteca atualiza(BibliotecaUpdateRequest entityRequest, Integer idBiblioteca) {
 		Biblioteca entity = consultaPorId(idBiblioteca);
 		
-		entity.setNome(entityRequest.getNome());
+//		entity.setNome(entityRequest.getNome());
 		
 		entity = save(entity);
 		
 		return entity;
 	}
 
-	public Page<Usuario> consultaOperadores(Integer idBiblioteca, Pageable page) {
+	public Page<UsuarioOperador> consultaOperadores(Integer idBiblioteca, Pageable page) {
 		Biblioteca entity = consultaPorId(idBiblioteca);
 		
-		return usuarioService.consultaOperadoresPorIdBiblioteca(entity.getId(), page);
+		return null;
 	}
 
+	@SuppressWarnings("unused")
 	public Usuario cadastraOperador(Integer idBiblioteca, BibliotecaOperadorCadastroRequest entityRequest) {
 		Biblioteca biblioteca = consultaPorId(idBiblioteca);
+		
+		Perfil perfil = perfilService.consultaPorId(entityRequest.getIdPerfil());
+		
+		if(false) {
+			throw new RuntimeException();
+		}
 
 		String password = RandomStringUtils.randomAlphanumeric(6);
 		System.out.println("Password: " + password);
-
-		Usuario entity = new Usuario(entityRequest.getEmail(), entityRequest.getNomeOperador(), password);
 		
-		entity = usuarioService.save(entity);
+		UsuarioOperador entity = new UsuarioOperador(entityRequest.getNomeOperador(), entityRequest.getEmail(), password, "", perfil, entityRequest.getDocumento());
+		
+		usuarioService.save(entity);
 		
 		biblioteca.getOperadores().add(entity);
 		save(biblioteca);

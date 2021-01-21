@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.herculano.livararia_api_rest.entity.Livro;
 import br.com.herculano.livararia_api_rest.repository.custom.LivroRepositoryCustom;
-import br.com.herculano.livararia_api_rest.repository.utils.RepositoryUtils;
+import br.com.herculano.utilits.repository.RepositoryUtils;
 
 @Repository
 public class LivroRepositoryImpl implements LivroRepositoryCustom {

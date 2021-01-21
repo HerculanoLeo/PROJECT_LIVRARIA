@@ -11,6 +11,7 @@ import br.com.herculano.livararia_api_rest.controller.request.AutorCadastroReque
 import br.com.herculano.livararia_api_rest.controller.request.AutorConsultaRequest;
 import br.com.herculano.livararia_api_rest.entity.Autor;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.AutorRepository;
+import br.com.herculano.utilits.templates.ServiceTemplate;
 
 @Repository
 public class AutorService extends ServiceTemplate<Autor, AutorRepository, AutorMessage> {

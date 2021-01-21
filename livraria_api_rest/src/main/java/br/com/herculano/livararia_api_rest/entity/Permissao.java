@@ -25,6 +25,9 @@ public class Permissao implements GrantedAuthority {
 	@JsonIgnore
 	private String codigo;
 	
+	@Column(name = "tipo", nullable = false)
+	private String tipo;
+	
 	public Permissao(String codigo) {
 		this.codigo = codigo;
 	}

@@ -28,6 +28,7 @@ import br.com.herculano.livararia_api_rest.entity.Biblioteca;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.event.CreatedEvent;
 import br.com.herculano.livararia_api_rest.service.BibliotecaService;
+import br.com.herculano.livararia_api_rest.service.UsuarioService;
 
 @RestController
 @RequestMapping("/biblioteca")
@@ -35,6 +36,9 @@ public class BibliotecaController {
 
 	@Autowired
 	private BibliotecaService service;
+
+	@Autowired
+	private UsuarioService usuarioService;
 		
 	@Autowired
 	private ApplicationEventPublisher publisher;
@@ -71,9 +75,9 @@ public class BibliotecaController {
 		return ResponseEntity.ok( new BibliotecaResponse(entity));
 	}
 	
-	@GetMapping("/{idBiblioteca}/operador")
+	@GetMapping("/{idBiblioteca}/usuarios")
 	public ResponseEntity<Page<UsuarioResponse>> consultaOperadorPorFiltro(@PathVariable Integer idBiblioteca, Pageable page) {
-		Page<Usuario> entities = service.consultaOperadores(idBiblioteca, page);
+		Page<Usuario> entities = usuarioService.consultaUsuarioPorIdBiblioteca(idBiblioteca, page);
 		
 		return ResponseEntity.ok(entities.map(UsuarioResponse::new));
 	}

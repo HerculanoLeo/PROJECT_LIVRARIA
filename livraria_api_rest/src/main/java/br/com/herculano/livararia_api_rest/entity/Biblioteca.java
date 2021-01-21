@@ -1,5 +1,6 @@
 package br.com.herculano.livararia_api_rest.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -8,48 +9,44 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.Transient;
 
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaCadastroRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "tb_biblioteca")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Biblioteca {
-	
+@EqualsAndHashCode(callSuper = false)
+@Entity
+@Table(name = "tb_biblioteca")
+public class Biblioteca implements Serializable {
+
+	private static final long serialVersionUID = 146582218570096099L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_administradora")
-	@SequenceGenerator(name = "sq_administradora", sequenceName = "sq_administradora", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_BIBLIOTECA")
+	@SequenceGenerator(name = "SQ_BIBLIOTECA", sequenceName = "SQ_BIBLIOTECA", allocationSize = 1)
 	private Integer id;
-	
+
 	@Column(name = "nome", nullable = false)
 	private String nome;
 	
-	@OneToOne(optional = false)
-	@JoinColumn(name = "id_usuario_administrador")
-	private Usuario usuarioAdministrador;
-	
-	@OneToMany
-	@JoinTable(name = "tb_biblioteca_operador", joinColumns = {
-			@JoinColumn(name = "id_biblioteca", referencedColumnName = "id")}, inverseJoinColumns = {
-					@JoinColumn(name = "id_operador", referencedColumnName = "id")}, uniqueConstraints = {
-							@UniqueConstraint(columnNames = {"id_operador"})})
-	private List<Usuario> operadores;
-	
-	public Biblioteca(BibliotecaCadastroRequest entityRequest, Usuario usuario) {
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "id_administrador")
+	private UsuarioAdministrador administrador;
+
+	@Transient
+	private List<UsuarioOperador> operadores;
+
+	public Biblioteca(BibliotecaCadastroRequest entityRequest) {
 		this.nome = entityRequest.getNomeBiblioteca();
-		this.usuarioAdministrador = usuario;
 	}
 
 }

@@ -11,5 +11,4 @@ public interface PermissaoRepository extends JpaRepository<Permissao, Integer>, 
 
 	Optional<Permissao> findByCodigo(String codigo);
 
-
 }

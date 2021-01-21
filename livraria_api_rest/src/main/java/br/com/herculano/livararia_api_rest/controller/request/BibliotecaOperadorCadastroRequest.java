@@ -16,5 +16,10 @@ public class BibliotecaOperadorCadastroRequest {
 	
 	@NotBlank
 	private String email;
+
+	@NotBlank
+	private String documento;
 	
+	@NotBlank
+	private Integer idPerfil;
 }

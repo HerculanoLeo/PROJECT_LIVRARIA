@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import br.com.herculano.livararia_api_rest.auth.token.UsuarioDetailsService;
+import br.com.herculano.livararia_api_rest.service.UsuarioService;
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +24,7 @@ import br.com.herculano.livararia_api_rest.auth.token.UsuarioDetailsService;
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private UsuarioDetailsService userDetailsService;
+	private UsuarioService usuarioService;
 
 	@Autowired
 	private JwtAuthenticationEntryPoint unauthorizedHandler;
@@ -37,7 +37,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(encoder());
+		auth.userDetailsService(usuarioService).passwordEncoder(encoder());
 	}
 
 	@Bean
@@ -61,13 +61,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.POST, "/usuario/trocaSenha").permitAll()
 				.antMatchers(HttpMethod.POST, "/usuario/trocaSenha/validaCodigo").permitAll()
 				.antMatchers(HttpMethod.POST, "/usuario/trocaSenha/codigo").permitAll()
-				.antMatchers(HttpMethod.GET, "/grupo").hasRole("CONSULTA_GRUPOS").antMatchers(HttpMethod.POST, "/grupo")
-				.hasRole("CADASTRAR_GRUPO").antMatchers(HttpMethod.GET, "/grupo/*").hasRole("CONSULTA_GRUPO_POR_ID")
+				.antMatchers(HttpMethod.GET, "/grupo").hasRole("CONSULTA_GRUPOS")
+				.antMatchers(HttpMethod.POST, "/grupo").hasRole("CADASTRAR_GRUPO")
+				.antMatchers(HttpMethod.GET, "/grupo/*").hasRole("CONSULTA_GRUPO_POR_ID")
 				.antMatchers(HttpMethod.PUT, "/grupo/*").hasRole("ATUALIZAR_GRUPO")
 				.antMatchers(HttpMethod.DELETE, "/grupo/*").hasRole("DELETE_GRUPO")
 				.antMatchers(HttpMethod.GET, "/grupo/permissoes").hasRole("CONSULTA_PERMISSOES")
-				.antMatchers(HttpMethod.GET, "/livro").hasRole("CONSULTA_LIVROS").antMatchers(HttpMethod.POST, "/livro")
-				.hasRole("CADASTRAR_LIVRO").antMatchers(HttpMethod.POST, "/livro/*").hasRole("CONSULTA_LIVRO_POR_ID")
+				.antMatchers(HttpMethod.GET, "/livro").hasRole("CONSULTA_LIVROS")
+				.antMatchers(HttpMethod.POST, "/livro").hasRole("CADASTRAR_LIVRO")
+				.antMatchers(HttpMethod.POST, "/livro/*").hasRole("CONSULTA_LIVRO_POR_ID")
 				.antMatchers(HttpMethod.PUT, "/livro/*").hasRole("ATUALIZAR_LIVRO")
 				.antMatchers(HttpMethod.DELETE, "/livro/*").hasRole("DELETE_LIVRO")
 				.antMatchers(HttpMethod.GET, "/livro/*/autor").hasRole("CONSULTA_AUTORES_POR_ID_LIVRO")

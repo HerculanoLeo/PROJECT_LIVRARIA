@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class GrupoUsuarioCadastroRequest {
+public class PerfilCadastroRequest {
 	
 	private String nome;
 	

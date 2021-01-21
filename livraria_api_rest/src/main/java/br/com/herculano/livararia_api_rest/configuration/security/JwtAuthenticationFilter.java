@@ -24,8 +24,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import br.com.herculano.livararia_api_rest.auth.token.UsuarioDetailsService;
-import br.com.herculano.livararia_api_rest.configuration.handler_errors.ApiError;
+import br.com.herculano.livararia_api_rest.service.UsuarioService;
+import br.com.herculano.utilits.api_error.ApiError;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -33,7 +33,7 @@ import io.jsonwebtoken.SignatureException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Autowired
-	private UsuarioDetailsService userDetailsService;
+	private UsuarioService usuarioService;
 
 	@Autowired
 	private TokenProvider jwtTokenUtil;
@@ -53,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 				if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-					UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+					UserDetails userDetails = usuarioService.loadUserByUsername(username);
 
 					if (jwtTokenUtil.validateToken(authToken, userDetails)) {
 						UsernamePasswordAuthenticationToken authentication = jwtTokenUtil.getAuthentication(authToken,

@@ -11,16 +11,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
-import br.com.herculano.livararia_api_rest.constants.system_message.MessageTemplate;
 import br.com.herculano.livararia_api_rest.constants.system_message.TrocaSenhaMessage;
 import br.com.herculano.livararia_api_rest.controller.request.TrocaSenhaComCodigoRequest;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioTrocaSenhaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.ValidaCodigoRequest;
 import br.com.herculano.livararia_api_rest.entity.TrocaSenha;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
-import br.com.herculano.livararia_api_rest.exception.custom.ConfirmPasswordException;
-import br.com.herculano.livararia_api_rest.exception.custom.TrocaSenhaException;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.TrocaSenhaRepository;
+import br.com.herculano.utilits.exceptions.ConfirmPasswordException;
+import br.com.herculano.utilits.exceptions.TrocaSenhaException;
+import br.com.herculano.utilits.templates.MessageTemplate;
+import br.com.herculano.utilits.templates.ServiceTemplate;
 
 @Service
 public class TrocaSenhaService extends ServiceTemplate<TrocaSenha, TrocaSenhaRepository, TrocaSenhaMessage> {

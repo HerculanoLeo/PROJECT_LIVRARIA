@@ -9,32 +9,33 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import br.com.herculano.livararia_api_rest.constants.system_message.GrupoUsuarioMessage;
-import br.com.herculano.livararia_api_rest.controller.request.GrupoUsuarioCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.GrupoUsuarioConsultaRequest;
+import br.com.herculano.livararia_api_rest.constants.system_message.PerfilMessage;
+import br.com.herculano.livararia_api_rest.controller.request.PerfilCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.PerfilConsultaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.PermissaoConsultaRequest;
-import br.com.herculano.livararia_api_rest.entity.GrupoUsuario;
+import br.com.herculano.livararia_api_rest.entity.Perfil;
 import br.com.herculano.livararia_api_rest.entity.Permissao;
-import br.com.herculano.livararia_api_rest.repository.jpa_repository.GrupoUsuarioRepository;
+import br.com.herculano.livararia_api_rest.repository.jpa_repository.PerfilRepository;
+import br.com.herculano.utilits.templates.ServiceTemplate;
 
 @Service
-public class GrupoUsuarioService extends ServiceTemplate<GrupoUsuario, GrupoUsuarioRepository, GrupoUsuarioMessage>{
+public class PerfilService extends ServiceTemplate<Perfil, PerfilRepository, PerfilMessage>{
 
 	@Autowired
 	private PermissaoService permissaoService;
 	
 	@Autowired
-	public GrupoUsuarioService(GrupoUsuarioRepository repository, @Qualifier("GrupoUsuarioMessage") GrupoUsuarioMessage message) {
+	public PerfilService(PerfilRepository repository, @Qualifier("PerfilMessage") PerfilMessage message) {
 		super(repository, message);
 	}
 
-	public GrupoUsuario cadastra(GrupoUsuarioCadastroRequest request) {
+	public Perfil cadastra(PerfilCadastroRequest request) {
 		
 		List<Permissao> permissoes = new ArrayList<Permissao>();
 
 		validaPermissoes(request, permissoes);
 
-		GrupoUsuario entity = new GrupoUsuario();
+		Perfil entity = new Perfil();
 
 		entity.setNome(request.getNome());
 		entity.setPermissoes(permissoes);
@@ -44,9 +45,9 @@ public class GrupoUsuarioService extends ServiceTemplate<GrupoUsuario, GrupoUsua
 		return entity;
 	}
 
-	public GrupoUsuario atualizar(Integer id, GrupoUsuarioCadastroRequest request) {
+	public Perfil atualizar(Integer id, PerfilCadastroRequest request) {
 		
-		GrupoUsuario entity = super.consultaPorId(id);
+		Perfil entity = super.consultaPorId(id);
 		
 		List<Permissao> permissoes = new ArrayList<Permissao>();
 		validaPermissoes(request, permissoes);
@@ -59,21 +60,23 @@ public class GrupoUsuarioService extends ServiceTemplate<GrupoUsuario, GrupoUsua
 		return entity;
 	}
 
-	public List<GrupoUsuario> consultaGrupoUsuarios(List<Integer> idsGrupoUsuario) {
+	public List<Perfil> consultaGrupoUsuarios(List<Integer> idsGrupoUsuario) {
 		return getRepository().findAllById(idsGrupoUsuario);
 	}
 	
-	public Page<GrupoUsuario> consultaPorFiltro(GrupoUsuarioConsultaRequest filter, Pageable page) {
-		return getRepository().consultaPorFiltro(filter, page);
+	public Page<Perfil> consultaPorFiltro(PerfilConsultaRequest filter, Pageable page) {
+		Page<Perfil> consultaPorFiltro = getRepository().consultaPorFiltro(filter, page);
+		
+		return consultaPorFiltro;
 	}
 
 	public void delete(Integer id) {
-		GrupoUsuario entity = super.consultaPorId(id);
+		Perfil entity = super.consultaPorId(id);
 		
 		super.delete(entity);
 	}
 	
-	private void validaPermissoes(GrupoUsuarioCadastroRequest request, List<Permissao> permissoes) {
+	private void validaPermissoes(PerfilCadastroRequest request, List<Permissao> permissoes) {
 
 		if (request.getPermissoes() != null) {
 			for (PermissaoConsultaRequest permissao : request.getPermissoes()) {

@@ -3,10 +3,14 @@ package br.com.herculano.livararia_api_rest.controller.request;
 import lombok.Data;
 
 @Data
-public class UsuarioUpdateRequest {
+public class UsuarioConsultaRequest {
 
 	private String nome;
 	
-	private Integer idPerfil;
+	private String email;
+	
+	private String tipoUsuario;
+	
+	private String perfil;
 	
 }

@@ -42,9 +42,8 @@ public class Livro {
 	@ManyToMany
 	@JoinTable(name = "tb_livro_autor", joinColumns = {
 			@JoinColumn(name = "id_livro", referencedColumnName = "id") }, inverseJoinColumns = {
-					@JoinColumn(name = "id_autor", referencedColumnName = "id") }, 
-					uniqueConstraints = {@UniqueConstraint(
-							columnNames = {"id_livro", "id_autor"})})
+					@JoinColumn(name = "id_autor", referencedColumnName = "id") }, uniqueConstraints = {
+							@UniqueConstraint(columnNames = { "id_livro", "id_autor" }) })
 	private List<Autor> autores;
 
 	public Livro(LivroCadastroRequest entity) {

@@ -1,11 +1,12 @@
 package br.com.herculano.livararia_api_rest.controller.response;
 
 import br.com.herculano.livararia_api_rest.constants.TiposUsuariosEnum;
+import br.com.herculano.livararia_api_rest.entity.Perfil;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
 import lombok.Data;
 
 @Data
-public class UsuarioResponse {
+public class UsuarioPerfilResponse {
 	
 	private Integer id;
 	
@@ -15,13 +16,13 @@ public class UsuarioResponse {
 	
 	private String tipo;
 	
-	private PerfilResponse perfil;
+	private Perfil perfil;
 
-	public UsuarioResponse(Usuario entity) {
+	public UsuarioPerfilResponse(Usuario entity) {
 		this.id = entity.getId();
 		this.nome = entity.getNome();
 		this.email = entity.getEmail();
-		this.perfil = new PerfilResponse(entity.getPerfil());
+		this.perfil = entity.getPerfil();
 		this.tipo = TiposUsuariosEnum.getTipoUsuario(entity.getTipoUsuario()).getDescricao();
 	}
 }

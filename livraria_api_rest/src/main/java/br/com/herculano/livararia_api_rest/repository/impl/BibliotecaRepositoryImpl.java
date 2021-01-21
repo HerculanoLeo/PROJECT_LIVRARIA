@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaConsultaRequest;
 import br.com.herculano.livararia_api_rest.entity.Biblioteca;
 import br.com.herculano.livararia_api_rest.repository.custom.BibliotecaRespositoryCustom;
-import br.com.herculano.livararia_api_rest.repository.utils.RepositoryUtils;
+import br.com.herculano.utilits.repository.RepositoryUtils;
 
 @Repository
 public class BibliotecaRepositoryImpl implements BibliotecaRespositoryCustom {

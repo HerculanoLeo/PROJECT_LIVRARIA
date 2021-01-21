@@ -16,7 +16,8 @@ public class BibliotecaAutenticaResponse {
 	
 	public BibliotecaAutenticaResponse(Biblioteca entity) {
 		this.id = entity.getId();
-		this.nome = entity.getNome();
 	}
+	
+	
 	
 }

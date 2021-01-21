@@ -2,6 +2,7 @@ package br.com.herculano.livararia_api_rest.entity;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,20 +17,23 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "tb_grupo_usuario")
-public class GrupoUsuario {
+@Table(name = "tb_perfil")
+public class Perfil {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_GRUPO_USUARIO")
-	@SequenceGenerator(name = "SQ_GRUPO_USUARIO", sequenceName = "SQ_GRUPO_USUARIO", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_PERFIL")
+	@SequenceGenerator(name = "SQ_PERFIL", sequenceName = "SQ_PERFIL", allocationSize = 1)
 	private Integer id;
 	
 	private String nome;
 	
 	@ManyToMany
-	@JoinTable(name = "tb_grupo_usuario_permissao", joinColumns =
-				@JoinColumn (name = "id_grupo_usuario", referencedColumnName = "id"), inverseJoinColumns = 
+	@JoinTable(name = "tb_perfil_permissao", joinColumns =
+				@JoinColumn (name = "id_perfil", referencedColumnName = "id"), inverseJoinColumns = 
 						@JoinColumn (name = "id_permissao", referencedColumnName = "codigo"))
 	private List<Permissao> permissoes;
+	
+	@Column(name = "tipo", nullable = false)
+	private String tipo;
 	
 }

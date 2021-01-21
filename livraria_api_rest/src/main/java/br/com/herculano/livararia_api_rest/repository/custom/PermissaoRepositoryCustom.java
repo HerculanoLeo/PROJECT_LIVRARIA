@@ -6,6 +6,6 @@ import br.com.herculano.livararia_api_rest.entity.Permissao;
 
 public interface PermissaoRepositoryCustom {
 
-	List<Permissao> consultaPorIdUsuario(Integer idCliente);
+	List<Permissao> consultaPorIdPerfil(Integer idCliente);
 	
 }

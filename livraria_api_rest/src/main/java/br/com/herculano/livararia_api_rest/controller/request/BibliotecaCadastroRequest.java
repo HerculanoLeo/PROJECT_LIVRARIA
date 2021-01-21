@@ -14,17 +14,4 @@ public class BibliotecaCadastroRequest {
 	@NotBlank
 	private String nomeBiblioteca;
 	
-	@NotBlank
-	private String nomeAdministrador;
-	
-	@NotBlank
-	private String email;
-	
-	@NotBlank
-	private String senha;
-	
-	@NotBlank
-	private String confirmeSenha;
-	
-	
 }

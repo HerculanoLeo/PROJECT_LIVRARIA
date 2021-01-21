@@ -15,6 +15,7 @@ import br.com.herculano.livararia_api_rest.controller.response.LivroResponse;
 import br.com.herculano.livararia_api_rest.entity.Autor;
 import br.com.herculano.livararia_api_rest.entity.Livro;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.LivroRepository;
+import br.com.herculano.utilits.templates.ServiceTemplate;
 
 @Service
 public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroMessage> {

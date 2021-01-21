@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.UsuarioRepository;
-import br.com.herculano.livararia_api_rest.service.BibliotecaService;
 import br.com.herculano.livararia_api_rest.service.PermissaoService;
 
 @Service
@@ -19,25 +18,18 @@ public class UsuarioDetailsService implements UserDetailsService {
 	private UsuarioRepository usuarioRepository;
 	
 	@Autowired
-	private BibliotecaService bibliotecaService;
-	
-	@Autowired
 	private PermissaoService permissaoService;
 
 	@Override
 	public Usuario loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<Usuario> optionalUsuario = usuarioRepository.consultaPorEmailComTipo(username);
+		Optional<Usuario> optionalUsuario = usuarioRepository.findByEmail(username);
 		
 		if (!optionalUsuario.isPresent()) {
 			throw new UsernameNotFoundException("User " + username + " not found.");
 		}
 		
 		Usuario entity = optionalUsuario.get();
-		entity.setPermissoes(permissaoService.consultaPorIdUsuario(entity.getId()));
-		
-		if(entity.getTipo().equals("bib") || entity.getTipo().equals("op")) {
-			entity.setBiblioteca(bibliotecaService.consultaPorUsuarioId(entity.getId()));
-		}
+		entity.setPermissoes(permissaoService.consultaPorIdPerfil(entity.getPerfil().getId()));
 		
 		return entity;
 	}

@@ -17,22 +17,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.herculano.livararia_api_rest.controller.request.GrupoUsuarioCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.GrupoUsuarioConsultaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.PerfilConsultaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.PerfilCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.response.GrupoUsuarioResponse;
+import br.com.herculano.livararia_api_rest.controller.response.PerfilResponse;
 import br.com.herculano.livararia_api_rest.controller.response.PermissaoResponse;
-import br.com.herculano.livararia_api_rest.entity.GrupoUsuario;
+import br.com.herculano.livararia_api_rest.entity.Perfil;
 import br.com.herculano.livararia_api_rest.entity.Permissao;
 import br.com.herculano.livararia_api_rest.event.CreatedEvent;
-import br.com.herculano.livararia_api_rest.service.GrupoUsuarioService;
+import br.com.herculano.livararia_api_rest.service.PerfilService;
 import br.com.herculano.livararia_api_rest.service.PermissaoService;
 
 @RestController
-@RequestMapping("/grupo")
-public class GrupoUsuarioController {
+@RequestMapping("/perfil")
+public class PerfilController {
 
 	@Autowired
-	private GrupoUsuarioService service;
+	private PerfilService service;
 
 	@Autowired
 	private PermissaoService permissaoService;
@@ -41,11 +42,10 @@ public class GrupoUsuarioController {
 	private ApplicationEventPublisher publisher;
 
 	@GetMapping
-	public ResponseEntity<Page<GrupoUsuarioResponse>> consultaGruposPorFiltro(GrupoUsuarioConsultaRequest entityRequest, Pageable page) {
+	public ResponseEntity<Page<PerfilResponse>> consultaGruposPorFiltro(PerfilConsultaRequest entityRequest, Pageable page) {
+		Page<Perfil> entity = service.consultaPorFiltro(entityRequest, page);
 
-		Page<GrupoUsuario> entity = service.consultaPorFiltro(entityRequest, page);
-
-		return ResponseEntity.ok(entity.map(GrupoUsuarioResponse::new));
+		return ResponseEntity.ok(entity.map(PerfilResponse::new));
 	}
 
 	@GetMapping("/permissoes")
@@ -55,37 +55,37 @@ public class GrupoUsuarioController {
 		return ResponseEntity.ok(entity.map(PermissaoResponse::new));
 	}
 
-	@GetMapping("/{idGrupoUsuario}")
-	public ResponseEntity<GrupoUsuario> consultaGrupoUsuarioPorId(@PathVariable Integer idGrupoUsuario) {
-		GrupoUsuario entity = service.consultaPorId(idGrupoUsuario);
+	@GetMapping("/{idPerfil}")
+	public ResponseEntity<Perfil> consultaPerfilPorId(@PathVariable Integer idPerfil) {
+		Perfil entity = service.consultaPorId(idPerfil);
 
 		return ResponseEntity.ok(entity);
 	}
 
 	@PostMapping
-	public ResponseEntity<?> cadastraGrupo(@RequestBody GrupoUsuarioCadastroRequest request, HttpServletResponse response) {
+	public ResponseEntity<?> cadastraGrupo(@RequestBody PerfilCadastroRequest request, HttpServletResponse response) {
 
-		GrupoUsuario entity = service.cadastra(request);
+		Perfil entity = service.cadastra(request);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(new GrupoUsuarioResponse(entity));
 	}
 
-	@PutMapping("/{idGrupoUsuario}")
-	public ResponseEntity<?> atualizaGrupo(@RequestBody GrupoUsuarioCadastroRequest request,
-			@PathVariable Integer idGrupoUsuario, HttpServletResponse response) {
+	@PutMapping("/{idPerfil}")
+	public ResponseEntity<?> atualizaPerfil(@RequestBody PerfilCadastroRequest request,
+			@PathVariable Integer idPerfil, HttpServletResponse response) {
 
-		GrupoUsuario entity = service.atualizar(idGrupoUsuario, request);
+		Perfil entity = service.atualizar(idPerfil, request);
 		
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
 
 		return ResponseEntity.status(HttpStatus.OK).body(new GrupoUsuarioResponse(entity));
 	}
 
-	@DeleteMapping("/{idGrupoUsuario}")
-	public ResponseEntity<?> deletarGrupo(@PathVariable Integer idGrupoUsuario) {
-		service.delete(idGrupoUsuario);
+	@DeleteMapping("/{idPerfil}")
+	public ResponseEntity<?> deletarPerfil(@PathVariable Integer idPerfil) {
+		service.delete(idPerfil);
 
 		return ResponseEntity.ok().build();
 	}

@@ -9,10 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import br.com.herculano.livararia_api_rest.constants.system_message.MessageTemplate;
 import br.com.herculano.livararia_api_rest.constants.system_message.PermissaoMessage;
 import br.com.herculano.livararia_api_rest.entity.Permissao;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.PermissaoRepository;
+import br.com.herculano.utilits.templates.MessageTemplate;
+import br.com.herculano.utilits.templates.ServiceTemplate;
 
 @Service
 public class PermissaoService extends ServiceTemplate<Permissao, PermissaoRepository, PermissaoMessage>{
@@ -22,8 +23,8 @@ public class PermissaoService extends ServiceTemplate<Permissao, PermissaoReposi
 		super(repository, message);
 	}
 
-	public List<Permissao> consultaPorIdUsuario(Integer idCliente) {
-		return getRepository().consultaPorIdUsuario(idCliente);
+	public List<Permissao> consultaPorIdPerfil(Integer idPerfil) {
+		return getRepository().consultaPorIdPerfil(idPerfil);
 	}
 
 	public Permissao consultaPorCodigo(String codigo) {

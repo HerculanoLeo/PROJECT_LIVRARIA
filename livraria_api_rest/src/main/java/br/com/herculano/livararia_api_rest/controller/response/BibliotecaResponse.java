@@ -16,14 +16,14 @@ public class BibliotecaResponse {
 	
 	public BibliotecaResponse(Biblioteca entity, UsuarioResponse usuarioResponse) {
 		this.id = entity.getId();
-		this.nome = entity.getNome();
+//		this.nome = entity.getNome();
 		this.usuarioAdministrador = usuarioResponse;
 	}
 
 	public BibliotecaResponse(Biblioteca entity) {
 		this.id = entity.getId();
-		this.nome = entity.getNome();
-		this.usuarioAdministrador = new UsuarioResponse(entity.getUsuarioAdministrador());
+//		this.nome = entity.getNome();
+//		this.usuarioAdministrador = new UsuarioResponse(entity);
 	}
 	
 }

@@ -24,9 +24,11 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import br.com.herculano.livararia_api_rest.constants.system_message.CommonMessage;
-import br.com.herculano.livararia_api_rest.exception.custom.ConfirmPasswordException;
-import br.com.herculano.livararia_api_rest.exception.custom.EmptyGrupoUsuarioException;
-import br.com.herculano.livararia_api_rest.exception.custom.TrocaSenhaException;
+import br.com.herculano.utilits.api_error.ApiError;
+import br.com.herculano.utilits.exceptions.ConfirmPasswordException;
+import br.com.herculano.utilits.exceptions.DadosInvalidosException;
+import br.com.herculano.utilits.exceptions.EmptyPerfilException;
+import br.com.herculano.utilits.exceptions.TrocaSenhaException;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -55,7 +57,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		return buildResponseEntity(api);
 	}
 
-	@ExceptionHandler({ ConfirmPasswordException.class, EmptyGrupoUsuarioException.class })
+	@ExceptionHandler({ ConfirmPasswordException.class, EmptyPerfilException.class, DadosInvalidosException.class })
 	protected ResponseEntity<Object> handleConfirmPasswordException(Exception ex) {
 		ApiError api = new ApiError(HttpStatus.BAD_REQUEST);
 		api.setMessage(ex.getMessage());
