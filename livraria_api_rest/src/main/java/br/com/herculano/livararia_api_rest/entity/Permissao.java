@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import br.com.herculano.livararia_api_rest.constants.TiposUsuariosEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -36,5 +37,19 @@ public class Permissao implements GrantedAuthority {
 	public String getAuthority() {
 		return this.codigo;
 	}
+	
+	@JsonIgnore
+	public boolean isROOT() {
+		return tipo.equals(TiposUsuariosEnum.ROOT.getValor()) || isBiblioteca() || isCliente();
+	}
 
+	@JsonIgnore
+	public boolean isBiblioteca() {
+		return tipo.equals(TiposUsuariosEnum.ADMINISTRADOR.getValor()) || tipo.equals(TiposUsuariosEnum.OPERADOR.getValor()) || isCliente();
+	}
+
+	@JsonIgnore
+	public boolean isCliente() {
+		return tipo.equals(TiposUsuariosEnum.CLIENTE.getValor());
+	}
 }

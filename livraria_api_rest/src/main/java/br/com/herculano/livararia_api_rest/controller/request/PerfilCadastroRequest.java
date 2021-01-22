@@ -8,6 +8,8 @@ import lombok.Data;
 public class PerfilCadastroRequest {
 	
 	private String nome;
+
+	private String tipo;
 	
 	private List<PermissaoConsultaRequest> permissoes;
 

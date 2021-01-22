@@ -7,7 +7,7 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import br.com.herculano.livararia_api_rest.repository.custom.TrocaSenhaRepositoryCustom;
-import br.com.herculano.utilits.repository.RepositoryUtils;
+import br.com.herculano.utilities.repository.RepositoryUtils;
 
 @Repository
 public class TrocaSenhaRepositoryImpl implements TrocaSenhaRepositoryCustom {

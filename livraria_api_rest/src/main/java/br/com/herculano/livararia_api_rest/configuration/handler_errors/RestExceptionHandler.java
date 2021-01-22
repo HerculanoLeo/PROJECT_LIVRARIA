@@ -23,33 +23,34 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import br.com.herculano.livararia_api_rest.constants.system_message.CommonMessage;
-import br.com.herculano.utilits.api_error.ApiError;
-import br.com.herculano.utilits.exceptions.ConfirmPasswordException;
-import br.com.herculano.utilits.exceptions.DadosInvalidosException;
-import br.com.herculano.utilits.exceptions.EmptyPerfilException;
-import br.com.herculano.utilits.exceptions.TrocaSenhaException;
+import br.com.herculano.utilities.api_error.ApiError;
+import br.com.herculano.utilities.exceptions.ConfirmPasswordException;
+import br.com.herculano.utilities.exceptions.DadosInvalidosException;
+import br.com.herculano.utilities.exceptions.EmptyPerfilException;
+import br.com.herculano.utilities.exceptions.ResourceForbiddenException;
+import br.com.herculano.utilities.exceptions.TrocaSenhaException;
+import br.com.herculano.utilities.templates.CommonMessageTemplate;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@Autowired
-	private CommonMessage message;
+	private CommonMessageTemplate message;
 
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		String error = CommonMessage.getCodigo(message.getJsonMalformed(), null);
+		String error = CommonMessageTemplate.getCodigo(message.getJsonMalformed(), null);
 		
 		return buildResponseEntity(new ApiError(status, error, ex));
 	}
-
+	
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		ApiError api = new ApiError(HttpStatus.BAD_REQUEST);
-		api.setMessage(CommonMessage.getCodigo(message.getValidationError(), null));
+		api.setMessage(CommonMessageTemplate.getCodigo(message.getValidationError(), null));
 		List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
 		api.addValidationErrors(fieldErrors);
 		List<ObjectError> globalErrors = ex.getBindingResult().getGlobalErrors();
@@ -70,6 +71,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		api.setMessage(ex.getMessage());
 		return buildResponseEntity(api);
 	}
+	
+	@ExceptionHandler({ ResourceForbiddenException.class })
+	protected ResponseEntity<Object> handleResourceForbiddenException(Exception ex) {
+		ApiError api = new ApiError(HttpStatus.FORBIDDEN);
+		api.setMessage(ex.getMessage());
+		return buildResponseEntity(api);
+	}
 
 	@ExceptionHandler({ EntityNotFoundException.class, JpaObjectRetrievalFailureException.class })
 	protected ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex) {
@@ -83,10 +91,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		String error = "";
 
 		if (ex instanceof InternalAuthenticationServiceException) {
-			error = CommonMessage.getCodigo(message.getUserNotFound(), null);
+			error = CommonMessageTemplate.getCodigo(message.getUserNotFound(), null);
 
 		} else if (ex instanceof BadCredentialsException) {
-			error = CommonMessage.getCodigo(message.getUserOrPasswordIncorrect(), null);
+			error = CommonMessageTemplate.getCodigo(message.getUserOrPasswordIncorrect(), null);
 		}
 
 		return buildResponseEntity(new ApiError(HttpStatus.UNAUTHORIZED, error, ex));

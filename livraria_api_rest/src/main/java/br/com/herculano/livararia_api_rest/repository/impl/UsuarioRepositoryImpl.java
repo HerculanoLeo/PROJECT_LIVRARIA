@@ -25,7 +25,7 @@ import br.com.herculano.livararia_api_rest.controller.request.UsuarioConsultaReq
 import br.com.herculano.livararia_api_rest.entity.Perfil;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.repository.custom.UsuarioRespositoryCustom;
-import br.com.herculano.utilits.repository.RepositoryUtils;
+import br.com.herculano.utilities.repository.RepositoryUtils;
 
 @Repository
 public class UsuarioRepositoryImpl implements UsuarioRespositoryCustom {

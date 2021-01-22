@@ -2,7 +2,7 @@ package br.com.herculano.livararia_api_rest.constants.system_message;
 
 import org.springframework.stereotype.Component;
 
-import br.com.herculano.utilits.templates.MessageTemplate;
+import br.com.herculano.utilities.templates.MessageTemplate;
 
 @Component(value = "TrocaSenhaMessage")
 public class TrocaSenhaMessage extends MessageTemplate {

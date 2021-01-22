@@ -42,7 +42,7 @@ public class PerfilController {
 	private ApplicationEventPublisher publisher;
 
 	@GetMapping
-	public ResponseEntity<Page<PerfilResponse>> consultaGruposPorFiltro(PerfilConsultaRequest entityRequest, Pageable page) {
+	public ResponseEntity<Page<PerfilResponse>> consultaPerfilPorFiltro(PerfilConsultaRequest entityRequest, Pageable page) {
 		Page<Perfil> entity = service.consultaPorFiltro(entityRequest, page);
 
 		return ResponseEntity.ok(entity.map(PerfilResponse::new));
@@ -63,7 +63,7 @@ public class PerfilController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> cadastraGrupo(@RequestBody PerfilCadastroRequest request, HttpServletResponse response) {
+	public ResponseEntity<?> cadastraPerfil(@RequestBody PerfilCadastroRequest request, HttpServletResponse response) {
 
 		Perfil entity = service.cadastra(request);
 

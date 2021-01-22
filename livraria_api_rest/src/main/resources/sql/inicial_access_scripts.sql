@@ -23,9 +23,9 @@ INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CADASTRAR_AUTOR','R');
 INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_ATUALIZAR_AUTOR','R');
 INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_DELETE_AUTOR','R');
 
-INSERT INTO tb_perfil (id, nome, tipo) VALUES ((SELECT nextval ('sq_perfil')),'ROOT','R');
-INSERT INTO tb_perfil (id, nome, tipo) VALUES ((SELECT nextval ('sq_perfil')),'ADMINISTRADORES','A');
-INSERT INTO tb_perfil (id, nome, tipo) VALUES ((SELECT nextval ('sq_perfil')),'CLIENTE','C');
+INSERT INTO tb_perfil (id, nome, tipo, padrao) VALUES ((SELECT nextval ('sq_perfil')),'ROOT','R', true);
+INSERT INTO tb_perfil (id, nome, tipo, padrao) VALUES ((SELECT nextval ('sq_perfil')),'ADMINISTRADOR','A', true);
+INSERT INTO tb_perfil (id, nome, tipo, padrao) VALUES ((SELECT nextval ('sq_perfil')),'CLIENTE','C', true);
 
 INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CADASTRAR_USUARIO_GRUPOS');
 INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_ATUALIZAR_USUARIO');
@@ -53,3 +53,7 @@ INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FRO
 INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_DELETE_AUTOR');
                                      
 INSERT INTO tb_usuario (id, email, nome, senha, tp_usuario, id_perfil) VALUES ((SELECT nextval('sq_usuario')), 'admin@test.com', 'ADMIN', '$2a$10$GRruFm1WRGPZ6dGaTQ8ph.VwVnhzI3PkHSDIEjy/w7v0Ow7ZCMv86', 'R', (SELECT id FROM tb_perfil WHERE nome = 'ROOT'));
+
+INSERT INTO tb_configuracao (codigo, valor) VALUES ('perfil.root.padrao', (SELECT id FROM tb_perfil p WHERE p.nome = 'ROOT' AND tipo = 'R' AND padrao = true));
+INSERT INTO tb_configuracao (codigo, valor) VALUES ('perfil.administrador.padrao', (SELECT id FROM tb_perfil p WHERE p.nome = 'ADMINISTRADOR' AND tipo = 'A' AND padrao = true));
+INSERT INTO tb_configuracao (codigo, valor) VALUES ('perfil.cliente.padrao', (SELECT id FROM tb_perfil p WHERE p.nome = 'CLIENTE' AND tipo = 'C' AND padrao = true));

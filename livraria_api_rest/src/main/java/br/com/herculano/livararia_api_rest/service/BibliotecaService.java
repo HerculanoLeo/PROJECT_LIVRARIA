@@ -18,20 +18,20 @@ import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.entity.UsuarioOperador;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.BibliotecaRepository;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.OperadorRepository;
-import br.com.herculano.utilits.templates.ServiceTemplate;
+import br.com.herculano.utilities.templates.ServiceTemplate;
 
 @Service
 public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRepository, BibliotecaMessage> {
 	
 	@Autowired
-	private UsuarioService usuarioService;
-
-	@Autowired
 	private OperadorRepository operadorRepository;
-			
+	
+	@Autowired
+	private UsuarioService usuarioService;
+	
 	@Autowired
 	private PerfilService perfilService;
-	
+
 	@Autowired
 	public BibliotecaService(BibliotecaRepository repository, @Qualifier("BibliotecaMessage") BibliotecaMessage message) {
 		super(repository, message);

@@ -13,21 +13,23 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import br.com.herculano.livararia_api_rest.constants.ConfiguracaoEnum;
 import br.com.herculano.livararia_api_rest.constants.TiposUsuariosEnum;
 import br.com.herculano.livararia_api_rest.constants.system_message.UsuarioMessage;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioClienteCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioConsultaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioRootCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioUpdateRequest;
+import br.com.herculano.livararia_api_rest.entity.Configuracao;
 import br.com.herculano.livararia_api_rest.entity.Perfil;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.entity.UsuarioCliente;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.UsuarioRepository;
-import br.com.herculano.utilits.exceptions.ConfirmPasswordException;
-import br.com.herculano.utilits.exceptions.DadosInvalidosException;
-import br.com.herculano.utilits.exceptions.EmptyPerfilException;
-import br.com.herculano.utilits.templates.MessageTemplate;
-import br.com.herculano.utilits.templates.ServiceTemplate;
+import br.com.herculano.utilities.exceptions.ConfirmPasswordException;
+import br.com.herculano.utilities.exceptions.DadosInvalidosException;
+import br.com.herculano.utilities.exceptions.EmptyPerfilException;
+import br.com.herculano.utilities.templates.MessageTemplate;
+import br.com.herculano.utilities.templates.ServiceTemplate;
 
 @Service
 public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, UsuarioMessage> implements UserDetailsService {
@@ -37,6 +39,9 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 
 	@Autowired
 	private PermissaoService permissaoService;
+	
+	@Autowired
+	private ConfiguracaoService configuracaService;
 
 	@Autowired
 	public UsuarioService(UsuarioRepository repository, @Qualifier("UsuarioMessage") UsuarioMessage message) {
@@ -65,7 +70,9 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 				throw new DadosInvalidosException("E-mail aready exist.");
 			}
 
-			Perfil perfil = perfilService.consultaPorId(3);
+			Configuracao configuracaoPerfilPadrao = configuracaService.consultaPorId(ConfiguracaoEnum.PERFIL_CLIENTE_PADRAO.getValor());
+			
+			Perfil perfil = perfilService.consultaPorId(Integer.valueOf(configuracaoPerfilPadrao.getValor()));
 
 			if (!perfil.getTipo().equals(TiposUsuariosEnum.CLIENTE.getValor())) {
 				throw new DadosInvalidosException("Perfil is not compatible.");
@@ -91,14 +98,14 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 			throw new DadosInvalidosException("E-mail aready exist.");
 		}
 
-		Perfil perfil = perfilService.consultaPorId(1);
+		Perfil perfil = perfilService.consultaPorId(entityRequest.getIdPerfil());
 
 		if (!perfil.getTipo().equals(TiposUsuariosEnum.ROOT.getValor())) {
 			throw new DadosInvalidosException("Profile is not compatible for User Type.");
 		}
 		entityRequest.setTipo(TiposUsuariosEnum.ROOT.getValor());
 
-		String password = RandomStringUtils.randomAlphanumeric(6);
+		String password = RandomStringUtils.randomAlphanumeric(8);
 		System.out.println("Password: " + password);
 		entityRequest.setSenha(password);
 		entityRequest.setPerfil(perfil);

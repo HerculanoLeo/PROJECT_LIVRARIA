@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import br.com.herculano.livararia_api_rest.controller.request.AutorConsultaRequest;
 import br.com.herculano.livararia_api_rest.entity.Autor;
 import br.com.herculano.livararia_api_rest.repository.custom.AutorRepositoryCustom;
-import br.com.herculano.utilits.repository.RepositoryUtils;
+import br.com.herculano.utilities.repository.RepositoryUtils;
 
 //O padrão de nomenclatura deve ser respeitado "EntityRepositoryImpl"
 @Repository

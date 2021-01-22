@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import br.com.herculano.utilities.templates.CommonMessageTemplate;
+
 @Configuration
 public class CommonConfiguration {
 
@@ -23,5 +25,10 @@ public class CommonConfiguration {
 	    LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
 	    bean.setValidationMessageSource(messageSource());
 	    return bean;
+	}
+	
+	@Bean(value = "CommonMessageTemplate")
+	public CommonMessageTemplate commonMessageTemplate() {
+		return new CommonMessageTemplate();
 	}
 }

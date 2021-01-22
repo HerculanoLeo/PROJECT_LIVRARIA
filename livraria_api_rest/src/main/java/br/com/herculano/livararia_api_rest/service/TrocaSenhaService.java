@@ -18,10 +18,10 @@ import br.com.herculano.livararia_api_rest.controller.request.ValidaCodigoReques
 import br.com.herculano.livararia_api_rest.entity.TrocaSenha;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.TrocaSenhaRepository;
-import br.com.herculano.utilits.exceptions.ConfirmPasswordException;
-import br.com.herculano.utilits.exceptions.TrocaSenhaException;
-import br.com.herculano.utilits.templates.MessageTemplate;
-import br.com.herculano.utilits.templates.ServiceTemplate;
+import br.com.herculano.utilities.exceptions.ConfirmPasswordException;
+import br.com.herculano.utilities.exceptions.TrocaSenhaException;
+import br.com.herculano.utilities.templates.MessageTemplate;
+import br.com.herculano.utilities.templates.ServiceTemplate;
 
 @Service
 public class TrocaSenhaService extends ServiceTemplate<TrocaSenha, TrocaSenhaRepository, TrocaSenhaMessage> {
