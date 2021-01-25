@@ -77,10 +77,6 @@ public class PerfilService extends ServiceTemplate<Perfil, PerfilRepository, Per
 		return entity;
 	}
 
-	public List<Perfil> consultaGrupoUsuarios(List<Integer> idsGrupoUsuario) {
-		return getRepository().findAllById(idsGrupoUsuario);
-	}
-
 	public Page<Perfil> consultaPorFiltro(PerfilConsultaRequest filter, Pageable page) {
 		Page<Perfil> consultaPorFiltro = getRepository().consultaPorFiltro(filter, page);
 

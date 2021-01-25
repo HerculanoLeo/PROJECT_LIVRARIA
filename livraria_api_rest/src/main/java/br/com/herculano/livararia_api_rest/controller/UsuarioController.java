@@ -26,9 +26,11 @@ import br.com.herculano.livararia_api_rest.controller.request.UsuarioTrocaSenhaR
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioUpdateRequest;
 import br.com.herculano.livararia_api_rest.controller.request.ValidaCodigoRequest;
 import br.com.herculano.livararia_api_rest.controller.response.TrocaSenhaResponse;
+import br.com.herculano.livararia_api_rest.controller.response.UsuarioClienteResponse;
 import br.com.herculano.livararia_api_rest.controller.response.UsuarioResponse;
 import br.com.herculano.livararia_api_rest.entity.TrocaSenha;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
+import br.com.herculano.livararia_api_rest.entity.UsuarioCliente;
 import br.com.herculano.livararia_api_rest.event.CreatedEvent;
 import br.com.herculano.livararia_api_rest.service.TrocaSenhaService;
 import br.com.herculano.livararia_api_rest.service.UsuarioService;
@@ -50,11 +52,7 @@ public class UsuarioController {
 	public ResponseEntity<Page<UsuarioResponse>> consultaUsuarios(UsuarioConsultaRequest entityRequest, Pageable page) {
 		Page<Usuario> entities = service.consultaPorFiltro(entityRequest, page);
 
-		ResponseEntity<Page<UsuarioResponse>> response = ResponseEntity.ok(entities.map(usuario -> {
-			UsuarioResponse entity = new UsuarioResponse(usuario);
-
-			return entity;
-		}));
+		ResponseEntity<Page<UsuarioResponse>> response = ResponseEntity.ok(entities.map(UsuarioResponse::new));
 
 		return response;
 	}
@@ -67,14 +65,14 @@ public class UsuarioController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> cadastraUsuario(@RequestBody @Validated UsuarioClienteCadastroRequest request,
+	public ResponseEntity<UsuarioClienteResponse> cadastraUsuario(@RequestBody @Validated UsuarioClienteCadastroRequest request,
 			HttpServletResponse response) {
 
-		Usuario entity = service.cadastraCliente(request);
+		UsuarioCliente entity = service.cadastraCliente(request);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(new UsuarioResponse(entity));
+		return ResponseEntity.status(HttpStatus.CREATED).body(new UsuarioClienteResponse(entity));
 	}
 
 	@PostMapping("/root")

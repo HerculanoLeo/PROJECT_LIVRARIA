@@ -21,6 +21,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import br.com.herculano.livararia_api_rest.constants.TiposUsuariosEnum;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioRootCadastroRequest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -67,7 +68,7 @@ public class Usuario implements UserDetails {
 		this.nome = entityRequest.getNome();
 		this.email = entityRequest.getEmail();
 		this.senha = this.encoder.encode(entityRequest.getSenha());
-		this.tipoUsuario = entityRequest.getTipo();
+		this.tipoUsuario = TiposUsuariosEnum.ROOT.getValor();
 		this.perfil = entityRequest.getPerfil();
 	}
 	

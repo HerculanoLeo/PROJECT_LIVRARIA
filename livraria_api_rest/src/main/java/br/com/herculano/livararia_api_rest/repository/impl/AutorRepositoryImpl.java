@@ -16,7 +16,6 @@ import br.com.herculano.livararia_api_rest.entity.Autor;
 import br.com.herculano.livararia_api_rest.repository.custom.AutorRepositoryCustom;
 import br.com.herculano.utilities.repository.RepositoryUtils;
 
-//O padrão de nomenclatura deve ser respeitado "EntityRepositoryImpl"
 @Repository
 public class AutorRepositoryImpl implements AutorRepositoryCustom{
 

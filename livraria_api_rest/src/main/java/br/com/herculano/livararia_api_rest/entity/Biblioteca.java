@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.BibliotecaComAdministradorCadastroRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -45,8 +46,14 @@ public class Biblioteca implements Serializable {
 	@Transient
 	private List<UsuarioOperador> operadores;
 
-	public Biblioteca(BibliotecaCadastroRequest entityRequest) {
+	public Biblioteca(BibliotecaComAdministradorCadastroRequest entityRequest, UsuarioAdministrador administrador) {
 		this.nome = entityRequest.getNomeBiblioteca();
+		this.administrador = administrador;
+	}
+
+	public Biblioteca(BibliotecaCadastroRequest entityRequest, UsuarioAdministrador administrador) {
+		this.nome = entityRequest.getNome();
+		this.administrador = administrador;
 	}
 
 }

@@ -8,9 +8,15 @@ import br.com.herculano.utilities.templates.MessageTemplate;
 public class BibliotecaMessage extends MessageTemplate{
 
 	private final String NOT_FOUND = "autor.notfound";
+
+	private final String NOT_ALLOWED_USER_TYPE = "biblioteca.not_allowed_user_type";
 	
 	@Override
 	public String getNotFound() {
 		return NOT_FOUND;
+	}
+	
+	public String getNotAllowedUserType() {
+		return this.NOT_ALLOWED_USER_TYPE;
 	}
 }

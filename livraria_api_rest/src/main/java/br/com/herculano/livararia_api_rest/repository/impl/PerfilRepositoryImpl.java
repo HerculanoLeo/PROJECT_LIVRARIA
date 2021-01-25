@@ -1,7 +1,8 @@
 package br.com.herculano.livararia_api_rest.repository.impl;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -31,16 +32,16 @@ public class PerfilRepositoryImpl implements PerfilRepositoryCustom {
 				+ " LEFT JOIN tb_perfil_permissao p_p ON p_p.id_perfil = p.id";
 
 		String where = "";
-		List<Object> params = new ArrayList<>();
+		Map<String, Object> params = new HashMap<>();
 
 		if (StringUtils.isNotBlank(filter.getNome())) {
-			where = RepositoryUtils.generateWhere(where, " UPPER(p.nome) LIKE ?");
-			params.add("%" + filter.getNome().toUpperCase() + "%");
+			where = RepositoryUtils.generateWhere(where, " UPPER(p.nome) LIKE :a");
+			params.put("a","%" + filter.getNome().toUpperCase() + "%");
 		}
 
 		if (StringUtils.isNotBlank(filter.getPermissao())) {
-			where = RepositoryUtils.generateWhere(where, "UPPER(p_p.id_permissao) LIKE ?");
-			params.add("%" + filter.getPermissao().toUpperCase() + "%");
+			where = RepositoryUtils.generateWhere(where, "UPPER(p_p.id_permissao) LIKE :b");
+			params.put("b", "%" + filter.getPermissao().toUpperCase() + "%");
 		}
 
 		queryStr += where;
@@ -52,8 +53,8 @@ public class PerfilRepositoryImpl implements PerfilRepositoryCustom {
 
 		Query query = em.createNativeQuery(queryStr, Perfil.class);
 		
-		for (int i = 0; i < params.size(); i++) {
-			query.setParameter((i + 1), params.get(i));
+		for (Map.Entry<String, Object> param : params.entrySet()) {
+			query.setParameter(param.getKey(), param.getValue());
 		}
 		
 		List<Perfil> entities = query.getResultList();

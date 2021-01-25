@@ -6,12 +6,18 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class BibliotecaCadastroRequest {
-	
+public class AdministradorUpdateRequest {
+
 	@NotNull
 	private Integer idAdministrador;
 	
 	@NotBlank
 	private String nome;
+
+	@NotBlank
+	private String documento;
+
+	@NotBlank
+	private String email;
 
 }

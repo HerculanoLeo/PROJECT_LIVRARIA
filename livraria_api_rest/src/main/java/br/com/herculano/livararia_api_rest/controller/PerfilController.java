@@ -17,9 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.herculano.livararia_api_rest.controller.request.PerfilConsultaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.PerfilCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.response.GrupoUsuarioResponse;
+import br.com.herculano.livararia_api_rest.controller.request.PerfilConsultaRequest;
 import br.com.herculano.livararia_api_rest.controller.response.PerfilResponse;
 import br.com.herculano.livararia_api_rest.controller.response.PermissaoResponse;
 import br.com.herculano.livararia_api_rest.entity.Perfil;
@@ -64,12 +63,11 @@ public class PerfilController {
 
 	@PostMapping
 	public ResponseEntity<?> cadastraPerfil(@RequestBody PerfilCadastroRequest request, HttpServletResponse response) {
-
 		Perfil entity = service.cadastra(request);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(new GrupoUsuarioResponse(entity));
+		return ResponseEntity.status(HttpStatus.CREATED).body(new PerfilResponse(entity));
 	}
 
 	@PutMapping("/{idPerfil}")
@@ -80,7 +78,7 @@ public class PerfilController {
 		
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
 
-		return ResponseEntity.status(HttpStatus.OK).body(new GrupoUsuarioResponse(entity));
+		return ResponseEntity.status(HttpStatus.OK).body(new PerfilResponse(entity));
 	}
 
 	@DeleteMapping("/{idPerfil}")

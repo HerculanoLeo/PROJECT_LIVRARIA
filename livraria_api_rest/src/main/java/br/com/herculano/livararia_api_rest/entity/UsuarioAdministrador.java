@@ -8,6 +8,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import br.com.herculano.livararia_api_rest.constants.TiposUsuariosEnum;
+import br.com.herculano.livararia_api_rest.controller.request.AdministradorCadastroRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -27,5 +29,12 @@ public class UsuarioAdministrador extends Usuario {
 	
 	@Transient
 	private List<Biblioteca> bibliotecas;
+
+	public UsuarioAdministrador(AdministradorCadastroRequest entityRequest) {
+		super(entityRequest.getNome(), entityRequest.getNome(), entityRequest.getSenha(), TiposUsuariosEnum.ADMINISTRADOR.getValor(), entityRequest.getPerfil());
+		this.documento = entityRequest.getDocumento();
+	}
+	
+	
 
 }

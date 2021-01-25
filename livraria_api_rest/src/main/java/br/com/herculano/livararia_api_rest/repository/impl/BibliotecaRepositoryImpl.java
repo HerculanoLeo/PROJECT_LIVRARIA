@@ -1,9 +1,20 @@
 package br.com.herculano.livararia_api_rest.repository.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -13,6 +24,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaConsultaRequest;
 import br.com.herculano.livararia_api_rest.entity.Biblioteca;
+import br.com.herculano.livararia_api_rest.entity.UsuarioAdministrador;
 import br.com.herculano.livararia_api_rest.repository.custom.BibliotecaRespositoryCustom;
 import br.com.herculano.utilities.repository.RepositoryUtils;
 
@@ -25,44 +37,72 @@ public class BibliotecaRepositoryImpl implements BibliotecaRespositoryCustom {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Page<Biblioteca> consultaPorFiltro(BibliotecaConsultaRequest entityRequest, Pageable page) {
-		String queryStr = "SELECT bib.* FROM tb_biblioteca bib "
-				+ "INNER JOIN tb_usuario usu ON bib.id_usuario_administrador = usu.id";
+		String queryStr = "SELECT b.* FROM tb_biblioteca b "
+				+ " INNER JOIN tb_usuario_adminisitrador ua ON b.id_administrador = ua.id_usuario "
+				+ " INNER JOIN tb_usuario u ON ua.id_usuario = u.id ";
 
 		String where = "";
+		Map<String, Object> params = new HashMap<>();
 
 		if (StringUtils.isNotBlank(entityRequest.getNomeBiblioteca())) {
-			where = RepositoryUtils.generateWhere(where,
-					"UPPER(bib.nome) LIKE '%" + entityRequest.getNomeBiblioteca().toUpperCase() + "%'");
+			where = RepositoryUtils.generateWhere(where, "UPPER(b.nome) LIKE :a ");
+			params.put("a", "%" + entityRequest.getNomeBiblioteca().toUpperCase() + "%");
 		}
 
 		if (StringUtils.isNotBlank(entityRequest.getNomeAdministrador())) {
-			where = RepositoryUtils.generateWhere(where,
-					"UPPER(usu.nome) LIKE '%" + entityRequest.getNomeAdministrador().toUpperCase() + "%'");
+			where = RepositoryUtils.generateWhere(where, "UPPER(u.nome) LIKE :b ");
+			params.put("b", "%" + entityRequest.getNomeAdministrador().toUpperCase() + "%");
 		}
 
 		queryStr += where;
 
-		queryStr += " ORDER BY bib.id ASC";
+		queryStr += " ORDER BY b.id ASC";
 
-		Long totalResgistros = RepositoryUtils.totalRegistros(queryStr, em);
+		Long totalResgistros = RepositoryUtils.totalRegistros(queryStr, em, params);
 		
 		queryStr += RepositoryUtils.adicionarPaginacao(page);
 		
-		List<Biblioteca> entities = em.createNativeQuery(queryStr, Biblioteca.class).getResultList();
+		Query query = em.createNativeQuery(queryStr, Biblioteca.class);
+		
+		for(Map.Entry<String, Object> param : params.entrySet()) {
+			query.setParameter(param.getKey(), param.getValue());
+		}
+		
+		List<Biblioteca> entities = query.getResultList();
 
 		return new PageImpl<Biblioteca>(entities, page, totalResgistros);
 	}
+	
+//	@Override
+	public Page<Biblioteca> aconsultaPorFiltro(BibliotecaConsultaRequest entityRequest, Pageable page) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Biblioteca> cq = cb.createQuery(Biblioteca.class);
+		Root<Biblioteca> biblioteca = cq.from(Biblioteca.class);
+		Join<Biblioteca, UsuarioAdministrador> administrador = biblioteca.join("administrador", JoinType.INNER);
 
-	@Override
-	public Biblioteca consultaPorUsuarioId(Integer idUsuario) {
-		String queryStr = "SELECT bib.* FROM tb_biblioteca bib "
-				+ "INNER JOIN tb_usuario usu ON bib.id_usuario_administrador = usu.id";
+		Map<String, JoinType> joinMap = new HashMap<>();
+		joinMap.put("administrador", JoinType.INNER);
 
-		String where = RepositoryUtils.generateWhere("", "bib.id_usuario_administrador = " + idUsuario + "");
+		List<Predicate> predicates = new ArrayList<>();
 
-		queryStr += where;
+		if (StringUtils.isNotBlank(entityRequest.getNomeBiblioteca())) {
+			predicates.add(cb.like(cb.upper(biblioteca.get("nome")), "%" + entityRequest.getNomeBiblioteca().toUpperCase() + "%"));
+		}
 
-		return (Biblioteca) em.createNativeQuery(queryStr, Biblioteca.class).getSingleResult();
+		if (StringUtils.isNotBlank(entityRequest.getNomeAdministrador())) {
+			predicates.add(cb.like(cb.upper(administrador.get("nome")), "%" + entityRequest.getNomeAdministrador().toUpperCase() + "%"));
+		}
+
+		cq.select(biblioteca).where(predicates.toArray(new Predicate[predicates.size()]));
+
+		TypedQuery<Biblioteca> query = em.createQuery(cq);
+
+		query.setFirstResult(Math.toIntExact(page.getOffset()));
+		query.setMaxResults(page.getPageSize());
+
+		List<Biblioteca> entities = query.getResultList();
+
+		return new PageImpl<Biblioteca>(entities, page, RepositoryUtils.totalRegistros(em, cb, predicates, Biblioteca.class, joinMap));
 	}
 
 }

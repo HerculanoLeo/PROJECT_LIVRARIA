@@ -25,13 +25,13 @@ public class PermissaoRepositoryImpl implements PermissaoRepositoryCustom {
 				+ "INNER JOIN tb_perfil_permissao p_p ON p.codigo = p_p.id_permissao "
 				+ "INNER JOIN tb_perfil pf ON p_p.id_perfil = pf.id ";
 		
-		String where = RepositoryUtils.generateWhere("", "pf.id = ?");
+		String where = RepositoryUtils.generateWhere("", "pf.id = :a");
 		
 		queryStr += where;
 		
 		Query query = em.createNativeQuery(queryStr, Permissao.class);
 		
-		query.setParameter(1, idPerfil);
+		query.setParameter("a", idPerfil);
 
 		return query.getResultList();
 	}

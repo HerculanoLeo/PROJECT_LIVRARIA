@@ -40,8 +40,8 @@ public class UsuarioRepositoryImpl implements UsuarioRespositoryCustom {
 		Root<Usuario> user = cq.from(Usuario.class);
 		Join<Usuario, Perfil> perfil = user.join("perfil", JoinType.INNER);
 		
-		Map<String, JoinType> mapClassTypes = new HashMap<>();
-		mapClassTypes.put("perfil", JoinType.INNER);
+		Map<String, JoinType> joinMap = new HashMap<>();
+		joinMap.put("perfil", JoinType.INNER);
 
 		List<Predicate> predicates = new ArrayList<>();
 		
@@ -70,7 +70,7 @@ public class UsuarioRepositoryImpl implements UsuarioRespositoryCustom {
 		
 		List<Usuario> entities = query.getResultList();
 
-		return new PageImpl<Usuario>(entities, page, RepositoryUtils.totalRegistros(em, cb, predicates, Usuario.class, mapClassTypes));
+		return new PageImpl<Usuario>(entities, page, RepositoryUtils.totalRegistros(em, cb, predicates, Usuario.class, joinMap));
 	}
 
 }

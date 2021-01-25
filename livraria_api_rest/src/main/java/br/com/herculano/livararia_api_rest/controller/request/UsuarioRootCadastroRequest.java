@@ -15,9 +15,6 @@ public class UsuarioRootCadastroRequest {
 	private Integer idPerfil;
 
 	@JsonIgnore
-	private String tipo;
-
-	@JsonIgnore
 	private String senha;
 
 	@JsonIgnore

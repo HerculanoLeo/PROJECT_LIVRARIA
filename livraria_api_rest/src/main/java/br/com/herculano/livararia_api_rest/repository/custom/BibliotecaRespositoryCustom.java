@@ -7,9 +7,7 @@ import br.com.herculano.livararia_api_rest.controller.request.BibliotecaConsulta
 import br.com.herculano.livararia_api_rest.entity.Biblioteca;
 
 public interface BibliotecaRespositoryCustom {
-	
+
 	Page<Biblioteca> consultaPorFiltro(BibliotecaConsultaRequest entityRequest, Pageable page);
-	
-	Biblioteca consultaPorUsuarioId(Integer idUsuario);
-	
+
 }

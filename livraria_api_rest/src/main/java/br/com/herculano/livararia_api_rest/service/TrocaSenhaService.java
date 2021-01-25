@@ -57,7 +57,6 @@ public class TrocaSenhaService extends ServiceTemplate<TrocaSenha, TrocaSenhaRep
 			throw new ConfirmPasswordException(MessageTemplate.getCodigo(getMessage().getPasswordEmpty(), null));
 
 		}
-
 	}
 
 	public TrocaSenha validaCodigo(ValidaCodigoRequest request) {
@@ -96,7 +95,6 @@ public class TrocaSenhaService extends ServiceTemplate<TrocaSenha, TrocaSenhaRep
 		save(entity);
 
 		enviaCodigoEmail(entity.getCode());
-
 	}
 
 	public TrocaSenha validaCodigo(String codigo, String email) {

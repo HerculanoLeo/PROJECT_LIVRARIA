@@ -14,6 +14,8 @@ public class UsuarioResponse {
 	private String email;
 	
 	private String tipo;
+
+	private String tipoDescricao;
 	
 	private PerfilResponse perfil;
 
@@ -22,6 +24,7 @@ public class UsuarioResponse {
 		this.nome = entity.getNome();
 		this.email = entity.getEmail();
 		this.perfil = new PerfilResponse(entity.getPerfil());
-		this.tipo = TiposUsuariosEnum.getTipoUsuario(entity.getTipoUsuario()).getDescricao();
+		this.tipo = entity.getTipoUsuario();
+		this.tipoDescricao = TiposUsuariosEnum.getTipoUsuario(entity.getTipoUsuario()).getDescricao();
 	}
 }
