@@ -18,4 +18,5 @@ public class LoginRequest {
 	public UsernamePasswordAuthenticationToken converter() {
 		return new UsernamePasswordAuthenticationToken(email, password);
 	}
+
 }

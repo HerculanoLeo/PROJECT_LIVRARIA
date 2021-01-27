@@ -31,5 +31,4 @@ public class BibliotecaComAdministradorCadastroRequest {
 	@NotBlank
 	private String nomeBiblioteca;
 	
-	
 }

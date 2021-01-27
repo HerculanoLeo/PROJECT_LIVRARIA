@@ -27,4 +27,5 @@ public class LivroCadastroRequest {
 	private LocalDate dataLancamento;
 	
 	private List<Integer> idsAutor;
+
 }

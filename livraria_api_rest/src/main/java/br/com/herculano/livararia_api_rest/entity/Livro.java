@@ -47,11 +47,8 @@ public class Livro {
 	private List<Autor> autores;
 
 	public Livro(LivroCadastroRequest entity) {
-
 		this.titulo = entity.getTitulo();
-
 		this.ISBN = entity.getIsbn();
-
 		this.dataLancamento = entity.getDataLancamento();
 	}
 }

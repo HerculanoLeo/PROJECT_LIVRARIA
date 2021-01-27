@@ -7,6 +7,4 @@ import br.com.herculano.livararia_api_rest.repository.custom.BibliotecaResposito
 
 public interface BibliotecaRepository extends JpaRepository<Biblioteca, Integer>, BibliotecaRespositoryCustom {
 
-
-
 }

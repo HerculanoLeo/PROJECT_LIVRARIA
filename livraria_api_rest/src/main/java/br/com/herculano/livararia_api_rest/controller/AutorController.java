@@ -24,6 +24,7 @@ import br.com.herculano.livararia_api_rest.entity.Autor;
 import br.com.herculano.livararia_api_rest.event.CreatedEvent;
 import br.com.herculano.livararia_api_rest.service.AutorService;
 
+// TODO refatorar todo a classe
 @RestController
 @RequestMapping("/autor")
 public class AutorController {
@@ -38,11 +39,7 @@ public class AutorController {
 	public ResponseEntity<Page<AutorResponse>> consultaAutores(AutorConsultaRequest entityRequest, Pageable page) {
 		Page<Autor> entities = service.consultaPorFiltro(entityRequest, page);
 
-		ResponseEntity<Page<AutorResponse>> response = ResponseEntity.ok(entities.map(autor -> {
-			AutorResponse entity = new AutorResponse(autor);
-
-			return entity;
-		}));
+		ResponseEntity<Page<AutorResponse>> response = ResponseEntity.ok(entities.map(AutorResponse::new));
 
 		return response;
 	}

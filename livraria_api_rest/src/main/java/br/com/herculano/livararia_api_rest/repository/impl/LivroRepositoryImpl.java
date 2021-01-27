@@ -49,4 +49,5 @@ public class LivroRepositoryImpl implements LivroRepositoryCustom {
 
 		em.createNativeQuery(queryStr).executeUpdate();
 	}
+
 }

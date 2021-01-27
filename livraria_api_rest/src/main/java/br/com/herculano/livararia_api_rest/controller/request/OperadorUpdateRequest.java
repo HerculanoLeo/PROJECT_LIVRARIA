@@ -3,10 +3,6 @@ package br.com.herculano.livararia_api_rest.controller.request;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import br.com.herculano.livararia_api_rest.entity.Biblioteca;
-import br.com.herculano.livararia_api_rest.entity.Perfil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,10 +10,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BibliotecaOperadorCadastroRequest {
+public class OperadorUpdateRequest {
 
 	@NotNull
-	private Integer idBiblioteca;
+	private Integer idOperador;
 
 	@NotBlank
 	private String nome;
@@ -31,12 +27,4 @@ public class BibliotecaOperadorCadastroRequest {
 	@NotNull
 	private Integer idPerfil;
 	
-	@JsonIgnore
-	private String senha;
-
-	@JsonIgnore
-	private Perfil perfil;
-	
-	@JsonIgnore
-	private Biblioteca biblioteca;
 }

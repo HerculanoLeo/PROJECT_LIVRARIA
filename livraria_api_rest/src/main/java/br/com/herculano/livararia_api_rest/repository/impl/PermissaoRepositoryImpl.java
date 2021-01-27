@@ -36,5 +36,4 @@ public class PermissaoRepositoryImpl implements PermissaoRepositoryCustom {
 		return query.getResultList();
 	}
 	
-	
 }

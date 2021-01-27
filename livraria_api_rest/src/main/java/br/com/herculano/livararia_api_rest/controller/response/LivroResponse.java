@@ -18,13 +18,10 @@ public class LivroResponse {
 	private LocalDate dataLancamento;
 
 	public LivroResponse(Livro entity) {
-
 		this.id = entity.getId();
-
 		this.titulo = entity.getTitulo();
-
 		this.dataLancamento = entity.getDataLancamento();
-
 		this.isbn = entity.getISBN();
 	}
+
 }

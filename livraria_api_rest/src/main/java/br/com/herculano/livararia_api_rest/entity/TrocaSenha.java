@@ -46,4 +46,5 @@ public class TrocaSenha {
 		this.email = usuario.getEmail();
 		this.nome = usuario.getNome();
 	}
+
 }

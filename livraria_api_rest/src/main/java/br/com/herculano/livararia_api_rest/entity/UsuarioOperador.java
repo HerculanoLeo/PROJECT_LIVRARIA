@@ -8,7 +8,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import br.com.herculano.livararia_api_rest.constants.TiposUsuariosEnum;
-import br.com.herculano.livararia_api_rest.controller.request.BibliotecaOperadorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.OperadorCadastroRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -30,7 +30,7 @@ public class UsuarioOperador extends Usuario {
 	@Column(name = "documento", nullable = false)
 	private String documento;
 	
-	public UsuarioOperador(BibliotecaOperadorCadastroRequest entityRequest) {
+	public UsuarioOperador(OperadorCadastroRequest entityRequest) {
 		super(entityRequest.getNome(), entityRequest.getEmail(), entityRequest.getSenha(), TiposUsuariosEnum.OPERADOR.getValor() ,entityRequest.getPerfil());
 		
 		this.documento = entityRequest.getDocumento();

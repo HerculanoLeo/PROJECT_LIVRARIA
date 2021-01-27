@@ -31,6 +31,7 @@ import br.com.herculano.livararia_api_rest.event.CreatedEvent;
 import br.com.herculano.livararia_api_rest.service.AutorService;
 import br.com.herculano.livararia_api_rest.service.LivroService;
 
+//TODO refatorar todo a classe
 @RestController
 @RequestMapping("/livro")
 public class LivroController {

@@ -25,13 +25,11 @@ public class UsuarioCliente extends Usuario {
 
 	public UsuarioCliente(String nome, String email, String password, String valor, Perfil perfil, String documento) {
 		super(nome, email, password, valor, perfil);
-		
 		this.documento = documento;
 	}
 
 	public UsuarioCliente(UsuarioClienteCadastroRequest entityRequest) {
 		super(entityRequest.getNome(), entityRequest.getEmail(), entityRequest.getSenha(), entityRequest.getTipo(), entityRequest.getPerfil());
-		
 		this.documento = entityRequest.getDocumento();
 	}
 

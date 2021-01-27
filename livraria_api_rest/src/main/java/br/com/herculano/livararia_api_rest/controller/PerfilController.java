@@ -71,11 +71,10 @@ public class PerfilController {
 	}
 
 	@PutMapping("/{idPerfil}")
-	public ResponseEntity<?> atualizaPerfil(@RequestBody PerfilCadastroRequest request,
-			@PathVariable Integer idPerfil, HttpServletResponse response) {
-
+	public ResponseEntity<?> atualizaPerfil(@RequestBody PerfilCadastroRequest request, @PathVariable Integer idPerfil,
+			HttpServletResponse response) {
 		Perfil entity = service.atualizar(idPerfil, request);
-		
+
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
 
 		return ResponseEntity.status(HttpStatus.OK).body(new PerfilResponse(entity));

@@ -24,4 +24,5 @@ public class AutorResponse {
 		this.dataNascimento = entity.getDataNascimento();
 		this.dataFalecimento = entity.getDataFalecimento();
 	}
+
 }

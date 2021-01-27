@@ -9,4 +9,5 @@ public interface LivroRepositoryCustom {
 	public List<Livro> consultaPorIdAutor(Integer idAutor);
 	
 	public void removeAutorPorId(Integer idLivro, Integer idAutor);
+
 }

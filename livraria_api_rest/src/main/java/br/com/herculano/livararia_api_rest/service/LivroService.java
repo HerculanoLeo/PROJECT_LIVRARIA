@@ -30,7 +30,6 @@ public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroM
 	}
 
 	public Livro cadastra(LivroCadastroRequest request) {
-
 		List<Autor> autores = new ArrayList<Autor>();
 
 		validaLivro(request, autores);
@@ -88,7 +87,6 @@ public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroM
 	}
 
 	public Livro adiconaAutorPorId(Integer idLivro, Integer idAutor) {
-
 		Livro entity = super.consultaPorId(idLivro);
 
 		Autor autor = autorService.consultaPorId(idAutor);
@@ -107,7 +105,6 @@ public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroM
 	}
 
 	private void validaLivro(LivroCadastroRequest request, List<Autor> autores) {
-
 		if (null != request.getIdsAutor() && !request.getIdsAutor().isEmpty()) {
 			for (Integer id : request.getIdsAutor()) {
 				Autor entity = autorService.consultaPorId(id);
@@ -116,6 +113,5 @@ public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroM
 			}
 		}
 	}
-
 
 }

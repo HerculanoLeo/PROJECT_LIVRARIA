@@ -34,7 +34,6 @@ public class PerfilService extends ServiceTemplate<Perfil, PerfilRepository, Per
 	}
 
 	public Perfil cadastra(PerfilCadastroRequest entityRequest) {
-
 		List<Permissao> permissoes = new ArrayList<Permissao>();
 
 		if (!isCadastroPermitido(entityRequest)) {
@@ -56,7 +55,6 @@ public class PerfilService extends ServiceTemplate<Perfil, PerfilRepository, Per
 	}
 
 	public Perfil atualizar(Integer id, PerfilCadastroRequest entityRequest) {
-
 		Perfil entity = super.consultaPorId(id);
 
 		List<Permissao> permissoes = new ArrayList<Permissao>();
@@ -90,7 +88,6 @@ public class PerfilService extends ServiceTemplate<Perfil, PerfilRepository, Per
 	}
 
 	private void validaPermissoes(PerfilCadastroRequest entityRequest, List<Permissao> permissoes) {
-
 		if (entityRequest.getPermissoes() != null) {
 			for (PermissaoConsultaRequest permissao : entityRequest.getPermissoes()) {
 				Permissao entity = permissaoService.consultaPorCodigo(permissao.getAuthority());

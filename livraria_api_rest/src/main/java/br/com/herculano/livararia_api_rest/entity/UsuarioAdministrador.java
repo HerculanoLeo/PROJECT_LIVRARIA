@@ -34,7 +34,5 @@ public class UsuarioAdministrador extends Usuario {
 		super(entityRequest.getNome(), entityRequest.getNome(), entityRequest.getSenha(), TiposUsuariosEnum.ADMINISTRADOR.getValor(), entityRequest.getPerfil());
 		this.documento = entityRequest.getDocumento();
 	}
-	
-	
 
 }

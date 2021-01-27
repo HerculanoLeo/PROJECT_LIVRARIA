@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.herculano.livararia_api_rest.controller.request.TrocaSenhaComCodigoRequest;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioClienteCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.UsuarioClienteUpdateRequest;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioConsultaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioRootCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioTrocaSenhaRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.UsuarioRootUpdateRequest;
 import br.com.herculano.livararia_api_rest.controller.request.ValidaCodigoRequest;
 import br.com.herculano.livararia_api_rest.controller.response.TrocaSenhaResponse;
 import br.com.herculano.livararia_api_rest.controller.response.UsuarioClienteResponse;
@@ -58,16 +58,19 @@ public class UsuarioController {
 	}
 
 	@GetMapping("/{idUsuario}")
-	public ResponseEntity<UsuarioResponse> consultaPorIdUsuario(@PathVariable Integer idUsuario) {
+	public ResponseEntity<?> consultaPorIdUsuario(@PathVariable Integer idUsuario) {
 		Usuario entity = service.consultaPorId(idUsuario);
-
-		return ResponseEntity.ok(new UsuarioResponse(entity));
+		
+		if(entity instanceof UsuarioCliente) {
+			return ResponseEntity.ok(new UsuarioClienteResponse((UsuarioCliente) entity));
+		} else {
+			return ResponseEntity.ok(new UsuarioResponse(entity));
+		}
 	}
 
 	@PostMapping
 	public ResponseEntity<UsuarioClienteResponse> cadastraUsuario(@RequestBody @Validated UsuarioClienteCadastroRequest request,
 			HttpServletResponse response) {
-
 		UsuarioCliente entity = service.cadastraCliente(request);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
@@ -78,7 +81,6 @@ public class UsuarioController {
 	@PostMapping("/root")
 	public ResponseEntity<?> cadastraUsuarioRoot(@RequestBody @Validated UsuarioRootCadastroRequest request,
 			HttpServletResponse response) {
-
 		Usuario entity = service.cadastraRoot(request);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
@@ -86,34 +88,36 @@ public class UsuarioController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(new UsuarioResponse(entity));
 	}
 
-	@PutMapping("/{idUsuario}")
-	public ResponseEntity<?> atualizaUsuario(@RequestBody UsuarioUpdateRequest request, @PathVariable Integer idUsuario,
-			HttpServletResponse response) {
-
-		Usuario entity = service.atualiza(idUsuario, request);
+	@PutMapping()
+	public ResponseEntity<?> atualizaCleinte(@RequestBody UsuarioClienteUpdateRequest request) {
+		UsuarioCliente entity = service.atualizaCliente(request);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new UsuarioClienteResponse(entity));
+	}
+	
+	@PutMapping("/root")
+	public ResponseEntity<?> atualizaRoot(@RequestBody UsuarioRootUpdateRequest request) {
+		Usuario entity = service.atualizaRoot(request);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new UsuarioResponse(entity));
 	}
 
 	@PostMapping("/trocaSenha")
-	public ResponseEntity<?> trocaSenha(@RequestBody UsuarioTrocaSenhaRequest request, UriComponentsBuilder uirBuilder) {
-
+	public ResponseEntity<?> trocaSenha(@RequestBody UsuarioTrocaSenhaRequest request) {
 		trocaSenhaService.trocaSenha(request);
 
 		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/trocaSenha/validaCodigo")
-	public ResponseEntity<TrocaSenhaResponse> trocaSenha(@RequestBody ValidaCodigoRequest request, HttpServletResponse response) {
-
+	public ResponseEntity<TrocaSenhaResponse> trocaSenha(@RequestBody ValidaCodigoRequest request) {
 		TrocaSenha entity = trocaSenhaService.validaCodigo(request);
 
 		return ResponseEntity.ok(new TrocaSenhaResponse(entity));
 	}
 
 	@PostMapping("/trocaSenha/codigo")
-	public ResponseEntity<?> trocaSenhaComCodigo(@RequestBody TrocaSenhaComCodigoRequest request, HttpServletResponse response) {
-
+	public ResponseEntity<?> trocaSenhaComCodigo(@RequestBody TrocaSenhaComCodigoRequest request) {
 		trocaSenhaService.trocaSenhaComCodigo(request);
 
 		return ResponseEntity.ok().build();
