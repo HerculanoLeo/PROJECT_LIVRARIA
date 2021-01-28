@@ -7,7 +7,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,7 +34,6 @@ import br.com.herculano.livararia_api_rest.entity.UsuarioOperador;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.UsuarioRepository;
 import br.com.herculano.utilities.exceptions.ConfirmPasswordException;
 import br.com.herculano.utilities.exceptions.DadosInvalidosException;
-import br.com.herculano.utilities.exceptions.EmptyPerfilException;
 import br.com.herculano.utilities.templates.MessageTemplate;
 import br.com.herculano.utilities.templates.ServiceTemplate;
 
@@ -52,19 +50,30 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 	private ConfiguracaoService configuracaService;
 
 	@Autowired
-	public UsuarioService(UsuarioRepository repository, @Qualifier("UsuarioMessage") UsuarioMessage message) {
+	private UsuarioAdministradorService administradorService;
+
+	@Autowired
+	private UsuarioOperadorService operadorService;
+
+	@Autowired
+	private UsuarioClienteService clienteService;
+
+	@Autowired
+	public UsuarioService(UsuarioRepository repository, UsuarioMessage message) {
 		super(repository, message);
 	}
 
 	@Override
 	public Usuario loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<Usuario> optionalUsuario = getRepository().findByEmail(username);
+		Optional<Usuario> optional = getRepository().findByEmail(username);
 
-		if (!optionalUsuario.isPresent()) {
-			throw new UsernameNotFoundException("User " + username + " not found.");
+		if (!optional.isPresent()) {
+			Object[] args = new Object[] { username };
+			
+			throw new UsernameNotFoundException(MessageTemplate.getCodigo(message.getAuthenticationNotFound(), args));
 		}
 
-		Usuario entity = optionalUsuario.get();
+		Usuario entity = optional.get();
 		entity.setPermissoes(permissaoService.consultaPorIdPerfil(entity.getPerfil().getId()));
 
 		return entity;
@@ -149,26 +158,20 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 	}
 
 	public UsuarioAdministrador atualizarAdministrador(@Valid AdministradorUpdateRequest entityRequest) {
-		Usuario usuario = consultaPorId(entityRequest.getIdAdministrador());
+		UsuarioAdministrador entity = administradorService.consultaPorId(entityRequest.getIdAdministrador());
 
-		if (usuario instanceof UsuarioAdministrador) {
-			UsuarioAdministrador entity = (UsuarioAdministrador) usuario;
+		if (!entityRequest.getEmail().equals(entity.getEmail())) {
+			validaEmailDisponivel(entityRequest.getEmail());
 
-			if (!entityRequest.getEmail().equals(entity.getEmail())) {
-				validaEmailDisponivel(entityRequest.getEmail());
-
-				entity.setEmail(entityRequest.getEmail());
-			}
-
-			entity.setNome(entityRequest.getNome());
-			entity.setDocumento(entityRequest.getDocumento());
-
-			super.save(entity);
-
-			return entity;
-		} else {
-			throw new DadosInvalidosException("User is not a Administrator.");
+			entity.setEmail(entityRequest.getEmail());
 		}
+
+		entity.setNome(entityRequest.getNome());
+		entity.setDocumento(entityRequest.getDocumento());
+
+		super.save(entity);
+
+		return entity;
 	}
 
 	public UsuarioOperador cadastraOperador(OperadorCadastroRequest entityRequest) {
@@ -194,33 +197,27 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 	}
 
 	public UsuarioOperador atualizarOperador(@Valid OperadorUpdateRequest entityRequest) {
-		Usuario usuario = consultaPorId(entityRequest.getIdOperador());
+		UsuarioOperador entity = operadorService.consultaPorId(entityRequest.getIdOperador());
 
 		validaEmailDisponivel(entityRequest.getEmail());
 
-		if (usuario instanceof UsuarioAdministrador) {
-			UsuarioOperador entity = (UsuarioOperador) usuario;
+		if (!entity.getEmail().equals(entityRequest.getEmail())) {
+			validaEmailDisponivel(entityRequest.getEmail());
 
-			if (!entity.getEmail().equals(entityRequest.getEmail())) {
-				validaEmailDisponivel(entityRequest.getEmail());
-
-				entity.setEmail(entityRequest.getEmail());
-			}
-
-			Perfil perfil = perfilService.consultaPorId(entityRequest.getIdPerfil());
-
-			if (!perfil.getTipo().equals(TiposUsuariosEnum.OPERADOR.getValor())) {
-				throw new DadosInvalidosException("Perfil is not compatible.");
-			}
-
-			entity.setPerfil(perfil);
-
-			super.save(entity);
-
-			return entity;
-		} else {
-			throw new DadosInvalidosException("User is not a Operator.");
+			entity.setEmail(entityRequest.getEmail());
 		}
+
+		Perfil perfil = perfilService.consultaPorId(entityRequest.getIdPerfil());
+
+		if (!perfil.getTipo().equals(TiposUsuariosEnum.OPERADOR.getValor())) {
+			throw new DadosInvalidosException("Perfil is not compatible.");
+		}
+
+		entity.setPerfil(perfil);
+
+		super.save(entity);
+
+		return entity;
 	}
 
 	public UsuarioCliente cadastraCliente(UsuarioClienteCadastroRequest entityRequest) {
@@ -250,40 +247,20 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 	}
 
 	public UsuarioCliente atualizaCliente(UsuarioClienteUpdateRequest entityRequest) {
-		Usuario usuario = super.consultaPorId(entityRequest.getIdUsuario());
+		UsuarioCliente entity = clienteService.consultaPorId(entityRequest.getIdUsuario());
 
-		if (usuario instanceof UsuarioCliente) {
-			UsuarioCliente entity = (UsuarioCliente) usuario;
+		entity.setNome(entityRequest.getNome());
+		entity.setDocumento(entityRequest.getDocumento());
 
-			entity.setNome(entityRequest.getNome());
-			entity.setDocumento(entityRequest.getDocumento());
+		if (!entity.getEmail().equals(entityRequest.getEmail())) {
+			validaEmailDisponivel(entityRequest.getEmail());
 
-			if (!entity.getEmail().equals(entityRequest.getEmail())) {
-				validaEmailDisponivel(entityRequest.getEmail());
-
-				entity.setEmail(entityRequest.getEmail());
-			}
-
-			super.save(entity);
-
-			return entity;
-		} else {
-			throw new DadosInvalidosException("User is not a Client.");
+			entity.setEmail(entityRequest.getEmail());
 		}
-	}
 
-	public UsuarioCliente consultaClientePorId(Integer id) {
-		Usuario entity = consultaPorId(id);
+		super.save(entity);
 
-		if (entity instanceof UsuarioCliente) {
-
-			return (UsuarioCliente) entity;
-
-		} else {
-
-			throw new DadosInvalidosException("User is not a Client.");
-
-		}
+		return entity;
 	}
 
 	public Usuario consultaPorEmail(String email) {
@@ -296,22 +273,6 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		}
 
 		return optionalUsuario.get();
-	}
-
-	public Usuario cadastraPerfilPorId(Integer idUsuario, Integer idPerfil) {
-		if (null == idPerfil) {
-			throw new EmptyPerfilException(MessageTemplate.getCodigo(getMessage().getEmptyGroupUser(), null));
-		}
-
-		Usuario entity = super.consultaPorId(idUsuario);
-
-		Perfil perfil = perfilService.consultaPorId(idPerfil);
-
-		entity.setPerfil(perfil);
-
-		super.save(entity);
-
-		return entity;
 	}
 
 	private void validaEmailDisponivel(String email) {

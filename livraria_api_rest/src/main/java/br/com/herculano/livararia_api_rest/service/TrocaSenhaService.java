@@ -7,7 +7,6 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +29,7 @@ public class TrocaSenhaService extends ServiceTemplate<TrocaSenha, TrocaSenhaRep
 	private UsuarioService usuarioService;
 	
 	@Autowired
-	public TrocaSenhaService(TrocaSenhaRepository repository, @Qualifier("TrocaSenhaMessage") TrocaSenhaMessage message) {
+	public TrocaSenhaService(TrocaSenhaRepository repository, TrocaSenhaMessage message) {
 		super(repository, message);
 	}
 

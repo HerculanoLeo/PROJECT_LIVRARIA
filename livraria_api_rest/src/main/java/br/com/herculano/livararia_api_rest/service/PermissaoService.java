@@ -6,7 +6,6 @@ import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import br.com.herculano.livararia_api_rest.constants.system_message.PermissaoMessage;
@@ -19,7 +18,7 @@ import br.com.herculano.utilities.templates.ServiceTemplate;
 public class PermissaoService extends ServiceTemplate<Permissao, PermissaoRepository, PermissaoMessage>{
 
 	@Autowired
-	public PermissaoService(PermissaoRepository repository, @Qualifier("PermissaoMessage") PermissaoMessage message) {
+	public PermissaoService(PermissaoRepository repository, PermissaoMessage message) {
 		super(repository, message);
 	}
 

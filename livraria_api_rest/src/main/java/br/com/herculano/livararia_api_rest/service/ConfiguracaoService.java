@@ -5,7 +5,6 @@ import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import br.com.herculano.livararia_api_rest.entity.Configuracao;
@@ -17,7 +16,7 @@ import br.com.herculano.utilities.templates.ServiceTemplate;
 public class ConfiguracaoService extends ServiceTemplate<Configuracao, ConfiguracaoRepository, CommonMessageTemplate> {
 
 	@Autowired
-	public ConfiguracaoService(ConfiguracaoRepository repository, @Qualifier("CommonMessageTemplate") CommonMessageTemplate message) {
+	public ConfiguracaoService(ConfiguracaoRepository repository, CommonMessageTemplate message) {
 		super(repository, message);
 	}
 

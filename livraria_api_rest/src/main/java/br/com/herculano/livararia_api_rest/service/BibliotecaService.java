@@ -3,42 +3,40 @@ package br.com.herculano.livararia_api_rest.service;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import br.com.herculano.livararia_api_rest.constants.TiposUsuariosEnum;
 import br.com.herculano.livararia_api_rest.constants.system_message.BibliotecaMessage;
 import br.com.herculano.livararia_api_rest.controller.request.AdministradorCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.AdministradorUpdateRequest;
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaComAdministradorCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaConsultaRequest;
-import br.com.herculano.livararia_api_rest.controller.request.OperadorCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.OperadorCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.OperadorConsultaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.OperadorUpdateRequest;
 import br.com.herculano.livararia_api_rest.entity.Biblioteca;
-import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.entity.UsuarioAdministrador;
 import br.com.herculano.livararia_api_rest.entity.UsuarioOperador;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.BibliotecaRepository;
-import br.com.herculano.livararia_api_rest.repository.jpa_repository.UsuarioOperadorRepository;
-import br.com.herculano.utilities.exceptions.DadosInvalidosException;
 import br.com.herculano.utilities.templates.ServiceTemplate;
 
 @Service
 public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRepository, BibliotecaMessage> {
 
 	@Autowired
-	private UsuarioOperadorRepository operadorRepository;
+	private UsuarioOperadorService operadorService;
 
 	@Autowired
 	private UsuarioService usuarioService;
 
 	@Autowired
-	public BibliotecaService(BibliotecaRepository repository, @Qualifier("BibliotecaMessage") BibliotecaMessage message) {
+	private UsuarioAdministradorService administradorService;
+
+	@Autowired
+	public BibliotecaService(BibliotecaRepository repository, BibliotecaMessage message) {
 		super(repository, message);
 	}
 
@@ -47,19 +45,13 @@ public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRep
 	}
 
 	public Biblioteca cadastra(@Valid BibliotecaCadastroRequest entityRequest) {
-		Usuario usuario = usuarioService.consultaPorId(entityRequest.getIdAdministrador());
+		UsuarioAdministrador usuario = administradorService.consultaPorId(entityRequest.getIdAdministrador());
 
-		if (usuario instanceof UsuarioAdministrador) {
+		Biblioteca entity = new Biblioteca(entityRequest, (UsuarioAdministrador) usuario);
 
-			Biblioteca entity = new Biblioteca(entityRequest, (UsuarioAdministrador) usuario);
+		super.save(entity);
 
-			super.save(entity);
-
-			return entity;
-		} else {
-			throw new DadosInvalidosException(BibliotecaMessage.getCodigo(message.getNotAllowedUserType(),
-					new Object[] { TiposUsuariosEnum.getTipoUsuario(usuario.getTipoUsuario()).getDescricao() }));
-		}
+		return entity;
 	}
 
 	public Biblioteca cadastraComAdministrador(BibliotecaComAdministradorCadastroRequest entityRequest) {
@@ -81,51 +73,51 @@ public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRep
 
 		return entity;
 	}
-	
+
 	public UsuarioAdministrador cadastroAdministrador(@Valid AdministradorCadastroRequest entityRequest) {
 		UsuarioAdministrador entity = usuarioService.cadastroAdministrador(entityRequest);
-		
+
 		return entity;
 	}
-	
+
 	public UsuarioAdministrador atualizaAdministrador(@Valid AdministradorUpdateRequest entityRequest) {
 		UsuarioAdministrador entity = usuarioService.atualizarAdministrador(entityRequest);
-		
+
 		return entity;
 	}
 
 	public Page<UsuarioOperador> consultaOperadores(OperadorConsultaRequest entityRequest, Pageable page) {
-		Page<UsuarioOperador> entities = operadorRepository.consulta(entityRequest, page);
+		Page<UsuarioOperador> entities = operadorService.consulta(entityRequest, page);
 
 		return entities;
 	}
-	
+
 	public UsuarioOperador cadastraOperador(OperadorCadastroRequest entityRequest) {
 		Biblioteca biblioteca = consultaPorId(entityRequest.getIdBiblioteca());
-		
+
 		entityRequest.setBiblioteca(biblioteca);
-		
+
 		UsuarioOperador entity = usuarioService.cadastraOperador(entityRequest);
-		
+
 		return entity;
 	}
 
 	public UsuarioOperador atualizaOperador(@Valid OperadorUpdateRequest entityRequest) {
 		UsuarioOperador entity = usuarioService.atualizarOperador(entityRequest);
-		
+
 		return entity;
 	}
 
-	// TODO consulta por id
 	public UsuarioAdministrador consultaAdministradorPorId(Integer idAdministrador) {
+		UsuarioAdministrador entity = administradorService.consultaPorId(idAdministrador);
 
-		return null;
+		return entity;
 	}
 
-	// TODO consulta por id
 	public UsuarioOperador consultaOperadorPorId(Integer idOperador) {
+		UsuarioOperador entity = operadorService.consultaPorId(idOperador);
 		
-		return null;
+		return entity;
 	}
 
 }

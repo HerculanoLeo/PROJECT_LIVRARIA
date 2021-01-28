@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,7 @@ public class PerfilService extends ServiceTemplate<Perfil, PerfilRepository, Per
 	private PermissaoService permissaoService;
 
 	@Autowired
-	public PerfilService(PerfilRepository repository, @Qualifier("PerfilMessage") PerfilMessage message) {
+	public PerfilService(PerfilRepository repository, PerfilMessage message) {
 		super(repository, message);
 	}
 

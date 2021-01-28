@@ -1,7 +1,6 @@
 package br.com.herculano.livararia_api_rest.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -17,7 +16,7 @@ import br.com.herculano.utilities.templates.ServiceTemplate;
 public class AutorService extends ServiceTemplate<Autor, AutorRepository, AutorMessage> {
 
 	@Autowired
-	public AutorService(AutorRepository repository, @Qualifier("AutorMessage") AutorMessage message) {
+	public AutorService(AutorRepository repository, AutorMessage message) {
 		super(repository, message);
 	}
 	

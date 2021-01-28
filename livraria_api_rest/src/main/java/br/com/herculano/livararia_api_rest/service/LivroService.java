@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +24,7 @@ public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroM
 	
 
 	@Autowired
-	public LivroService(LivroRepository repository, @Qualifier("LivroMessage") LivroMessage message) {
+	public LivroService(LivroRepository repository, LivroMessage message) {
 		super(repository, message);
 	}
 

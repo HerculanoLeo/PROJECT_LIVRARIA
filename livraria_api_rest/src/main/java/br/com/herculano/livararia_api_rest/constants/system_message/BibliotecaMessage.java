@@ -7,7 +7,7 @@ import br.com.herculano.utilities.templates.MessageTemplate;
 @Component(value = "BibliotecaMessage")
 public class BibliotecaMessage extends MessageTemplate{
 
-	private final String NOT_FOUND = "autor.notfound";
+	private final String NOT_FOUND = "biblioteca.notfound";
 
 	private final String NOT_ALLOWED_USER_TYPE = "biblioteca.not_allowed_user_type";
 	
