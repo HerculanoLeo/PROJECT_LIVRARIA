@@ -20,6 +20,8 @@ public class AdministradorCadastroRequest {
 
 	private String confirmeSenha;
 	
+	private String idioma;
+	
 	private Perfil perfil;
 	
 	public AdministradorCadastroRequest(BibliotecaComAdministradorCadastroRequest entityRequest) {
@@ -28,6 +30,7 @@ public class AdministradorCadastroRequest {
 		this.email = entityRequest.getEmail();
 		this.senha = entityRequest.getSenha();
 		this.confirmeSenha = entityRequest.getRepetirSenha();
+		this.idioma = entityRequest.getIdioma();
 	}
 	
 }

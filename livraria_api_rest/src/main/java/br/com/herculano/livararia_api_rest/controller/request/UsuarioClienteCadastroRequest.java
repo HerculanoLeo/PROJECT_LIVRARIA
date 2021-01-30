@@ -24,6 +24,9 @@ public class UsuarioClienteCadastroRequest {
 	
 	@NotBlank
 	private String confirmeSenha;
+
+	@NotBlank
+	private String idioma;
 	
 	@JsonIgnore
 	private String tipo;
@@ -31,11 +34,12 @@ public class UsuarioClienteCadastroRequest {
 	@JsonIgnore
 	private Perfil perfil;
 	
-	public UsuarioClienteCadastroRequest(String nome, String email, String senha, String confirmeSenha) {
+	public UsuarioClienteCadastroRequest(String nome, String email, String senha, String confirmeSenha, String idioma) {
 		this.nome = nome;
 		this.email = email;
 		this.senha = senha;
 		this.confirmeSenha = confirmeSenha;
+		this.idioma = idioma;
 	}
 	
 }

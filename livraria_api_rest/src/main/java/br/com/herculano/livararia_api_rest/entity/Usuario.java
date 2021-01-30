@@ -52,15 +52,19 @@ public class Usuario implements UserDetails {
 	@Column(name = "tp_usuario", nullable = false)
 	private String tipoUsuario;
 
+	@Column(name = "idioma", nullable = false)
+	private String idioma;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_perfil", referencedColumnName = "id", nullable = false)
 	private Perfil perfil;
 
-	public Usuario(String nome, String email, String senha, String tipoUsuario, Perfil perfil) {
+	public Usuario(String nome, String email, String senha, String tipoUsuario, String idioma, Perfil perfil) {
 		this.nome = nome;
 		this.email = email;
 		this.senha = this.encoder.encode(senha);
 		this.tipoUsuario = tipoUsuario;
+		this.idioma = idioma;
 		this.perfil = perfil;
 	}
 	
@@ -69,6 +73,7 @@ public class Usuario implements UserDetails {
 		this.email = entityRequest.getEmail();
 		this.senha = this.encoder.encode(entityRequest.getSenha());
 		this.tipoUsuario = TiposUsuariosEnum.ROOT.getValor();
+		this.idioma = entityRequest.getIdioma();
 		this.perfil = entityRequest.getPerfil();
 	}
 	

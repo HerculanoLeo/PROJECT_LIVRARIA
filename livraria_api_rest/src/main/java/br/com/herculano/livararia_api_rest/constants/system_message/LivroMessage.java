@@ -7,7 +7,7 @@ import br.com.herculano.utilities.templates.MessageTemplate;
 @Component(value = "LivroMessage")
 public class LivroMessage extends MessageTemplate{
 
-	private final String NOT_FOUND = "livro.notfound";
+	private final String NOT_FOUND = "book.notfound";
 	
 	public String getNotFound() {
 		return this.NOT_FOUND;

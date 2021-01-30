@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.UsuarioRepository;
 import br.com.herculano.livararia_api_rest.service.PermissaoService;
+import br.com.herculano.utilities.templates.CommonMessageTemplate;
+import br.com.herculano.utilities.templates.MessageTemplate;
 
 @Service
 public class UsuarioDetailsService implements UserDetailsService {
@@ -19,13 +21,18 @@ public class UsuarioDetailsService implements UserDetailsService {
 	
 	@Autowired
 	private PermissaoService permissaoService;
+	
+	@Autowired
+	private CommonMessageTemplate message;
 
 	@Override
 	public Usuario loadUserByUsername(String username) throws UsernameNotFoundException {
 		Optional<Usuario> optionalUsuario = usuarioRepository.findByEmail(username);
 		
 		if (!optionalUsuario.isPresent()) {
-			throw new UsernameNotFoundException("User " + username + " not found.");
+			Object[] args = new Object[] { username };
+			
+			throw new UsernameNotFoundException(MessageTemplate.getCodigo(message.getUserNotFound(), args));
 		}
 		
 		Usuario entity = optionalUsuario.get();

@@ -69,7 +69,7 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 
 		if (!optional.isPresent()) {
 			Object[] args = new Object[] { username };
-			
+
 			throw new UsernameNotFoundException(MessageTemplate.getCodigo(message.getAuthenticationNotFound(), args));
 		}
 
@@ -89,7 +89,9 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		Perfil perfil = perfilService.consultaPorId(entityRequest.getIdPerfil());
 
 		if (!perfil.getTipo().equals(TiposUsuariosEnum.ROOT.getValor())) {
-			throw new DadosInvalidosException("Profile is not compatible for User Type.");
+			Object[] args = new Object[] { TiposUsuariosEnum.ROOT.getValor() };
+
+			throw new DadosInvalidosException(MessageTemplate.getCodigo(message.getProfileNotCompatible(), args));
 		}
 
 		String password = RandomStringUtils.randomAlphanumeric(8);
@@ -118,13 +120,16 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		}
 
 		if (null != entityRequest.getIdPerfil() && !entity.getPerfil().getId().equals(entityRequest.getIdPerfil())) {
+			
 			Perfil perfil = perfilService.consultaPorId(entityRequest.getIdPerfil());
 
-			if (perfil.getTipo().equals(entity.getTipoUsuario())) {
-				entity.setPerfil(perfil);
-			} else {
-				throw new DadosInvalidosException("Profile is not compatible.");
+			if (!perfil.getTipo().equals(TiposUsuariosEnum.ADMINISTRADOR.getValor())) {
+				Object[] args = new Object[] { TiposUsuariosEnum.ADMINISTRADOR.getValor() };
+
+				throw new DadosInvalidosException(MessageTemplate.getCodigo(message.getProfileNotCompatible(), args));
 			}
+
+			entity.setPerfil(perfil);
 		}
 
 		super.save(entity);
@@ -142,7 +147,9 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 			Perfil perfil = perfilService.consultaPorId(Integer.valueOf(configuracaoPerfilPadrao.getValor()));
 
 			if (!perfil.getTipo().equals(TiposUsuariosEnum.ADMINISTRADOR.getValor())) {
-				throw new DadosInvalidosException("Perfil is not compatible.");
+				Object[] args = new Object[] { TiposUsuariosEnum.ADMINISTRADOR.getValor() };
+
+				throw new DadosInvalidosException(MessageTemplate.getCodigo(message.getProfileNotCompatible(), args));
 			}
 
 			entityRequest.setPerfil(perfil);
@@ -180,7 +187,9 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		Perfil perfil = perfilService.consultaPorId(entityRequest.getIdPerfil());
 
 		if (!perfil.getTipo().equals(TiposUsuariosEnum.OPERADOR.getValor())) {
-			throw new DadosInvalidosException("Perfil is not compatible.");
+			Object[] args = new Object[] { TiposUsuariosEnum.OPERADOR.getValor() };
+
+			throw new DadosInvalidosException(MessageTemplate.getCodigo(message.getProfileNotCompatible(), args));
 		}
 
 		String password = RandomStringUtils.randomAlphanumeric(8);
@@ -207,13 +216,18 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 			entity.setEmail(entityRequest.getEmail());
 		}
 
-		Perfil perfil = perfilService.consultaPorId(entityRequest.getIdPerfil());
+		if (null != entityRequest.getIdPerfil() && !entity.getPerfil().getId().equals(entityRequest.getIdPerfil())) {
+			
+			Perfil perfil = perfilService.consultaPorId(entityRequest.getIdPerfil());
 
-		if (!perfil.getTipo().equals(TiposUsuariosEnum.OPERADOR.getValor())) {
-			throw new DadosInvalidosException("Perfil is not compatible.");
+			if (!perfil.getTipo().equals(TiposUsuariosEnum.OPERADOR.getValor())) {
+				Object[] args = new Object[] { TiposUsuariosEnum.OPERADOR.getValor() };
+
+				throw new DadosInvalidosException(MessageTemplate.getCodigo(message.getProfileNotCompatible(), args));
+			}
+
+			entity.setPerfil(perfil);
 		}
-
-		entity.setPerfil(perfil);
 
 		super.save(entity);
 
@@ -230,7 +244,9 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 			Perfil perfil = perfilService.consultaPorId(Integer.valueOf(configuracaoPerfilPadrao.getValor()));
 
 			if (!perfil.getTipo().equals(TiposUsuariosEnum.CLIENTE.getValor())) {
-				throw new DadosInvalidosException("Perfil is not compatible.");
+				Object[] args = new Object[] { TiposUsuariosEnum.CLIENTE.getValor() };
+
+				throw new DadosInvalidosException(MessageTemplate.getCodigo(message.getProfileNotCompatible(), args));
 			}
 
 			entityRequest.setPerfil(perfil);
@@ -279,7 +295,7 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		Optional<Usuario> optional = getRepository().findByEmail(email);
 
 		if (optional.isPresent()) {
-			throw new DadosInvalidosException("Email aready exist.");
+			throw new DadosInvalidosException(MessageTemplate.getCodigo(message.getEmailAlreadyExist(), null));
 		}
 	}
 

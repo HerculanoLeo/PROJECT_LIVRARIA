@@ -31,4 +31,8 @@ public class BibliotecaComAdministradorCadastroRequest {
 	@NotBlank
 	private String nomeBiblioteca;
 	
+	@NotBlank
+	private String idioma;
+	
+	
 }

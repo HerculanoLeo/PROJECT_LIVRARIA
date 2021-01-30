@@ -27,6 +27,9 @@ public class OperadorCadastroRequest {
 
 	@NotBlank
 	private String documento;
+
+	@NotBlank
+	private String idioma;
 	
 	@NotNull
 	private Integer idPerfil;

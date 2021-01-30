@@ -23,13 +23,13 @@ public class UsuarioCliente extends Usuario {
 	@Column(name = "documento", nullable = false)
 	private String documento;
 
-	public UsuarioCliente(String nome, String email, String password, String valor, Perfil perfil, String documento) {
-		super(nome, email, password, valor, perfil);
+	public UsuarioCliente(String nome, String email, String password, String valor, Perfil perfil, String documento, String idioma) {
+		super(nome, email, password, valor, idioma, perfil);
 		this.documento = documento;
 	}
 
 	public UsuarioCliente(UsuarioClienteCadastroRequest entityRequest) {
-		super(entityRequest.getNome(), entityRequest.getEmail(), entityRequest.getSenha(), entityRequest.getTipo(), entityRequest.getPerfil());
+		super(entityRequest.getNome(), entityRequest.getEmail(), entityRequest.getSenha(), entityRequest.getTipo(), entityRequest.getIdioma(), entityRequest.getPerfil());
 		this.documento = entityRequest.getDocumento();
 	}
 

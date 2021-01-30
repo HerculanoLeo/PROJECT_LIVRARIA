@@ -7,12 +7,12 @@ import br.com.herculano.utilities.templates.MessageTemplate;
 @Component(value = "TrocaSenhaMessage")
 public class TrocaSenhaMessage extends MessageTemplate {
 
-	private final String NOT_FOUND = "troca_senha.notfound";
-	private final String PASSWORD_NOT_MATCH = "usuario.password_not_match";
-	private final String PASSWORD_EMPTY = "troca_senha.troca_password_empty";
-	private final String CODE_NOT_VALID = "troca_senha.code_not_valid";
-	private final String CODE_EXPIRED = "troca_senha.code_expired";
-	private final String WRONG_PASSWORD = "troca_senha.wrong_password";
+	private final String NOT_FOUND = "change_password.notfound";
+	private final String PASSWORD_NOT_MATCH = "user.password_not_match";
+	private final String PASSWORD_EMPTY = "change_password.troca_password_empty";
+	private final String CODE_NOT_VALID = "change_password.code_not_valid";
+	private final String CODE_EXPIRED = "change_password.code_expired";
+	private final String WRONG_PASSWORD = "change_password.wrong_password";
 
 	public String getNotFound() {
 		return this.NOT_FOUND;

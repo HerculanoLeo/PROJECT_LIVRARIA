@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
+import br.com.herculano.livararia_api_rest.constants.CodigoRecuperaSenhaStatusEnum;
 import br.com.herculano.livararia_api_rest.constants.system_message.TrocaSenhaMessage;
 import br.com.herculano.livararia_api_rest.controller.request.TrocaSenhaComCodigoRequest;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioTrocaSenhaRequest;
@@ -87,7 +88,7 @@ public class TrocaSenhaService extends ServiceTemplate<TrocaSenha, TrocaSenhaRep
 		entity.setDataValidade(dataValidade);
 
 		entity.setCode(geraCodigo());
-		entity.setStatus("A");
+		entity.setStatus(CodigoRecuperaSenhaStatusEnum.ATIVO.getValor());
 
 		invalidaCodigosAnteriores(usuario.getEmail());
 
@@ -102,7 +103,7 @@ public class TrocaSenhaService extends ServiceTemplate<TrocaSenha, TrocaSenhaRep
 
 		filterEntity.setEmail(email);
 		filterEntity.setCode(codigo);
-		filterEntity.setStatus("A");
+		filterEntity.setStatus(CodigoRecuperaSenhaStatusEnum.ATIVO.getValor());
 
 		List<TrocaSenha> entities = getRepository().findAll(Example.of(filterEntity));
 
@@ -143,6 +144,7 @@ public class TrocaSenhaService extends ServiceTemplate<TrocaSenha, TrocaSenhaRep
 		}
 	}
 
+	//TODO fazer notificacao de emails
 	private void enviaConfirmacaoTrocaSenhaEmail() {
 		System.out.println("Senha trocada com sucesso.");
 

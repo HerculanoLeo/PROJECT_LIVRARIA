@@ -31,7 +31,7 @@ public class UsuarioOperador extends Usuario {
 	private String documento;
 	
 	public UsuarioOperador(OperadorCadastroRequest entityRequest) {
-		super(entityRequest.getNome(), entityRequest.getEmail(), entityRequest.getSenha(), TiposUsuariosEnum.OPERADOR.getValor() ,entityRequest.getPerfil());
+		super(entityRequest.getNome(), entityRequest.getEmail(), entityRequest.getSenha(), TiposUsuariosEnum.OPERADOR.getValor(), entityRequest.getIdioma(), entityRequest.getPerfil());
 		
 		this.documento = entityRequest.getDocumento();
 		this.biblioteca = entityRequest.getBiblioteca();

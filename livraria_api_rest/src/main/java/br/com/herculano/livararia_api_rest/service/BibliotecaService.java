@@ -47,7 +47,7 @@ public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRep
 	public Biblioteca cadastra(@Valid BibliotecaCadastroRequest entityRequest) {
 		UsuarioAdministrador usuario = administradorService.consultaPorId(entityRequest.getIdAdministrador());
 
-		Biblioteca entity = new Biblioteca(entityRequest, (UsuarioAdministrador) usuario);
+		Biblioteca entity = new Biblioteca(entityRequest, usuario);
 
 		super.save(entity);
 

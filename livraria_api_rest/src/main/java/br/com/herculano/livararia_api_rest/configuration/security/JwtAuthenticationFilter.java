@@ -4,6 +4,7 @@ import static br.com.herculano.livararia_api_rest.auth.token.Constants.HEADER_ST
 import static br.com.herculano.livararia_api_rest.auth.token.Constants.TOKEN_PREFIX;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -14,16 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.LocaleResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.service.UsuarioService;
 import br.com.herculano.utilities.api_error.ApiError;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -37,6 +39,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Autowired
 	private TokenProvider jwtTokenUtil;
+	
+	@Autowired
+	private LocaleResolver localeResolver;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -53,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 				if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-					UserDetails userDetails = usuarioService.loadUserByUsername(username);
+					Usuario userDetails = usuarioService.loadUserByUsername(username);
 
 					if (jwtTokenUtil.validateToken(authToken, userDetails)) {
 						UsernamePasswordAuthenticationToken authentication = jwtTokenUtil.getAuthentication(authToken,
@@ -64,6 +69,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 						logger.info("authenticated user " + username + ", setting security context");
 
 						SecurityContextHolder.getContext().setAuthentication(authentication);
+						
+						localeResolver.setLocale(req, res, new Locale(userDetails.getIdioma(), ""));
 					}
 				}
 				chain.doFilter(req, res);

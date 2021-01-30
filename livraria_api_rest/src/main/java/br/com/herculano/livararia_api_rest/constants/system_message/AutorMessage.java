@@ -7,7 +7,7 @@ import br.com.herculano.utilities.templates.MessageTemplate;
 @Component(value = "AutorMessage")
 public class AutorMessage extends MessageTemplate{
 
-	private final String NOT_FOUND = "biblioteca.notfound";
+	private final String NOT_FOUND = "author.notfound";
 	
 	@Override
 	public String getNotFound() {

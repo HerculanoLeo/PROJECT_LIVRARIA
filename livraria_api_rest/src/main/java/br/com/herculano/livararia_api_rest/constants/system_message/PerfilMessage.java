@@ -7,11 +7,11 @@ import br.com.herculano.utilities.templates.MessageTemplate;
 @Component(value = "PerfilMessage")
 public class PerfilMessage extends MessageTemplate{
 
-	private final String NOT_FOUND = "perfil.notfound";
+	private final String NOT_FOUND = "profile.notfound";
 	
-	private final String NOT_ALLOWED_TYPE_PROFILE = "perfil.not_allowed_type_profile";
+	private final String NOT_ALLOWED_TYPE_PROFILE = "profile.not_allowed_type_profile";
 
-	private final String NOT_ALLOWED_TYPE_PROFILE_TYPE_PERMISSION = "perfil.not_allowed_type_profile_type_permission";
+	private final String NOT_ALLOWED_TYPE_PROFILE_TYPE_PERMISSION = "profile.not_allowed_type_profile_type_permission";
 	
 	@Override
 	public String getNotFound() {

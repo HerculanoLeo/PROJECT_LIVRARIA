@@ -80,7 +80,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.POST, "/autor").hasRole("CADASTRAR_AUTOR")
 				.antMatchers(HttpMethod.GET, "/autor/*").hasRole("CONSULTA_AUTOR_POR_ID")
 				.antMatchers(HttpMethod.PUT, "/autor/*").hasRole("ATUALIZAR_AUTOR")
-				.antMatchers(HttpMethod.DELETE, "/autor/*").hasRole("DELETE_AUTOR").anyRequest().authenticated().and()
+				.antMatchers(HttpMethod.DELETE, "/autor/*").hasRole("DELETE_AUTOR")
+				.anyRequest().authenticated().and()
 				.csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);

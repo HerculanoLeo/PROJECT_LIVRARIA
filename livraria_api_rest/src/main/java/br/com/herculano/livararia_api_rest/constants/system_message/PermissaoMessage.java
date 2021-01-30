@@ -7,7 +7,7 @@ import br.com.herculano.utilities.templates.MessageTemplate;
 @Component(value = "PermissaoMessage")
 public class PermissaoMessage extends MessageTemplate{
 
-	private final String NOT_FOUND = "permissao.notfound";
+	private final String NOT_FOUND = "permission.notfound";
 	
 	public String getNotFound() {
 		return this.NOT_FOUND;
