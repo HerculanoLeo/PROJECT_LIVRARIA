@@ -16,12 +16,15 @@ public class LivroResponse {
 	private Long isbn;
 
 	private LocalDate dataLancamento;
+	
+	private BibliotecaResponse biblioteca;
 
 	public LivroResponse(Livro entity) {
 		this.id = entity.getId();
 		this.titulo = entity.getTitulo();
 		this.dataLancamento = entity.getDataLancamento();
 		this.isbn = entity.getISBN();
+		this.biblioteca = new BibliotecaResponse(entity.getBiblioteca());
 	}
 
 }

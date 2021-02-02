@@ -26,7 +26,7 @@ import br.com.herculano.livararia_api_rest.controller.request.OperadorCadastroRe
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaUpdateRequest;
 import br.com.herculano.livararia_api_rest.controller.request.OperadorConsultaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.OperadorUpdateRequest;
-import br.com.herculano.livararia_api_rest.controller.response.BibliotecaResponse;
+import br.com.herculano.livararia_api_rest.controller.response.BibliotecaComAdministradorResponse;
 import br.com.herculano.livararia_api_rest.controller.response.UsuarioAdministradorResponse;
 import br.com.herculano.livararia_api_rest.controller.response.UsuarioOperadorResponse;
 import br.com.herculano.livararia_api_rest.entity.Biblioteca;
@@ -46,36 +46,36 @@ public class BibliotecaController {
 	private ApplicationEventPublisher publisher;
 
 	@GetMapping
-	public ResponseEntity<Page<BibliotecaResponse>> consultaPorFiltro(BibliotecaConsultaRequest entityRequest, Pageable page) {
+	public ResponseEntity<Page<BibliotecaComAdministradorResponse>> consultaPorFiltro(BibliotecaConsultaRequest entityRequest, Pageable page) {
 		Page<Biblioteca> entities = service.consultaPorFiltro(entityRequest, page);
 
-		Page<BibliotecaResponse> response = entities.map(BibliotecaResponse::new);
+		Page<BibliotecaComAdministradorResponse> response = entities.map(BibliotecaComAdministradorResponse::new);
 
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@GetMapping("/{idBiblioteca}")
-	public ResponseEntity<BibliotecaResponse> consultaPorId(@PathVariable(name = "idBiblioteca") Integer idBiblioteca) {
+	public ResponseEntity<BibliotecaComAdministradorResponse> consultaPorId(@PathVariable(name = "idBiblioteca") Integer idBiblioteca) {
 		Biblioteca entity = service.consultaPorId(idBiblioteca);
 
-		return ResponseEntity.ok(new BibliotecaResponse(entity));
+		return ResponseEntity.ok(new BibliotecaComAdministradorResponse(entity));
 	}
 
 	@PostMapping
-	public ResponseEntity<BibliotecaResponse> cadastrarBibliotecaComAdministrador(
+	public ResponseEntity<BibliotecaComAdministradorResponse> cadastrarBibliotecaComAdministrador(
 			@RequestBody @Valid BibliotecaComAdministradorCadastroRequest entityRequest, HttpServletResponse response) {
 		Biblioteca entity = service.cadastraComAdministrador(entityRequest);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(new BibliotecaResponse(entity));
+		return ResponseEntity.status(HttpStatus.CREATED).body(new BibliotecaComAdministradorResponse(entity));
 	}
 
 	@PutMapping
-	public ResponseEntity<BibliotecaResponse> atualizaBiblioteca(@RequestBody @Valid BibliotecaUpdateRequest entityRequest) {
+	public ResponseEntity<BibliotecaComAdministradorResponse> atualizaBiblioteca(@RequestBody @Valid BibliotecaUpdateRequest entityRequest) {
 		Biblioteca entity = service.atualiza(entityRequest);
 
-		return ResponseEntity.ok(new BibliotecaResponse(entity));
+		return ResponseEntity.ok(new BibliotecaComAdministradorResponse(entity));
 	}
 
 	@GetMapping("/administrador/{idAdministrador}")
@@ -102,13 +102,13 @@ public class BibliotecaController {
 	}
 
 	@PostMapping("/administrador/biblioteca")
-	public ResponseEntity<BibliotecaResponse> adicionarBiblioteca(@RequestBody @Valid BibliotecaCadastroRequest entityRequest,
+	public ResponseEntity<BibliotecaComAdministradorResponse> adicionarBiblioteca(@RequestBody @Valid BibliotecaCadastroRequest entityRequest,
 			HttpServletResponse response) {
 		Biblioteca entity = service.cadastra(entityRequest);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(new BibliotecaResponse(entity));
+		return ResponseEntity.status(HttpStatus.CREATED).body(new BibliotecaComAdministradorResponse(entity));
 	}
 
 	@GetMapping("/operador")

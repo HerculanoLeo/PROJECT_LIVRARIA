@@ -3,24 +3,26 @@ package br.com.herculano.livararia_api_rest.controller.request;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import br.com.herculano.livararia_api_rest.entity.Biblioteca;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class LivroCadastroRequest {
+@NoArgsConstructor
+public class LivroUpdateRequest {
+
+	@NotNull
+	private Integer id;
 	
 	@NotNull
 	private Integer idBiblioteca;
-	
-	@NotNull
-	@NotEmpty
+
+	@NotBlank
 	private String titulo;
 	
 	@NotNull
@@ -33,7 +35,4 @@ public class LivroCadastroRequest {
 	
 	private List<Integer> idAutores;
 	
-	@JsonIgnore
-	private Biblioteca biblioteca;
-
 }

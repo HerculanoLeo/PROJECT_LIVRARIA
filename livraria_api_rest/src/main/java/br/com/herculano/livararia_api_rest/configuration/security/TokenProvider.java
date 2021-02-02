@@ -1,9 +1,10 @@
 package br.com.herculano.livararia_api_rest.configuration.security;
 
-import static br.com.herculano.livararia_api_rest.auth.token.Constants.SIGNING_KEY;
 import static br.com.herculano.livararia_api_rest.auth.token.Constants.AUTHORITIES_KEY;
+import static br.com.herculano.livararia_api_rest.auth.token.Constants.SIGNING_KEY;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -51,9 +52,9 @@ public class TokenProvider implements Serializable {
 	}
 
 	public String generateToken(Authentication authentication, Date expireToken) {
-		final String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-				.collect(Collectors.joining(","));
-		return Jwts.builder().setSubject(authentication.getName()).claim(AUTHORITIES_KEY, authorities)
+//		final String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+//				.collect(Collectors.joining(","));
+		return Jwts.builder().setSubject(authentication.getName()).claim(AUTHORITIES_KEY, new ArrayList<>())
 				.signWith(SignatureAlgorithm.HS512, SIGNING_KEY).setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(expireToken).compact();
 	}

@@ -120,4 +120,8 @@ public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRep
 		return entity;
 	}
 
+	public Biblioteca consultaPorIdUsuario(Integer id) {
+		return getRepository().consultaPorIdUsuario(id);
+	}
+
 }

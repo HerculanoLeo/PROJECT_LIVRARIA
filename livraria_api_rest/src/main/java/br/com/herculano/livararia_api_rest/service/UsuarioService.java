@@ -57,6 +57,9 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 
 	@Autowired
 	private UsuarioClienteService clienteService;
+	
+	@Autowired
+	private BibliotecaService bibliotecaService;
 
 	@Autowired
 	public UsuarioService(UsuarioRepository repository, UsuarioMessage message) {
@@ -75,6 +78,10 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 
 		Usuario entity = optional.get();
 		entity.setPermissoes(permissaoService.consultaPorIdPerfil(entity.getPerfil().getId()));
+		
+		if(entity.isBiblioteca()) {
+			entity.setBiblioteca(bibliotecaService.consultaPorIdUsuario(entity.getId()));
+		}
 
 		return entity;
 	}

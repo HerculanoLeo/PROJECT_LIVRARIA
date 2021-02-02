@@ -2,18 +2,21 @@ package br.com.herculano.livararia_api_rest.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import br.com.herculano.livararia_api_rest.constants.system_message.AutorMessage;
 import br.com.herculano.livararia_api_rest.constants.system_message.LivroMessage;
 import br.com.herculano.livararia_api_rest.controller.request.LivroCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.response.LivroResponse;
+import br.com.herculano.livararia_api_rest.controller.request.LivroUpdateRequest;
 import br.com.herculano.livararia_api_rest.entity.Autor;
 import br.com.herculano.livararia_api_rest.entity.Livro;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.LivroRepository;
+import br.com.herculano.utilities.exceptions.DadosInvalidosException;
+import br.com.herculano.utilities.templates.MessageTemplate;
 import br.com.herculano.utilities.templates.ServiceTemplate;
 
 @Service
@@ -21,19 +24,26 @@ public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroM
 
 	@Autowired
 	private AutorService autorService;
-	
+
+	@Autowired
+	private BibliotecaService bibliotecaService;
+
+	@Autowired
+	private AutorMessage autorMessage;
 
 	@Autowired
 	public LivroService(LivroRepository repository, LivroMessage message) {
 		super(repository, message);
 	}
 
-	public Livro cadastra(LivroCadastroRequest request) {
+	public Livro cadastra(LivroCadastroRequest entityRequest) {
 		List<Autor> autores = new ArrayList<Autor>();
 
-		validaLivro(request, autores);
+		validaAutores(entityRequest, autores);
 
-		Livro entity = new Livro(request);
+		entityRequest.setBiblioteca(bibliotecaService.consultaPorId(entityRequest.getIdBiblioteca()));
+
+		Livro entity = new Livro(entityRequest);
 
 		if (!autores.isEmpty()) {
 			entity.setAutores(autores);
@@ -44,19 +54,24 @@ public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroM
 		return entity;
 	}
 
-	public Livro atualizar(Integer idLivro, LivroCadastroRequest request) {
-		Livro entity = super.consultaPorId(idLivro);
+	public Livro atualizar(LivroUpdateRequest entityRequest) {
+		Livro entity = consultaPorId(entityRequest.getId());
+
+		if (!entity.getBiblioteca().getId().equals(entityRequest.getIdBiblioteca())) {
+			throw new DadosInvalidosException(MessageTemplate.getCodigo(message.getBookNotBelongLibrary(), null));
+		}
 
 		List<Autor> autores = new ArrayList<Autor>();
-		validaLivro(request, autores);
+
+		validaAutores(entityRequest, autores);
 
 		if (!autores.isEmpty()) {
 			entity.setAutores(autores);
 		}
 
-		entity.setISBN(request.getIsbn());
-		entity.setTitulo(request.getTitulo());
-		entity.setDataLancamento(request.getDataLancamento());
+		entity.setISBN(entityRequest.getIsbn());
+		entity.setTitulo(entityRequest.getTitulo());
+		entity.setDataLancamento(entityRequest.getDataLancamento());
 
 		super.save(entity);
 
@@ -65,48 +80,36 @@ public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroM
 
 	public void delete(Integer id) {
 		Livro entity = super.consultaPorId(id);
-		
+
 		super.delete(entity);
 	}
 
-	public List<Livro> consulta() {
-		return this.getRepository().findAll();
+	public Page<Autor> consultaPorIdLivro(Integer idLivro, Pageable page) {
+		return autorService.consultaPorIdLivro(idLivro, page);
 	}
 
-	public List<Livro> consultaPorIdAutor(Integer idAutor) {
-		return getRepository().consultaPorIdAutor(idAutor);
-	}
-
-	public List<LivroResponse> converteListaDTO(List<Livro> entities) {
-		return entities.stream().map(LivroResponse::new).collect(Collectors.toList());
-	}
-
-	public Page<LivroResponse> convertePageListaResponse(Page<Livro> entities) {
-		return entities.map(LivroResponse::new);
-	}
-
-	public Livro adiconaAutorPorId(Integer idLivro, Integer idAutor) {
-		Livro entity = super.consultaPorId(idLivro);
-
-		Autor autor = autorService.consultaPorId(idAutor);
-		
-		entity.getAutores().add(autor);
-
-		save(entity);
-
-		return entity;
-	}
-	
 	public void deleteAutorPorId(Integer idLivro, Integer idAutor) {
 		Livro entity = super.consultaPorId(idLivro);
-		
+
 		this.getRepository().removeAutorPorId(entity.getId(), idAutor);
 	}
 
-	private void validaLivro(LivroCadastroRequest request, List<Autor> autores) {
-		if (null != request.getIdsAutor() && !request.getIdsAutor().isEmpty()) {
-			for (Integer id : request.getIdsAutor()) {
+	private void validaAutores(LivroCadastroRequest request, List<Autor> autores) {
+		validaAutores(request.getIdAutores(), autores, request.getIdBiblioteca());
+	}
+
+	private void validaAutores(LivroUpdateRequest request, List<Autor> autores) {
+		validaAutores(request.getIdAutores(), autores, request.getIdBiblioteca());
+	}
+
+	private void validaAutores(List<Integer> idsAutor, List<Autor> autores, Integer idBiblioteca) {
+		if (null != idsAutor && !idsAutor.isEmpty()) {
+			for (Integer id : idsAutor) {
 				Autor entity = autorService.consultaPorId(id);
+
+				if (!idBiblioteca.equals(entity.getBiblioteca().getId())) {
+					throw new DadosInvalidosException(MessageTemplate.getCodigo(autorMessage.getAuthorNotBelongLibrary(), null));
+				}
 
 				autores.add(entity);
 			}

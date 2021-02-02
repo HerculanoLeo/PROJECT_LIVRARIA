@@ -39,12 +39,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Autowired
 	private TokenProvider jwtTokenUtil;
-	
+
 	@Autowired
 	private LocaleResolver localeResolver;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
+	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
+			throws IOException, ServletException {
 		String header = req.getHeader(HEADER_STRING);
 		String username = null;
 		String authToken = null;
@@ -61,15 +62,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					Usuario userDetails = usuarioService.loadUserByUsername(username);
 
 					if (jwtTokenUtil.validateToken(authToken, userDetails)) {
-						UsernamePasswordAuthenticationToken authentication = jwtTokenUtil.getAuthentication(authToken,
-								SecurityContextHolder.getContext().getAuthentication(), userDetails);
+						UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+								userDetails, "", userDetails.getAuthorities());
 
 						authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
 
 						logger.info("authenticated user " + username + ", setting security context");
 
 						SecurityContextHolder.getContext().setAuthentication(authentication);
-						
+
 						localeResolver.setLocale(req, res, new Locale(userDetails.getIdioma(), ""));
 					}
 				}
@@ -107,9 +108,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			ObjectMapper om = new ObjectMapper();
 			om.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 			om.registerModule(new JavaTimeModule());
-			
+
 			ObjectWriter ow = om.writer();
-			
+
 			String json = ow.writeValueAsString(new ApiError(HttpStatus.FORBIDDEN, error, ex));
 
 			res.setStatus(HttpServletResponse.SC_FORBIDDEN);

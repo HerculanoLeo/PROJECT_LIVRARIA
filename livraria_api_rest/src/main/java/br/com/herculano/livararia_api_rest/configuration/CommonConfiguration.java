@@ -20,7 +20,6 @@ public class CommonConfiguration {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 		messageSource.setBasename("classpath:messages");
 		messageSource.setDefaultLocale(Locale.ENGLISH);
-		messageSource.setDefaultEncoding("UTF-8");
 		return messageSource;
 	}
 

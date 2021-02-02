@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -38,6 +39,13 @@ public class Livro {
 
 	@Column(name = "dt_lancamento", nullable = false)
 	private LocalDate dataLancamento;
+	
+	@Column(name = "qt_total")
+	private String quantidadeTotal;
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "id_biblioteca", referencedColumnName = "id")
+	private Biblioteca biblioteca;
 
 	@ManyToMany
 	@JoinTable(name = "tb_livro_autor", joinColumns = {
@@ -50,5 +58,7 @@ public class Livro {
 		this.titulo = entity.getTitulo();
 		this.ISBN = entity.getIsbn();
 		this.dataLancamento = entity.getDataLancamento();
+		this.biblioteca = entity.getBiblioteca();
 	}
+	
 }

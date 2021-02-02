@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.herculano.livararia_api_rest.controller.request.AutorCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.AutorConsultaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.AutorUpdateRequest;
 import br.com.herculano.livararia_api_rest.controller.response.AutorResponse;
 import br.com.herculano.livararia_api_rest.entity.Autor;
 import br.com.herculano.livararia_api_rest.event.CreatedEvent;
 import br.com.herculano.livararia_api_rest.service.AutorService;
 
-// TODO refatorar todo a classe
 @RestController
 @RequestMapping("/autor")
 public class AutorController {
@@ -53,31 +52,26 @@ public class AutorController {
 
 	@PostMapping
 	public ResponseEntity<AutorResponse> cadastrarAutor(@RequestBody AutorCadastroRequest entityRequest, HttpServletResponse response) {
-		Autor entity = new Autor(entityRequest);
-
-		service.save(entity);
+		Autor entity = service.cadastro(entityRequest);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(new AutorResponse(entity));
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<AutorResponse> atualizarAutor(@PathVariable Integer id,
-			@RequestBody AutorCadastroRequest entityRequest, HttpServletResponse response) {
+	@PutMapping()
+	public ResponseEntity<AutorResponse> atualizarAutor(@RequestBody AutorUpdateRequest entityRequest, HttpServletResponse response) {
+		AutorResponse entity = new AutorResponse(service.autilizaAutor(entityRequest));
 
-		AutorResponse entity = new AutorResponse(service.autilizaAutor(id, entityRequest));
-
-		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
-		
-		return ResponseEntity.status(HttpStatus.CREATED).body(entity);
+		return ResponseEntity.status(HttpStatus.OK).body(entity);
 	}
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<AutorResponse> deleteAutor(@PathVariable Integer id) {
-
-		service.delete(id);
-		
-		return ResponseEntity.ok().build();
-	}
+	//TODO Criar status inativo
+//	@DeleteMapping("/{id}")
+//	public ResponseEntity<AutorResponse> deleteAutor(@PathVariable Integer id) {
+//
+//		service.delete(id);
+//		
+//		return ResponseEntity.ok().build();
+//	}
 }

@@ -59,21 +59,22 @@ public class BibliotecaRepositoryImpl implements BibliotecaRespositoryCustom {
 		queryStr += " ORDER BY b.id ASC";
 
 		Long totalResgistros = RepositoryUtils.totalRegistros(queryStr, em, params);
-		
+
 		queryStr += RepositoryUtils.adicionarPaginacao(page);
-		
+
 		Query query = em.createNativeQuery(queryStr, Biblioteca.class);
-		
-		for(Map.Entry<String, Object> param : params.entrySet()) {
+
+		for (Map.Entry<String, Object> param : params.entrySet()) {
 			query.setParameter(param.getKey(), param.getValue());
 		}
-		
+
 		List<Biblioteca> entities = query.getResultList();
 
 		return new PageImpl<Biblioteca>(entities, page, totalResgistros);
 	}
-	
-//	@Override
+
+	//@Override
+	// TODO exemplo de consulta com filtro usando CriteriaQuery
 	public Page<Biblioteca> aconsultaPorFiltro(BibliotecaConsultaRequest entityRequest, Pageable page) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Biblioteca> cq = cb.createQuery(Biblioteca.class);
@@ -102,7 +103,9 @@ public class BibliotecaRepositoryImpl implements BibliotecaRespositoryCustom {
 
 		List<Biblioteca> entities = query.getResultList();
 
-		return new PageImpl<Biblioteca>(entities, page, RepositoryUtils.totalRegistros(em, cb, predicates, Biblioteca.class, joinMap));
+		Long totalRegistros = RepositoryUtils.totalRegistros(em, cb, predicates, Biblioteca.class, joinMap);
+		
+		return new PageImpl<Biblioteca>(entities, page, totalRegistros);
 	}
 
 }

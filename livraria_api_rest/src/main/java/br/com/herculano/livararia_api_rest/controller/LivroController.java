@@ -1,8 +1,5 @@
 package br.com.herculano.livararia_api_rest.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.herculano.livararia_api_rest.controller.request.LivroCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.LivroUpdateRequest;
 import br.com.herculano.livararia_api_rest.controller.response.AutorResponse;
 import br.com.herculano.livararia_api_rest.controller.response.LivroResponse;
 import br.com.herculano.livararia_api_rest.entity.Autor;
 import br.com.herculano.livararia_api_rest.entity.Livro;
 import br.com.herculano.livararia_api_rest.event.CreatedEvent;
-import br.com.herculano.livararia_api_rest.service.AutorService;
 import br.com.herculano.livararia_api_rest.service.LivroService;
 
 //TODO refatorar todo a classe
@@ -40,22 +37,18 @@ public class LivroController {
 	private LivroService service;
 
 	@Autowired
-	private AutorService autorService;
-
-	@Autowired
 	private ApplicationEventPublisher publisher;
 
 	@GetMapping
 	public ResponseEntity<Page<LivroResponse>> consultaLivros(Pageable page) {
 		Page<Livro> entities = service.consulta(page);
 
-		return ResponseEntity.ok(service.convertePageListaResponse(entities));
+		return ResponseEntity.ok(entities.map(LivroResponse::new));
 	}
 
 	@PostMapping
 	public ResponseEntity<LivroResponse> cadastrarLivro(@RequestBody @Validated LivroCadastroRequest request,
 			HttpServletResponse response) {
-
 		Livro entity = service.cadastra(request);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
@@ -70,11 +63,10 @@ public class LivroController {
 		return ResponseEntity.ok(new LivroResponse(entity));
 	}
 
-	@PutMapping("/{idLivro}")
-	public ResponseEntity<LivroResponse> atulizarLivro(@RequestBody @Validated LivroCadastroRequest request,
+	@PutMapping
+	public ResponseEntity<LivroResponse> atulizarLivro(@RequestBody @Validated LivroUpdateRequest request,
 			@PathVariable Integer idLivro, HttpServletResponse response) {
-
-		Livro entity = service.atualizar(idLivro, request);
+		Livro entity = service.atualizar(request);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
 
@@ -82,33 +74,21 @@ public class LivroController {
 	}
 
 	@GetMapping("/{idLivro}/autor")
-	public ResponseEntity<List<AutorResponse>> buscaAutoresPorIdLivro(@PathVariable Integer idLivro, Pageable page,
-			HttpServletResponse response) {
-		Page<Autor> entities = autorService.consultaPorIdLivro(idLivro, page);
+	public ResponseEntity<Page<AutorResponse>> buscaAutoresPorIdLivro(@PathVariable Integer idLivro, Pageable page) {
+		Page<Autor> entities = service.consultaPorIdLivro(idLivro, page);
 
-		return ResponseEntity.ok(entities.stream().map(AutorResponse::new).collect(Collectors.toList()));
-	}
-
-	@PutMapping("/{idLivro}/autor/{idAutor}")
-	public ResponseEntity<LivroResponse> adicionaAutor(@RequestBody @PathVariable Integer idLivro,
-			@PathVariable Integer idAutor, HttpServletResponse response) {
-
-		Livro entity = service.adiconaAutorPorId(idLivro, idAutor);
-
-		return ResponseEntity.status(HttpStatus.OK).body(new LivroResponse(entity));
+		return ResponseEntity.ok(entities.map(AutorResponse::new));
 	}
 
 	@DeleteMapping("/{idLivro}")
-	ResponseEntity<LivroResponse> deleteLivro(@PathVariable Integer idLivro, UriComponentsBuilder uriBuilder) {
+	ResponseEntity<LivroResponse> deleteLivro(@PathVariable Integer idLivro) {
 		service.delete(idLivro);
 
 		return ResponseEntity.ok().build();
 	}
 
 	@DeleteMapping("/{idLivro}/autor/{idAutor}")
-	public ResponseEntity<LivroResponse> deleteAutor(@RequestBody @PathVariable Integer idLivro,
-			@PathVariable Integer idAutor, HttpServletResponse response) {
-
+	public ResponseEntity<LivroResponse> deleteAutor(@RequestBody @PathVariable Integer idLivro, @PathVariable Integer idAutor) {
 		service.deleteAutorPorId(idLivro, idAutor);
 
 		return ResponseEntity.ok().build();

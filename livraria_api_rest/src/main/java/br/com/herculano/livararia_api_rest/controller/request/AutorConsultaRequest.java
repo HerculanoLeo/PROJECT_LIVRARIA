@@ -8,6 +8,7 @@ import lombok.Data;
 
 @Data
 public class AutorConsultaRequest {
+	
 	private String nome;
 	
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -17,4 +18,9 @@ public class AutorConsultaRequest {
 	private LocalDate dataFalecimento;
 	
 	private String nomeLivro;
+	
+	private String nomeBiblioteca;
+	
+	private Integer idBiblioteca;
+
 }

@@ -39,16 +39,16 @@ public class Usuario implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_USUARIO")
 	@SequenceGenerator(name = "SQ_USUARIO", sequenceName = "SQ_USUARIO", allocationSize = 1)
 	private Integer id;
-	
+
 	@Column(name = "email", unique = true, length = 200)
 	private String email;
-	
+
 	@Column(name = "nome", nullable = false)
 	private String nome;
-	
+
 	@Column(name = "senha", nullable = false)
 	private String senha;
-	
+
 	@Column(name = "tp_usuario", nullable = false)
 	private String tipoUsuario;
 
@@ -67,7 +67,7 @@ public class Usuario implements UserDetails {
 		this.idioma = idioma;
 		this.perfil = perfil;
 	}
-	
+
 	public Usuario(UsuarioRootCadastroRequest entityRequest) {
 		this.nome = entityRequest.getNome();
 		this.email = entityRequest.getEmail();
@@ -76,16 +76,16 @@ public class Usuario implements UserDetails {
 		this.idioma = entityRequest.getIdioma();
 		this.perfil = entityRequest.getPerfil();
 	}
-	
+
 	@Transient
 	private List<Permissao> permissoes;
-	
+
 	@Transient
 	private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-	
-	@Transient 
+
+	@Transient
 	private Biblioteca biblioteca;
-	
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return this.permissoes;
@@ -119,6 +119,11 @@ public class Usuario implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	public boolean isBiblioteca() {
+		return TiposUsuariosEnum.OPERADOR.getValor().equals(tipoUsuario)
+				|| TiposUsuariosEnum.ADMINISTRADOR.getValor().equals(tipoUsuario);
 	}
 
 }

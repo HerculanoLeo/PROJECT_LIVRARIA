@@ -18,11 +18,14 @@ public class AutorResponse {
 	
 	private LocalDate dataFalecimento;
 	
+	private BibliotecaResponse biblioteca;
+	
 	public AutorResponse(Autor entity) {
 		this.id = entity.getId();
 		this.nome = entity.getNome();
 		this.dataNascimento = entity.getDataNascimento();
 		this.dataFalecimento = entity.getDataFalecimento();
+		this.biblioteca = new BibliotecaResponse(entity.getBiblioteca());
 	}
 
 }
