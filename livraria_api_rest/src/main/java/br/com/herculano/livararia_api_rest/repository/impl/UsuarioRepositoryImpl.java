@@ -25,7 +25,6 @@ import br.com.herculano.livararia_api_rest.controller.request.UsuarioConsultaReq
 import br.com.herculano.livararia_api_rest.entity.Perfil;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.repository.custom.UsuarioRespositoryCustom;
-import br.com.herculano.utilities.repository.RepositoryUtils;
 
 @Repository
 public class UsuarioRepositoryImpl implements UsuarioRespositoryCustom {
@@ -70,7 +69,20 @@ public class UsuarioRepositoryImpl implements UsuarioRespositoryCustom {
 		
 		List<Usuario> entities = query.getResultList();
 
-		return new PageImpl<Usuario>(entities, page, RepositoryUtils.totalRegistros(em, cb, predicates, Usuario.class, joinMap));
+		return new PageImpl<Usuario>(entities, page, totalRegistros(predicates));
+	}
+
+	private Long totalRegistros(List<Predicate> predicates) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<Usuario> root = cq.from(Usuario.class);
+
+		root.join("perfil", JoinType.INNER);
+		
+		cq.select(cb.count(root));
+		cq.where(predicates.toArray(new Predicate[predicates.size()]));
+
+		return em.createQuery(cq).getSingleResult();
 	}
 
 }

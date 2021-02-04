@@ -15,6 +15,7 @@ import br.com.herculano.livararia_api_rest.controller.request.LivroUpdateRequest
 import br.com.herculano.livararia_api_rest.entity.Autor;
 import br.com.herculano.livararia_api_rest.entity.Livro;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.LivroRepository;
+import br.com.herculano.livararia_api_rest.repository.utils.ContextUtils;
 import br.com.herculano.utilities.exceptions.DadosInvalidosException;
 import br.com.herculano.utilities.templates.MessageTemplate;
 import br.com.herculano.utilities.templates.ServiceTemplate;
@@ -37,6 +38,10 @@ public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroM
 	}
 
 	public Livro cadastra(LivroCadastroRequest entityRequest) {
+		if (ContextUtils.isBiblioteca()) {
+			ContextUtils.validaBiblioteca(entityRequest.getIdBiblioteca(), null);
+		}
+		
 		List<Autor> autores = new ArrayList<Autor>();
 
 		validaAutores(entityRequest, autores);
@@ -54,8 +59,13 @@ public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroM
 		return entity;
 	}
 
-	public Livro atualizar(LivroUpdateRequest entityRequest) {
-		Livro entity = consultaPorId(entityRequest.getId());
+	public Livro atualizar(Integer idLivro, LivroUpdateRequest entityRequest) {
+		Livro entity = consultaPorId(idLivro);
+		
+		if (ContextUtils.isBiblioteca()) {
+			ContextUtils.validaBiblioteca(entityRequest.getIdBiblioteca(), null);
+		}
+		
 
 		if (!entity.getBiblioteca().getId().equals(entityRequest.getIdBiblioteca())) {
 			throw new DadosInvalidosException(MessageTemplate.getCodigo(message.getBookNotBelongLibrary(), null));
@@ -85,7 +95,9 @@ public class LivroService extends ServiceTemplate<Livro, LivroRepository, LivroM
 	}
 
 	public Page<Autor> consultaPorIdLivro(Integer idLivro, Pageable page) {
-		return autorService.consultaPorIdLivro(idLivro, page);
+		Page<Autor> livros = autorService.consultaPorIdLivro(idLivro, page);
+		
+		return livros;
 	}
 
 	public void deleteAutorPorId(Integer idLivro, Integer idAutor) {

@@ -12,9 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OperadorUpdateRequest {
 
-	@NotNull
-	private Integer idOperador;
-
 	@NotBlank
 	private String nome;
 	

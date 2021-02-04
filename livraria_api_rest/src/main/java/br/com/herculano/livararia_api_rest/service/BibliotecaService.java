@@ -1,5 +1,7 @@
 package br.com.herculano.livararia_api_rest.service;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import br.com.herculano.livararia_api_rest.controller.request.BibliotecaComAdmin
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaConsultaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaUpdateRequest;
 import br.com.herculano.livararia_api_rest.controller.request.OperadorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.OperadorConsultaBibliotecaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.OperadorConsultaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.OperadorUpdateRequest;
 import br.com.herculano.livararia_api_rest.entity.Biblioteca;
@@ -44,8 +47,8 @@ public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRep
 		return getRepository().consultaPorFiltro(entityRequest, page);
 	}
 
-	public Biblioteca cadastra(@Valid BibliotecaCadastroRequest entityRequest) {
-		UsuarioAdministrador usuario = administradorService.consultaPorId(entityRequest.getIdAdministrador());
+	public Biblioteca cadastra(Integer idAdministrador, @Valid BibliotecaCadastroRequest entityRequest) {
+		UsuarioAdministrador usuario = administradorService.consultaPorId(idAdministrador);
 
 		Biblioteca entity = new Biblioteca(entityRequest, usuario);
 
@@ -64,8 +67,8 @@ public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRep
 		return entity;
 	}
 
-	public Biblioteca atualiza(BibliotecaUpdateRequest entityRequest) {
-		Biblioteca entity = consultaPorId(entityRequest.getId());
+	public Biblioteca atualiza(Integer idBiblioteca, BibliotecaUpdateRequest entityRequest) {
+		Biblioteca entity = consultaPorId(idBiblioteca);
 
 		entity.setNome(entityRequest.getNome());
 
@@ -80,8 +83,8 @@ public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRep
 		return entity;
 	}
 
-	public UsuarioAdministrador atualizaAdministrador(@Valid AdministradorUpdateRequest entityRequest) {
-		UsuarioAdministrador entity = usuarioService.atualizarAdministrador(entityRequest);
+	public UsuarioAdministrador atualizaAdministrador(Integer idAdministrador, @Valid AdministradorUpdateRequest entityRequest) {
+		UsuarioAdministrador entity = usuarioService.atualizarAdministrador(idAdministrador, entityRequest);
 
 		return entity;
 	}
@@ -91,9 +94,22 @@ public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRep
 
 		return entities;
 	}
+	
 
-	public UsuarioOperador cadastraOperador(OperadorCadastroRequest entityRequest) {
-		Biblioteca biblioteca = consultaPorId(entityRequest.getIdBiblioteca());
+	public Page<UsuarioOperador> consultaOperadores(Integer idBiblioteca, OperadorConsultaBibliotecaRequest entityRequest,	Pageable page) {
+		OperadorConsultaRequest filter = OperadorConsultaRequest.builder()
+				.idBiblioteca(idBiblioteca)
+				.nomeOperador(entityRequest.getNomeOperador())
+				.documento(entityRequest.getDocumento())
+				.email(entityRequest.getEmail()).build();
+
+		Page<UsuarioOperador> entities = operadorService.consulta(filter, page);
+		
+		return entities;
+	}
+
+	public UsuarioOperador cadastraOperador(Integer idBiblioteca, OperadorCadastroRequest entityRequest) {
+		Biblioteca biblioteca = consultaPorId(idBiblioteca);
 
 		entityRequest.setBiblioteca(biblioteca);
 
@@ -102,8 +118,8 @@ public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRep
 		return entity;
 	}
 
-	public UsuarioOperador atualizaOperador(@Valid OperadorUpdateRequest entityRequest) {
-		UsuarioOperador entity = usuarioService.atualizarOperador(entityRequest);
+	public UsuarioOperador atualizaOperador(Integer idOperador, OperadorUpdateRequest entityRequest) {
+		UsuarioOperador entity = usuarioService.atualizarOperador(idOperador, entityRequest);
 
 		return entity;
 	}
@@ -120,7 +136,7 @@ public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRep
 		return entity;
 	}
 
-	public Biblioteca consultaPorIdUsuario(Integer id) {
+	public List<Biblioteca> consultaPorIdUsuario(Integer id) {
 		return getRepository().consultaPorIdUsuario(id);
 	}
 

@@ -77,8 +77,11 @@ public class BibliotecaRepositoryImpl implements BibliotecaRespositoryCustom {
 	// TODO exemplo de consulta com filtro usando CriteriaQuery
 	public Page<Biblioteca> aconsultaPorFiltro(BibliotecaConsultaRequest entityRequest, Pageable page) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
+		
 		CriteriaQuery<Biblioteca> cq = cb.createQuery(Biblioteca.class);
+		
 		Root<Biblioteca> biblioteca = cq.from(Biblioteca.class);
+		
 		Join<Biblioteca, UsuarioAdministrador> administrador = biblioteca.join("administrador", JoinType.INNER);
 
 		Map<String, JoinType> joinMap = new HashMap<>();
@@ -103,9 +106,23 @@ public class BibliotecaRepositoryImpl implements BibliotecaRespositoryCustom {
 
 		List<Biblioteca> entities = query.getResultList();
 
-		Long totalRegistros = RepositoryUtils.totalRegistros(em, cb, predicates, Biblioteca.class, joinMap);
+		Long totalRegistros = totalRegistros(predicates);
 		
 		return new PageImpl<Biblioteca>(entities, page, totalRegistros);
 	}
+
+	private Long totalRegistros(List<Predicate> predicates) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<Biblioteca> root = cq.from(Biblioteca.class);
+
+		root.join("administrador", JoinType.INNER);
+		
+		cq.select(cb.count(root));
+		cq.where(predicates.toArray(new Predicate[predicates.size()]));
+
+		return em.createQuery(cq).getSingleResult();
+	}
+	
 
 }

@@ -1,56 +1,21 @@
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CADASTRAR_USUARIO_GRUPOS','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_ATUALIZAR_USUARIO','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CADASTRAR_USUARIO','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CONSULTA_USUARIO_POR_ID','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CONSULTA_USUARIO','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CONSULTA_LIVROS','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CADASTRAR_LIVRO','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CONSULTA_LIVRO_POR_ID','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_ATUALIZAR_LIVRO','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CONSULTA_AUTORES_POR_ID_LIVRO','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_LIVRO_ADICIONAR_AUTOR','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_DELETE_LIVRO','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_LIVRO_DELETE_AUTOR','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CONSULTA_GRUPOS','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CONSULTA_PERMISSOES','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CONSULTA_GRUPO_POR_ID','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CADASTRAR_GRUPO','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_ATUALIZAR_GRUPO','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_DELETE_GRUPO','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CONSULTA_AUTORES','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CONSULTA_AUTOR_POR_ID','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CADASTRAR_AUTOR','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_ATUALIZAR_AUTOR','R');
-INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_DELETE_AUTOR','R');
+INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CONSULTA_USUARIOS','R');
+INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CONSULTA_USUARIO_ID','R');
+INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_CADASTRO_ROOT','R');
+INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_ATUALIZA_USUARIO_CLIENTE','R');
+INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_ATUALIZA_USUARIO_ROOT','R');
+/*INSERT INTO tb_permissao (codigo, tipo) VALUES ('ROLE_','R');*/
+
 
 INSERT INTO tb_perfil (id, nome, tipo, padrao) VALUES ((SELECT nextval ('sq_perfil')),'ROOT','R', true);
 INSERT INTO tb_perfil (id, nome, tipo, padrao) VALUES ((SELECT nextval ('sq_perfil')),'ADMINISTRADOR','A', true);
 INSERT INTO tb_perfil (id, nome, tipo, padrao) VALUES ((SELECT nextval ('sq_perfil')),'CLIENTE','C', true);
 
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CADASTRAR_USUARIO_GRUPOS');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_ATUALIZAR_USUARIO');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CADASTRAR_USUARIO');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CONSULTA_USUARIO_POR_ID');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CONSULTA_USUARIO');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CONSULTA_LIVROS');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CADASTRAR_LIVRO');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CONSULTA_LIVRO_POR_ID');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_ATUALIZAR_LIVRO');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CONSULTA_AUTORES_POR_ID_LIVRO');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_LIVRO_ADICIONAR_AUTOR');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_DELETE_LIVRO');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_LIVRO_DELETE_AUTOR');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CONSULTA_GRUPOS');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CONSULTA_PERMISSOES');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CONSULTA_GRUPO_POR_ID');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CADASTRAR_GRUPO');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_ATUALIZAR_GRUPO');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_DELETE_GRUPO');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CONSULTA_AUTORES');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CONSULTA_AUTOR_POR_ID');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_CADASTRAR_AUTOR');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_ATUALIZAR_AUTOR');
-INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'),'ROLE_DELETE_AUTOR');
+INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'), 'ROLE_CONSULTA_USUARIOS');
+INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'), 'ROLE_CONSULTA_USUARIO_ID');
+INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'), 'ROLE_CADASTRO_ROOT');
+INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'), 'ROLE_ATUALIZA_USUARIO_CLIENTE');
+INSERT INTO tb_perfil_permissao (id_perfil, id_permissao) VALUES ((SELECT id FROM tb_perfil WHERE nome = 'ROOT'), 'ROLE_ATUALIZA_USUARIO_ROOT');
+
                                      
 INSERT INTO tb_usuario (id, email, nome, senha, tp_usuario, idioma, id_perfil) VALUES ((SELECT nextval('sq_usuario')), 'admin@test.com', 'ADMIN', '$2a$10$GRruFm1WRGPZ6dGaTQ8ph.VwVnhzI3PkHSDIEjy/w7v0Ow7ZCMv86', 'R', 'BR', (SELECT id FROM tb_perfil WHERE nome = 'ROOT'));
 

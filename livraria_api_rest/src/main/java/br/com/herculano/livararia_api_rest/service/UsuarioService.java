@@ -1,5 +1,7 @@
 package br.com.herculano.livararia_api_rest.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -25,6 +27,7 @@ import br.com.herculano.livararia_api_rest.controller.request.UsuarioClienteUpda
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioConsultaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioRootCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.UsuarioRootUpdateRequest;
+import br.com.herculano.livararia_api_rest.entity.Biblioteca;
 import br.com.herculano.livararia_api_rest.entity.Configuracao;
 import br.com.herculano.livararia_api_rest.entity.Perfil;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
@@ -80,7 +83,19 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		entity.setPermissoes(permissaoService.consultaPorIdPerfil(entity.getPerfil().getId()));
 		
 		if(entity.isBiblioteca()) {
-			entity.setBiblioteca(bibliotecaService.consultaPorIdUsuario(entity.getId()));
+			List<Biblioteca> bibliotecas = bibliotecaService.consultaPorIdUsuario(entity.getId());
+			
+			List<Integer> ids = new ArrayList<Integer>();
+			
+			for(Biblioteca biblioteca : bibliotecas) {
+				if(null == entity.getIdUsuarioAdministrador()) {
+					entity.setIdUsuarioAdministrador(biblioteca.getAdministrador().getId());
+				}
+				
+				ids.add(biblioteca.getId());
+			}
+			
+			entity.setIdsBiblioteca(ids);
 		}
 
 		return entity;
@@ -114,8 +129,8 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		return entity;
 	}
 
-	public Usuario atualizaRoot(UsuarioRootUpdateRequest entityRequest) {
-		Usuario entity = super.consultaPorId(entityRequest.getIdUsuario());
+	public Usuario atualizaRoot(Integer idUsuario, UsuarioRootUpdateRequest entityRequest) {
+		Usuario entity = super.consultaPorId(idUsuario);
 
 		entity.setNome(entityRequest.getNome());
 
@@ -171,8 +186,8 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		}
 	}
 
-	public UsuarioAdministrador atualizarAdministrador(@Valid AdministradorUpdateRequest entityRequest) {
-		UsuarioAdministrador entity = administradorService.consultaPorId(entityRequest.getIdAdministrador());
+	public UsuarioAdministrador atualizarAdministrador(Integer idAdministrador, @Valid AdministradorUpdateRequest entityRequest) {
+		UsuarioAdministrador entity = administradorService.consultaPorId(idAdministrador);
 
 		if (!entityRequest.getEmail().equals(entity.getEmail())) {
 			validaEmailDisponivel(entityRequest.getEmail());
@@ -212,8 +227,8 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		return entity;
 	}
 
-	public UsuarioOperador atualizarOperador(@Valid OperadorUpdateRequest entityRequest) {
-		UsuarioOperador entity = operadorService.consultaPorId(entityRequest.getIdOperador());
+	public UsuarioOperador atualizarOperador(Integer idOperador, OperadorUpdateRequest entityRequest) {
+		UsuarioOperador entity = operadorService.consultaPorId(idOperador);
 
 		validaEmailDisponivel(entityRequest.getEmail());
 
@@ -269,8 +284,8 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		}
 	}
 
-	public UsuarioCliente atualizaCliente(UsuarioClienteUpdateRequest entityRequest) {
-		UsuarioCliente entity = clienteService.consultaPorId(entityRequest.getIdUsuario());
+	public UsuarioCliente atualizaCliente(Integer idUsuario, UsuarioClienteUpdateRequest entityRequest) {
+		UsuarioCliente entity = clienteService.consultaPorId(idUsuario);
 
 		entity.setNome(entityRequest.getNome());
 		entity.setDocumento(entityRequest.getDocumento());

@@ -47,8 +47,7 @@ public class LivroController {
 	}
 
 	@PostMapping
-	public ResponseEntity<LivroResponse> cadastrarLivro(@RequestBody @Validated LivroCadastroRequest request,
-			HttpServletResponse response) {
+	public ResponseEntity<LivroResponse> cadastrarLivro(@RequestBody @Validated LivroCadastroRequest request, HttpServletResponse response) {
 		Livro entity = service.cadastra(request);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
@@ -63,12 +62,9 @@ public class LivroController {
 		return ResponseEntity.ok(new LivroResponse(entity));
 	}
 
-	@PutMapping
-	public ResponseEntity<LivroResponse> atulizarLivro(@RequestBody @Validated LivroUpdateRequest request,
-			@PathVariable Integer idLivro, HttpServletResponse response) {
-		Livro entity = service.atualizar(request);
-
-		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
+	@PutMapping("/{idLivro}")
+	public ResponseEntity<LivroResponse> atulizarLivro(@PathVariable("idLivro") Integer idLivro, @RequestBody @Validated LivroUpdateRequest request, HttpServletResponse response) {
+		Livro entity = service.atualizar(idLivro, request);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new LivroResponse(entity));
 	}
@@ -81,7 +77,7 @@ public class LivroController {
 	}
 
 	@DeleteMapping("/{idLivro}")
-	ResponseEntity<LivroResponse> deleteLivro(@PathVariable Integer idLivro) {
+	ResponseEntity<LivroResponse> deleteLivro(@PathVariable("idLivro") Integer idLivro) {
 		service.delete(idLivro);
 
 		return ResponseEntity.ok().build();

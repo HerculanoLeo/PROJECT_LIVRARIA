@@ -84,7 +84,10 @@ public class Usuario implements UserDetails {
 	private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
 	@Transient
-	private Biblioteca biblioteca;
+	private Integer idUsuarioAdministrador;
+	
+	@Transient
+	private List<Integer> idsBiblioteca;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -124,6 +127,10 @@ public class Usuario implements UserDetails {
 	public boolean isBiblioteca() {
 		return TiposUsuariosEnum.OPERADOR.getValor().equals(tipoUsuario)
 				|| TiposUsuariosEnum.ADMINISTRADOR.getValor().equals(tipoUsuario);
+	}
+	
+	public boolean isROOT() {
+		return TiposUsuariosEnum.ROOT.getValor().equals(tipoUsuario);
 	}
 
 }

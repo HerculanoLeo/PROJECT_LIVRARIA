@@ -88,16 +88,16 @@ public class UsuarioController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(new UsuarioResponse(entity));
 	}
 
-	@PutMapping()
-	public ResponseEntity<?> atualizaCleinte(@RequestBody UsuarioClienteUpdateRequest request) {
-		UsuarioCliente entity = service.atualizaCliente(request);
+	@PutMapping("/{idUsuario}")
+	public ResponseEntity<?> atualizaCleinte(@PathVariable("idUsuario") Integer idUsuario, @RequestBody @Validated UsuarioClienteUpdateRequest request) {
+		UsuarioCliente entity = service.atualizaCliente(idUsuario, request);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new UsuarioClienteResponse(entity));
 	}
 	
-	@PutMapping("/root")
-	public ResponseEntity<?> atualizaRoot(@RequestBody UsuarioRootUpdateRequest request) {
-		Usuario entity = service.atualizaRoot(request);
+	@PutMapping("/root/{idUsuario}")
+	public ResponseEntity<?> atualizaRoot(@PathVariable("idUsuario") Integer idUsuario, @RequestBody @Validated UsuarioRootUpdateRequest request) {
+		Usuario entity = service.atualizaRoot(idUsuario, request);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new UsuarioResponse(entity));
 	}

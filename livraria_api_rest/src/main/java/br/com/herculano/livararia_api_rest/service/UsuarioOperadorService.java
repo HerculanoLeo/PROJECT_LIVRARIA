@@ -9,10 +9,12 @@ import br.com.herculano.livararia_api_rest.constants.system_message.UsuarioOpera
 import br.com.herculano.livararia_api_rest.controller.request.OperadorConsultaRequest;
 import br.com.herculano.livararia_api_rest.entity.UsuarioOperador;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.UsuarioOperadorRepository;
+import br.com.herculano.livararia_api_rest.repository.utils.ContextUtils;
+import br.com.herculano.utilities.exceptions.DadosInvalidosException;
 import br.com.herculano.utilities.templates.ServiceTemplate;
 
 @Service
-public class UsuarioOperadorService extends ServiceTemplate<UsuarioOperador, UsuarioOperadorRepository, UsuarioOperadorMessage>{
+public class UsuarioOperadorService extends ServiceTemplate<UsuarioOperador, UsuarioOperadorRepository, UsuarioOperadorMessage> {
 
 	@Autowired
 	public UsuarioOperadorService(UsuarioOperadorRepository repository, UsuarioOperadorMessage message) {
@@ -20,8 +22,15 @@ public class UsuarioOperadorService extends ServiceTemplate<UsuarioOperador, Usu
 	}
 
 	public Page<UsuarioOperador> consulta(OperadorConsultaRequest entityRequest, Pageable page) {
+		if (ContextUtils.isBiblioteca()) {
+			if (null != entityRequest.getIdBiblioteca() && !ContextUtils.isIdBibliotecaPresent(entityRequest.getIdBiblioteca())) {
+				throw new DadosInvalidosException(null);
+			}
+		
+			entityRequest.setIdAdministrador(ContextUtils.getUsuarioAutenticado().getIdUsuarioAdministrador());
+		}
+
 		return getRepository().consulta(entityRequest, page);
 	}
-
 
 }

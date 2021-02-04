@@ -16,9 +16,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OperadorCadastroRequest {
 
-	@NotNull
-	private Integer idBiblioteca;
-
 	@NotBlank
 	private String nome;
 	

@@ -22,8 +22,9 @@ import br.com.herculano.livararia_api_rest.controller.request.AdministradorUpdat
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaComAdministradorCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaConsultaRequest;
-import br.com.herculano.livararia_api_rest.controller.request.OperadorCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.BibliotecaUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.OperadorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.OperadorConsultaBibliotecaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.OperadorConsultaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.OperadorUpdateRequest;
 import br.com.herculano.livararia_api_rest.controller.response.BibliotecaComAdministradorResponse;
@@ -71,9 +72,10 @@ public class BibliotecaController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(new BibliotecaComAdministradorResponse(entity));
 	}
 
-	@PutMapping
-	public ResponseEntity<BibliotecaComAdministradorResponse> atualizaBiblioteca(@RequestBody @Valid BibliotecaUpdateRequest entityRequest) {
-		Biblioteca entity = service.atualiza(entityRequest);
+	@PutMapping("{idBiblioteca}")
+	public ResponseEntity<BibliotecaComAdministradorResponse> atualizaBiblioteca(@RequestBody @Valid BibliotecaUpdateRequest entityRequest,
+			@PathVariable(name = "idBiblioteca") Integer idBiblioteca) {
+		Biblioteca entity = service.atualiza(idBiblioteca, entityRequest);
 
 		return ResponseEntity.ok(new BibliotecaComAdministradorResponse(entity));
 	}
@@ -86,25 +88,24 @@ public class BibliotecaController {
 	}
 
 	@PostMapping("/administrador")
-	public ResponseEntity<UsuarioAdministradorResponse> cadastrarAdministrador(
-			@RequestBody @Valid AdministradorCadastroRequest entityRequest) {
+	public ResponseEntity<UsuarioAdministradorResponse> cadastrarAdministrador(@RequestBody @Valid AdministradorCadastroRequest entityRequest) {
 		UsuarioAdministrador entity = service.cadastroAdministrador(entityRequest);
 
 		return ResponseEntity.ok(new UsuarioAdministradorResponse(entity));
 	}
 
-	@PutMapping("/administrador")
-	public ResponseEntity<UsuarioAdministradorResponse> atualizaAdministrador(
-			@RequestBody @Valid AdministradorUpdateRequest entityRequest) {
-		UsuarioAdministrador entity = service.atualizaAdministrador(entityRequest);
+	@PutMapping("/administrador/{idAdministrador}")
+	public ResponseEntity<UsuarioAdministradorResponse> atualizaAdministrador(@RequestBody @Valid AdministradorUpdateRequest entityRequest,
+			@PathVariable("idAdministrador") Integer idAdministrador) {
+		UsuarioAdministrador entity = service.atualizaAdministrador(idAdministrador, entityRequest);
 
 		return ResponseEntity.ok(new UsuarioAdministradorResponse(entity));
 	}
 
-	@PostMapping("/administrador/biblioteca")
+	@PostMapping("/administrador/{idAdministrador}/biblioteca")
 	public ResponseEntity<BibliotecaComAdministradorResponse> adicionarBiblioteca(@RequestBody @Valid BibliotecaCadastroRequest entityRequest,
-			HttpServletResponse response) {
-		Biblioteca entity = service.cadastra(entityRequest);
+			@PathVariable("idAdministrador") Integer idAdministrador, HttpServletResponse response) {
+		Biblioteca entity = service.cadastra(idAdministrador, entityRequest);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
 
@@ -118,24 +119,33 @@ public class BibliotecaController {
 		return ResponseEntity.ok(entities.map(UsuarioOperadorResponse::new));
 	}
 
+	@GetMapping("/{idBiblioteca}/operador")
+	public ResponseEntity<Page<UsuarioOperadorResponse>> consultaOperadorBiblioteca(@PathVariable("idBiblioteca") Integer idBiblioteca,
+			OperadorConsultaBibliotecaRequest entityRequest, Pageable page) {
+		Page<UsuarioOperador> entities = service.consultaOperadores(idBiblioteca, entityRequest, page);
+
+		return ResponseEntity.ok(entities.map(UsuarioOperadorResponse::new));
+	}
+
 	@GetMapping("/operador/{idOperador}")
-	public ResponseEntity<UsuarioOperadorResponse> consultaOperadorPorId(@PathVariable Integer idOperador) {
+	public ResponseEntity<UsuarioOperadorResponse> consultaOperadorPorId(@PathVariable("idOperador") Integer idOperador) {
 		UsuarioOperador entity = service.consultaOperadorPorId(idOperador);
-				
+
 		return ResponseEntity.ok(new UsuarioOperadorResponse(entity));
 	}
 
-	@PutMapping("/operador")
-	public ResponseEntity<UsuarioOperadorResponse> atualizaOperador(@RequestBody @Valid OperadorUpdateRequest entityRequest) {
-		UsuarioOperador entity = service.atualizaOperador(entityRequest);
+	@PutMapping("/operador/{idOperador}")
+	public ResponseEntity<UsuarioOperadorResponse> atualizaOperador(@PathVariable("idOperador") Integer idOperador,
+			@RequestBody @Valid OperadorUpdateRequest entityRequest) {
+		UsuarioOperador entity = service.atualizaOperador(idOperador, entityRequest);
 
 		return ResponseEntity.ok(new UsuarioOperadorResponse(entity));
 	}
 
 	@PostMapping("/{idBiblioteca}/operador")
-	public ResponseEntity<?> cadastrarOperador(@RequestBody @Valid OperadorCadastroRequest entityRequest,
+	public ResponseEntity<?> cadastrarOperador(@PathVariable("idBiblioteca") Integer idBiblioteca, @RequestBody @Valid OperadorCadastroRequest entityRequest,
 			HttpServletResponse response) {
-		UsuarioOperador entity = service.cadastraOperador(entityRequest);
+		UsuarioOperador entity = service.cadastraOperador(idBiblioteca, entityRequest);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
 

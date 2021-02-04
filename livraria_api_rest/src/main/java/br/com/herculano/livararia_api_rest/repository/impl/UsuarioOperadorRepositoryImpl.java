@@ -1,9 +1,7 @@
 package br.com.herculano.livararia_api_rest.repository.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,32 +21,38 @@ import org.springframework.stereotype.Repository;
 
 import br.com.herculano.livararia_api_rest.controller.request.OperadorConsultaRequest;
 import br.com.herculano.livararia_api_rest.entity.Biblioteca;
+import br.com.herculano.livararia_api_rest.entity.UsuarioAdministrador;
 import br.com.herculano.livararia_api_rest.entity.UsuarioOperador;
 import br.com.herculano.livararia_api_rest.repository.custom.UsuarioOperadorRepositoryCustom;
-import br.com.herculano.utilities.repository.RepositoryUtils;
 
 @Repository
 public class UsuarioOperadorRepositoryImpl implements UsuarioOperadorRepositoryCustom {
 
 	@PersistenceContext
 	private EntityManager em;
-	
+
 	@Override
 	public Page<UsuarioOperador> consulta(OperadorConsultaRequest entityRequest, Pageable page) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
+
 		CriteriaQuery<UsuarioOperador> cq = cb.createQuery(UsuarioOperador.class);
+
 		Root<UsuarioOperador> usuarioOperador = cq.from(UsuarioOperador.class);
+
 		Join<UsuarioOperador, Biblioteca> biblioteca = usuarioOperador.join("biblioteca", JoinType.INNER);
 
-		Map<String, JoinType> joinMap = new HashMap<>();
-		joinMap.put("biblioteca", JoinType.INNER);
+		Join<Biblioteca, UsuarioAdministrador> administrador = biblioteca.join("administrador", JoinType.INNER);
 
 		List<Predicate> predicates = new ArrayList<>();
-		
-		if(null != entityRequest.getIdBiblioteca() && entityRequest.getIdBiblioteca() > 0) {
-			predicates.add(cb.equal(cb.upper(biblioteca.get("id")), entityRequest.getIdBiblioteca()));
+
+		if (null != entityRequest.getIdBiblioteca() && entityRequest.getIdBiblioteca() > 0) {
+			predicates.add(cb.equal(biblioteca.get("id"), entityRequest.getIdBiblioteca()));
 		}
-		
+
+		if (null != entityRequest.getIdAdministrador() && entityRequest.getIdAdministrador() > 0) {
+			predicates.add(cb.equal(administrador.get("id"), entityRequest.getIdAdministrador()));
+		}
+
 		if (StringUtils.isNotBlank(entityRequest.getNomeOperador())) {
 			predicates.add(cb.like(cb.upper(usuarioOperador.get("nome")), "%" + entityRequest.getNomeOperador().toUpperCase() + "%"));
 		}
@@ -62,7 +66,7 @@ public class UsuarioOperadorRepositoryImpl implements UsuarioOperadorRepositoryC
 		}
 
 		if (StringUtils.isNotBlank(entityRequest.getEmail())) {
-			predicates.add(cb.like(cb.upper(usuarioOperador.get("email")), "%" + entityRequest.getEmail() + "%"));
+			predicates.add(cb.like(cb.upper(usuarioOperador.get("email")), "%" + entityRequest.getEmail().toUpperCase() + "%"));
 		}
 
 		cq.select(usuarioOperador).where(predicates.toArray(new Predicate[predicates.size()]));
@@ -74,7 +78,21 @@ public class UsuarioOperadorRepositoryImpl implements UsuarioOperadorRepositoryC
 
 		List<UsuarioOperador> entities = query.getResultList();
 
-		return new PageImpl<UsuarioOperador>(entities, page, RepositoryUtils.totalRegistros(em, cb, predicates, UsuarioOperador.class, joinMap));
+		return new PageImpl<UsuarioOperador>(entities, page, totalRegistros(predicates));
+	}
+
+	private Long totalRegistros(List<Predicate> predicates) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<UsuarioOperador> root = cq.from(UsuarioOperador.class);
+
+		Join<UsuarioOperador, Biblioteca> biblioteca = root.join("biblioteca", JoinType.INNER);
+		biblioteca.join("administrador", JoinType.INNER);
+		
+		cq.select(cb.count(root));
+		cq.where(predicates.toArray(new Predicate[predicates.size()]));
+
+		return em.createQuery(cq).getSingleResult();
 	}
 
 }
