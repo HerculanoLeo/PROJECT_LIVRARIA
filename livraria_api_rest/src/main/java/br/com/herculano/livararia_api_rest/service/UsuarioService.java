@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
-import javax.validation.Valid;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +17,16 @@ import org.springframework.stereotype.Service;
 import br.com.herculano.livararia_api_rest.constants.ConfiguracaoEnum;
 import br.com.herculano.livararia_api_rest.constants.TiposUsuariosEnum;
 import br.com.herculano.livararia_api_rest.constants.system_message.UsuarioMessage;
-import br.com.herculano.livararia_api_rest.controller.request.AdministradorCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.AdministradorUpdateRequest;
-import br.com.herculano.livararia_api_rest.controller.request.OperadorCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.OperadorUpdateRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioClienteCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioClienteUpdateRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioConsultaRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioRootCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioRootUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.AdministradorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.AdministradorUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.OperadorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.OperadorUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioAtualizaPerfilRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioClienteCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioClienteUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioConsultaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioRootCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioRootUpdateRequest;
 import br.com.herculano.livararia_api_rest.entity.Biblioteca;
 import br.com.herculano.livararia_api_rest.entity.Configuracao;
 import br.com.herculano.livararia_api_rest.entity.Perfil;
@@ -60,7 +60,7 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 
 	@Autowired
 	private UsuarioClienteService clienteService;
-	
+
 	@Autowired
 	private BibliotecaService bibliotecaService;
 
@@ -84,17 +84,17 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		
 		if(entity.isBiblioteca()) {
 			List<Biblioteca> bibliotecas = bibliotecaService.consultaPorIdUsuario(entity.getId());
-			
+
 			List<Integer> ids = new ArrayList<Integer>();
-			
-			for(Biblioteca biblioteca : bibliotecas) {
-				if(null == entity.getIdUsuarioAdministrador()) {
+
+			for (Biblioteca biblioteca : bibliotecas) {
+				if (null == entity.getIdUsuarioAdministrador()) {
 					entity.setIdUsuarioAdministrador(biblioteca.getAdministrador().getId());
 				}
-				
+
 				ids.add(biblioteca.getId());
 			}
-			
+
 			entity.setIdsBiblioteca(ids);
 		}
 
@@ -133,25 +133,12 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		Usuario entity = super.consultaPorId(idUsuario);
 
 		entity.setNome(entityRequest.getNome());
+		entity.setIdioma(entityRequest.getIdioma());
 
 		if (!entity.getEmail().equals(entityRequest.getEmail())) {
-
 			validaEmailDisponivel(entityRequest.getEmail());
 
 			entity.setEmail(entityRequest.getEmail());
-		}
-
-		if (null != entityRequest.getIdPerfil() && !entity.getPerfil().getId().equals(entityRequest.getIdPerfil())) {
-			
-			Perfil perfil = perfilService.consultaPorId(entityRequest.getIdPerfil());
-
-			if (!perfil.getTipo().equals(TiposUsuariosEnum.ADMINISTRADOR.getValor())) {
-				Object[] args = new Object[] { TiposUsuariosEnum.ADMINISTRADOR.getValor() };
-
-				throw new DadosInvalidosException(MessageTemplate.getCodigo(message.getProfileNotCompatible(), args));
-			}
-
-			entity.setPerfil(perfil);
 		}
 
 		super.save(entity);
@@ -163,8 +150,7 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		if (entityRequest.getSenha().equals(entityRequest.getConfirmeSenha())) {
 			validaEmailDisponivel(entityRequest.getEmail());
 
-			Configuracao configuracaoPerfilPadrao = configuracaService
-					.consultaPorId(ConfiguracaoEnum.PERFIL_ADMINISTADOR_PADRAO.getValor());
+			Configuracao configuracaoPerfilPadrao = configuracaService.consultaPorId(ConfiguracaoEnum.PERFIL_ADMINISTADOR_PADRAO.getValor());
 
 			Perfil perfil = perfilService.consultaPorId(Integer.valueOf(configuracaoPerfilPadrao.getValor()));
 
@@ -186,7 +172,7 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		}
 	}
 
-	public UsuarioAdministrador atualizarAdministrador(Integer idAdministrador, @Valid AdministradorUpdateRequest entityRequest) {
+	public UsuarioAdministrador atualizarAdministrador(Integer idAdministrador, AdministradorUpdateRequest entityRequest) {
 		UsuarioAdministrador entity = administradorService.consultaPorId(idAdministrador);
 
 		if (!entityRequest.getEmail().equals(entity.getEmail())) {
@@ -238,19 +224,6 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 			entity.setEmail(entityRequest.getEmail());
 		}
 
-		if (null != entityRequest.getIdPerfil() && !entity.getPerfil().getId().equals(entityRequest.getIdPerfil())) {
-			
-			Perfil perfil = perfilService.consultaPorId(entityRequest.getIdPerfil());
-
-			if (!perfil.getTipo().equals(TiposUsuariosEnum.OPERADOR.getValor())) {
-				Object[] args = new Object[] { TiposUsuariosEnum.OPERADOR.getValor() };
-
-				throw new DadosInvalidosException(MessageTemplate.getCodigo(message.getProfileNotCompatible(), args));
-			}
-
-			entity.setPerfil(perfil);
-		}
-
 		super.save(entity);
 
 		return entity;
@@ -260,8 +233,7 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		if (entityRequest.getSenha().equals(entityRequest.getConfirmeSenha())) {
 			validaEmailDisponivel(entityRequest.getEmail());
 
-			Configuracao configuracaoPerfilPadrao = configuracaService
-					.consultaPorId(ConfiguracaoEnum.PERFIL_CLIENTE_PADRAO.getValor());
+			Configuracao configuracaoPerfilPadrao = configuracaService.consultaPorId(ConfiguracaoEnum.PERFIL_CLIENTE_PADRAO.getValor());
 
 			Perfil perfil = perfilService.consultaPorId(Integer.valueOf(configuracaoPerfilPadrao.getValor()));
 
@@ -289,6 +261,7 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 
 		entity.setNome(entityRequest.getNome());
 		entity.setDocumento(entityRequest.getDocumento());
+		entity.setIdioma(entityRequest.getIdioma());
 
 		if (!entity.getEmail().equals(entityRequest.getEmail())) {
 			validaEmailDisponivel(entityRequest.getEmail());
@@ -297,6 +270,38 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 		}
 
 		super.save(entity);
+
+		return entity;
+	}
+
+	public Usuario atualizaPerfil(UsuarioAtualizaPerfilRequest entityRequest) {
+		Usuario entity = consultaPorId(entityRequest.getIdUsuario());
+
+		Perfil perfil = perfilService.consultaPorId(entityRequest.getIdPerfil());
+
+		if (!entity.getTipoUsuario().equals(perfil.getTipo())) {
+			Object[] args = new Object[] { TiposUsuariosEnum.getTipoUsuario(entity.getTipoUsuario()) };
+
+			throw new DadosInvalidosException(MessageTemplate.getCodigo(message.getProfileNotCompatible(), args));
+		}
+
+		if (entity.isBiblioteca() && null != perfil.getAdministrador()) {
+			if (entity instanceof UsuarioAdministrador) {
+				if (!entity.getId().equals(perfil.getAdministrador().getId())) {
+					throw new DadosInvalidosException(MessageTemplate.getCodigo(message.getProfileNotBelongAdministrator(), null));
+				}
+			}
+
+			if (entity instanceof UsuarioOperador) {
+				if (!((UsuarioOperador) entity).getBiblioteca().getAdministrador().getId().equals(perfil.getAdministrador().getId())) {
+					throw new DadosInvalidosException(MessageTemplate.getCodigo(message.getProfileNotBelongAdministrator(), null));
+				}
+			}
+		}
+
+		entity.setPerfil(perfil);
+
+		entity = save(entity);
 
 		return entity;
 	}

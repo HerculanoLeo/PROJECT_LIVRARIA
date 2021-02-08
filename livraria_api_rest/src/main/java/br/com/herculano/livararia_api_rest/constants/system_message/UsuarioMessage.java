@@ -14,6 +14,7 @@ public class UsuarioMessage extends MessageTemplate {
 	private final String EMPTY_PROFILE_USER = "user.empty_profile_not_valid";
 	private final String PROFILE_NOT_COMPATIBLE = "user.profile_not_compatible";
 	private final String EMAIL_ALREADY_EXIST = "user.email_already_exist";
+	private final String PROFIL_NOT_BELONG_ADMINISTRATOR = "user.profile_not_belong_administrator";
 
 	@Override
 	public String getNotFound() {
@@ -42,5 +43,9 @@ public class UsuarioMessage extends MessageTemplate {
 	
 	public String getEmailAlreadyExist() {
 		return EMAIL_ALREADY_EXIST;
+	}
+	
+	public String getProfileNotBelongAdministrator() {
+		return PROFIL_NOT_BELONG_ADMINISTRATOR;
 	}
 }

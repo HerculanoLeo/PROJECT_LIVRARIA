@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,14 +18,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.herculano.livararia_api_rest.controller.request.TrocaSenhaComCodigoRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioClienteCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioClienteUpdateRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioConsultaRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioRootCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioTrocaSenhaRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioRootUpdateRequest;
-import br.com.herculano.livararia_api_rest.controller.request.ValidaCodigoRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioAtualizaPerfilRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioClienteCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioClienteUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioConsultaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioRootCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioRootUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioTrocaSenhaComCodigoRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioTrocaSenhaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioValidaCodigoRequest;
 import br.com.herculano.livararia_api_rest.controller.response.TrocaSenhaResponse;
 import br.com.herculano.livararia_api_rest.controller.response.UsuarioClienteResponse;
 import br.com.herculano.livararia_api_rest.controller.response.UsuarioResponse;
@@ -61,7 +63,7 @@ public class UsuarioController {
 	public ResponseEntity<?> consultaPorIdUsuario(@PathVariable Integer idUsuario) {
 		Usuario entity = service.consultaPorId(idUsuario);
 		
-		if(entity instanceof UsuarioCliente) {
+		if(entity.isCliente()) {
 			return ResponseEntity.ok(new UsuarioClienteResponse((UsuarioCliente) entity));
 		} else {
 			return ResponseEntity.ok(new UsuarioResponse(entity));
@@ -101,23 +103,31 @@ public class UsuarioController {
 
 		return ResponseEntity.status(HttpStatus.OK).body(new UsuarioResponse(entity));
 	}
+	
+	@PutMapping("/perfil")
+	@PreAuthorize("@resourcesSecurity.isAtualizaPerfilUsuario(authentication, #entityRequest)")
+	public ResponseEntity<?> atualizaPerfil(@RequestBody UsuarioAtualizaPerfilRequest entityRequest) {
+		service.atualizaPerfil(entityRequest);
+		
+		return ResponseEntity.ok().build();
+	}
 
-	@PostMapping("/trocaSenha")
+	@PostMapping("/troca_senha")
 	public ResponseEntity<?> trocaSenha(@RequestBody UsuarioTrocaSenhaRequest request) {
 		trocaSenhaService.trocaSenha(request);
 
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/trocaSenha/validaCodigo")
-	public ResponseEntity<TrocaSenhaResponse> trocaSenha(@RequestBody ValidaCodigoRequest request) {
+	@PostMapping("/troca_senha/valida_codigo")
+	public ResponseEntity<TrocaSenhaResponse> trocaSenha(@RequestBody UsuarioValidaCodigoRequest request) {
 		TrocaSenha entity = trocaSenhaService.validaCodigo(request);
 
 		return ResponseEntity.ok(new TrocaSenhaResponse(entity));
 	}
 
-	@PostMapping("/trocaSenha/codigo")
-	public ResponseEntity<?> trocaSenhaComCodigo(@RequestBody TrocaSenhaComCodigoRequest request) {
+	@PostMapping("/troca_senha/codigo")
+	public ResponseEntity<?> trocaSenhaComCodigo(@RequestBody UsuarioTrocaSenhaComCodigoRequest request) {
 		trocaSenhaService.trocaSenhaComCodigo(request);
 
 		return ResponseEntity.ok().build();

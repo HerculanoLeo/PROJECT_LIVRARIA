@@ -22,7 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import br.com.herculano.livararia_api_rest.constants.TiposUsuariosEnum;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioRootCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioRootCadastroRequest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -129,8 +129,20 @@ public class Usuario implements UserDetails {
 				|| TiposUsuariosEnum.ADMINISTRADOR.getValor().equals(tipoUsuario);
 	}
 	
-	public boolean isROOT() {
+	public boolean isAdministrador() {
+		return TiposUsuariosEnum.ADMINISTRADOR.getValor().equals(tipoUsuario);
+	}
+	
+	public boolean isOperador() {
+		return TiposUsuariosEnum.OPERADOR.getValor().equals(tipoUsuario);
+	}
+	
+	public boolean isRoot() {
 		return TiposUsuariosEnum.ROOT.getValor().equals(tipoUsuario);
+	}
+	
+	public boolean isCliente() {
+		return TiposUsuariosEnum.CLIENTE.getValor().equals(tipoUsuario);
 	}
 
 }

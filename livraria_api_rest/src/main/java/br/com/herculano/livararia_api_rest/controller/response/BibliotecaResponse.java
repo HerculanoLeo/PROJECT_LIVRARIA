@@ -10,9 +10,12 @@ public class BibliotecaResponse {
 	private Integer id;
 
 	private String nome;
+	
+	private Integer idAdministrador;
 
 	public BibliotecaResponse(Biblioteca entity) {
 		this.id = entity.getId();
 		this.nome = entity.getNome();
+		this.idAdministrador = entity.getAdministrador().getId();
 	}
 }

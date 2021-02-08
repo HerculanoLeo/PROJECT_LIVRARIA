@@ -22,7 +22,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import br.com.herculano.livararia_api_rest.controller.request.BibliotecaConsultaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.BibliotecaConsultaRequest;
 import br.com.herculano.livararia_api_rest.entity.Biblioteca;
 import br.com.herculano.livararia_api_rest.entity.UsuarioAdministrador;
 import br.com.herculano.livararia_api_rest.repository.custom.BibliotecaRespositoryCustom;
@@ -74,7 +74,7 @@ public class BibliotecaRepositoryImpl implements BibliotecaRespositoryCustom {
 	}
 
 	//@Override
-	// TODO exemplo de consulta com filtro usando CriteriaQuery
+	// exemplo de consulta com filtro usando CriteriaQuery
 	public Page<Biblioteca> aconsultaPorFiltro(BibliotecaConsultaRequest entityRequest, Pageable page) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		

@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import br.com.herculano.livararia_api_rest.constants.TiposUsuariosEnum;
-import br.com.herculano.livararia_api_rest.controller.request.AdministradorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.AdministradorCadastroRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import br.com.herculano.livararia_api_rest.constants.system_message.AutorMessage;
-import br.com.herculano.livararia_api_rest.controller.request.AutorCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.AutorConsultaRequest;
-import br.com.herculano.livararia_api_rest.controller.request.AutorUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.autor.AutorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.autor.AutorConsultaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.autor.AutorUpdateRequest;
 import br.com.herculano.livararia_api_rest.entity.Autor;
 import br.com.herculano.livararia_api_rest.entity.Biblioteca;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.AutorRepository;
@@ -37,8 +37,8 @@ public class AutorService extends ServiceTemplate<Autor, AutorRepository, AutorM
 		return entity;
 	}
 	
-	public Autor autilizaAutor(AutorUpdateRequest entityRequest) {
-		Autor entity = consultaPorId(entityRequest.getId());
+	public Autor autilizaAutor(Integer idAutor, AutorUpdateRequest entityRequest) {
+		Autor entity = consultaPorId(idAutor);
 		
 		entity.setNome(entityRequest.getNome());
 		entity.setDataNascimento(entityRequest.getDataNascimento());

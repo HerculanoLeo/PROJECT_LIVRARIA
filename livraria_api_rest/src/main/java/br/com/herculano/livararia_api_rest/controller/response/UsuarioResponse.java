@@ -17,13 +17,13 @@ public class UsuarioResponse {
 
 	private String tipoDescricao;
 	
-	private PerfilResponse perfil;
+	private UsuarioPerfilResponse perfil;
 
 	public UsuarioResponse(Usuario entity) {
 		this.id = entity.getId();
 		this.nome = entity.getNome();
 		this.email = entity.getEmail();
-		this.perfil = new PerfilResponse(entity.getPerfil());
+		this.perfil = new UsuarioPerfilResponse(entity.getPerfil());
 		this.tipo = entity.getTipoUsuario();
 		this.tipoDescricao = TiposUsuariosEnum.getTipoUsuario(entity.getTipoUsuario()).getDescricao();
 	}

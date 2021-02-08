@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioClienteCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioClienteCadastroRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

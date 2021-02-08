@@ -19,7 +19,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import br.com.herculano.livararia_api_rest.controller.request.OperadorConsultaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.OperadorConsultaRequest;
 import br.com.herculano.livararia_api_rest.entity.Biblioteca;
 import br.com.herculano.livararia_api_rest.entity.UsuarioAdministrador;
 import br.com.herculano.livararia_api_rest.entity.UsuarioOperador;

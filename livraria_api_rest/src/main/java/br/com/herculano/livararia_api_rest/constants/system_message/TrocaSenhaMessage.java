@@ -9,7 +9,7 @@ public class TrocaSenhaMessage extends MessageTemplate {
 
 	private final String NOT_FOUND = "change_password.notfound";
 	private final String PASSWORD_NOT_MATCH = "user.password_not_match";
-	private final String PASSWORD_EMPTY = "change_password.troca_password_empty";
+	private final String PASSWORD_EMPTY = "change_password.password_empty";
 	private final String CODE_NOT_VALID = "change_password.code_not_valid";
 	private final String CODE_EXPIRED = "change_password.code_expired";
 	private final String WRONG_PASSWORD = "change_password.wrong_password";

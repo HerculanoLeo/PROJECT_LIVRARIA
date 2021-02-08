@@ -17,17 +17,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.herculano.livararia_api_rest.controller.request.AdministradorCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.AdministradorUpdateRequest;
-import br.com.herculano.livararia_api_rest.controller.request.BibliotecaCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.BibliotecaComAdministradorCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.BibliotecaConsultaRequest;
-import br.com.herculano.livararia_api_rest.controller.request.BibliotecaUpdateRequest;
-import br.com.herculano.livararia_api_rest.controller.request.OperadorCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.OperadorConsultaBibliotecaRequest;
-import br.com.herculano.livararia_api_rest.controller.request.OperadorConsultaRequest;
-import br.com.herculano.livararia_api_rest.controller.request.OperadorUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.AdministradorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.AdministradorUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.BibliotecaCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.BibliotecaComAdministradorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.BibliotecaConsultaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.BibliotecaUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.OperadorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.OperadorConsultaBibliotecaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.OperadorConsultaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.OperadorUpdateRequest;
 import br.com.herculano.livararia_api_rest.controller.response.BibliotecaComAdministradorResponse;
+import br.com.herculano.livararia_api_rest.controller.response.BibliotecaResponse;
 import br.com.herculano.livararia_api_rest.controller.response.UsuarioAdministradorResponse;
 import br.com.herculano.livararia_api_rest.controller.response.UsuarioOperadorResponse;
 import br.com.herculano.livararia_api_rest.entity.Biblioteca;
@@ -47,19 +48,19 @@ public class BibliotecaController {
 	private ApplicationEventPublisher publisher;
 
 	@GetMapping
-	public ResponseEntity<Page<BibliotecaComAdministradorResponse>> consultaPorFiltro(BibliotecaConsultaRequest entityRequest, Pageable page) {
+	public ResponseEntity<Page<BibliotecaResponse>> consultaPorFiltro(BibliotecaConsultaRequest entityRequest, Pageable page) {
 		Page<Biblioteca> entities = service.consultaPorFiltro(entityRequest, page);
 
-		Page<BibliotecaComAdministradorResponse> response = entities.map(BibliotecaComAdministradorResponse::new);
+		Page<BibliotecaResponse> response = entities.map(BibliotecaResponse::new);
 
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@GetMapping("/{idBiblioteca}")
-	public ResponseEntity<BibliotecaComAdministradorResponse> consultaPorId(@PathVariable(name = "idBiblioteca") Integer idBiblioteca) {
+	public ResponseEntity<BibliotecaResponse> consultaPorId(@PathVariable(name = "idBiblioteca") Integer idBiblioteca) {
 		Biblioteca entity = service.consultaPorId(idBiblioteca);
 
-		return ResponseEntity.ok(new BibliotecaComAdministradorResponse(entity));
+		return ResponseEntity.ok(new BibliotecaResponse(entity));
 	}
 
 	@PostMapping
@@ -119,6 +120,14 @@ public class BibliotecaController {
 		return ResponseEntity.ok(entities.map(UsuarioOperadorResponse::new));
 	}
 
+	@GetMapping("/administrador/{idAdministrador}/operador")
+	public ResponseEntity<Page<UsuarioOperadorResponse>> consultaOperadorAdministrador(@PathVariable("idAdministrador") Integer idAdministrador,
+			OperadorConsultaBibliotecaRequest entityRequest, Pageable page) {
+		Page<UsuarioOperador> entities = service.consultaOperadorAdministrador(idAdministrador, entityRequest, page);
+		
+		return ResponseEntity.ok(entities.map(UsuarioOperadorResponse::new));
+	}
+	
 	@GetMapping("/{idBiblioteca}/operador")
 	public ResponseEntity<Page<UsuarioOperadorResponse>> consultaOperadorBiblioteca(@PathVariable("idBiblioteca") Integer idBiblioteca,
 			OperadorConsultaBibliotecaRequest entityRequest, Pageable page) {
@@ -151,4 +160,5 @@ public class BibliotecaController {
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(new UsuarioOperadorResponse(entity));
 	}
+
 }

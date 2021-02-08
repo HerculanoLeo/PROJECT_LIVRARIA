@@ -6,15 +6,16 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import br.com.herculano.livararia_api_rest.constants.CodigoRecuperaSenhaStatusEnum;
 import br.com.herculano.livararia_api_rest.constants.system_message.TrocaSenhaMessage;
-import br.com.herculano.livararia_api_rest.controller.request.TrocaSenhaComCodigoRequest;
-import br.com.herculano.livararia_api_rest.controller.request.UsuarioTrocaSenhaRequest;
-import br.com.herculano.livararia_api_rest.controller.request.ValidaCodigoRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioTrocaSenhaComCodigoRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioTrocaSenhaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.usuario.UsuarioValidaCodigoRequest;
 import br.com.herculano.livararia_api_rest.entity.TrocaSenha;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
 import br.com.herculano.livararia_api_rest.repository.jpa_repository.TrocaSenhaRepository;
@@ -28,27 +29,27 @@ public class TrocaSenhaService extends ServiceTemplate<TrocaSenha, TrocaSenhaRep
 
 	@Autowired
 	private UsuarioService usuarioService;
-	
+
 	@Autowired
 	public TrocaSenhaService(TrocaSenhaRepository repository, TrocaSenhaMessage message) {
 		super(repository, message);
 	}
 
-	public void trocaSenha(UsuarioTrocaSenhaRequest request) {
-		Usuario entity = usuarioService.consultaPorEmail(request.getEmail());
+	public void trocaSenha(UsuarioTrocaSenhaRequest entityRequest) {
+		Usuario entity = usuarioService.consultaPorEmail(entityRequest.getEmail());
 
-		if (request.getNovaSenha() != null) {
+		if (StringUtils.isNotBlank(entityRequest.getNovaSenha())) {
 
-			if (request.getSenhaAntiga().equals(request.getConfirmaSenha())) {
+			if (entityRequest.getNovaSenha().equals(entityRequest.getConfirmaSenha())) {
 
-				trocaSenhaAntiga(entity, request);
+				trocaSenhaAntiga(entity, entityRequest);
 
 			} else {
 
 				throw new ConfirmPasswordException(MessageTemplate.getCodigo(getMessage().getPasswordNotMatch(), null));
 			}
 
-		} else if (request.getSenhaAntiga() == null || request.getConfirmaSenha() == null) {
+		} else if (StringUtils.isBlank(entityRequest.getSenhaAntiga()) || StringUtils.isBlank(entityRequest.getConfirmaSenha())) {
 
 			geraCodido(entity);
 
@@ -59,7 +60,7 @@ public class TrocaSenhaService extends ServiceTemplate<TrocaSenha, TrocaSenhaRep
 		}
 	}
 
-	public TrocaSenha validaCodigo(ValidaCodigoRequest request) {
+	public TrocaSenha validaCodigo(UsuarioValidaCodigoRequest request) {
 		Usuario usuario = usuarioService.consultaPorEmail(request.getEmail());
 
 		TrocaSenha entity = validaCodigo(request.getCode(), usuario.getEmail());
@@ -67,13 +68,25 @@ public class TrocaSenhaService extends ServiceTemplate<TrocaSenha, TrocaSenhaRep
 		return entity;
 	}
 
-	public void trocaSenhaComCodigo(TrocaSenhaComCodigoRequest request) {
-		Usuario entity = usuarioService.consultaPorEmail(request.getEmail());
+	public void trocaSenhaComCodigo(UsuarioTrocaSenhaComCodigoRequest entityRequest) {
+		Usuario entity = usuarioService.consultaPorEmail(entityRequest.getEmail());
 
-		if (request.getNovaSenha().equals(request.getConfirmaSenha())) {
-			trocaSenhaComCodigo(request, entity);
+		if (StringUtils.isNotBlank(entityRequest.getSenha()) && StringUtils.isNotBlank(entityRequest.getConfirmaSenha())) {
+			
+			if (entityRequest.getSenha().equals(entityRequest.getConfirmaSenha())) {
+				
+				trocaSenhaComCodigo(entityRequest, entity);
+			
+			} else {
+				
+				throw new ConfirmPasswordException(MessageTemplate.getCodigo(getMessage().getPasswordNotMatch(), null));
+			
+			}
+			
 		} else {
-			throw new ConfirmPasswordException(MessageTemplate.getCodigo(getMessage().getPasswordNotMatch(), null));
+			
+			throw new ConfirmPasswordException(MessageTemplate.getCodigo(getMessage().getPasswordEmpty(), null));
+		
 		}
 	}
 
@@ -122,10 +135,10 @@ public class TrocaSenhaService extends ServiceTemplate<TrocaSenha, TrocaSenhaRep
 		}
 	}
 
-	public void trocaSenhaComCodigo(TrocaSenhaComCodigoRequest request, Usuario entity) {
-		validaCodigo(request.getCodigo(), request.getEmail());
+	public void trocaSenhaComCodigo(UsuarioTrocaSenhaComCodigoRequest request, Usuario entity) {
+		validaCodigo(request.getCode(), request.getEmail());
 
-		entity.setSenha(entity.getEncoder().encode(request.getNovaSenha()));
+		entity.setSenha(entity.getEncoder().encode(request.getSenha()));
 
 		usuarioService.save(entity);
 
@@ -144,7 +157,7 @@ public class TrocaSenhaService extends ServiceTemplate<TrocaSenha, TrocaSenhaRep
 		}
 	}
 
-	//TODO fazer notificacao de emails
+	// TODO fazer notificacao de emails
 	private void enviaConfirmacaoTrocaSenhaEmail() {
 		System.out.println("Senha trocada com sucesso.");
 

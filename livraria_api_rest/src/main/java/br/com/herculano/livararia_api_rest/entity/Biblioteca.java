@@ -14,8 +14,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import br.com.herculano.livararia_api_rest.controller.request.BibliotecaCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.BibliotecaComAdministradorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.BibliotecaCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.BibliotecaComAdministradorCadastroRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

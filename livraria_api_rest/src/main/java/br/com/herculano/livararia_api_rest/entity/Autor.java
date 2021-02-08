@@ -16,7 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.com.herculano.livararia_api_rest.controller.request.AutorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.autor.AutorCadastroRequest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

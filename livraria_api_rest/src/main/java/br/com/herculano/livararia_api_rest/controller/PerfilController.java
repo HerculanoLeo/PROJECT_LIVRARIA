@@ -8,7 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,8 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.herculano.livararia_api_rest.controller.request.PerfilCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.PerfilConsultaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.perfil.PerfilCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.perfil.PerfilConsultaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.perfil.PerfilUpdateRequest;
 import br.com.herculano.livararia_api_rest.controller.response.PerfilResponse;
 import br.com.herculano.livararia_api_rest.controller.response.PermissaoResponse;
 import br.com.herculano.livararia_api_rest.entity.Perfil;
@@ -41,6 +43,7 @@ public class PerfilController {
 	private ApplicationEventPublisher publisher;
 
 	@GetMapping
+	@PreAuthorize("@resourcesSecurity.isAcessoPerfis(authentication, #entityRequest)")
 	public ResponseEntity<Page<PerfilResponse>> consultaPerfilPorFiltro(PerfilConsultaRequest entityRequest, Pageable page) {
 		Page<Perfil> entity = service.consultaPorFiltro(entityRequest, page);
 
@@ -55,10 +58,10 @@ public class PerfilController {
 	}
 
 	@GetMapping("/{idPerfil}")
-	public ResponseEntity<Perfil> consultaPerfilPorId(@PathVariable Integer idPerfil) {
+	public ResponseEntity<PerfilResponse> consultaPerfilPorId(@PathVariable Integer idPerfil) {
 		Perfil entity = service.consultaPorId(idPerfil);
 
-		return ResponseEntity.ok(entity);
+		return ResponseEntity.status(HttpStatus.OK).body(new PerfilResponse(entity));
 	}
 
 	@PostMapping
@@ -70,9 +73,18 @@ public class PerfilController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(new PerfilResponse(entity));
 	}
 
-	@PutMapping("/{idPerfil}")
-	public ResponseEntity<?> atualizaPerfil(@RequestBody PerfilCadastroRequest request, @PathVariable Integer idPerfil,
+	@PostMapping("/{idAdministrador}")
+	public ResponseEntity<?> cadastraPerfilComAdministrador(@PathVariable("idAdministrador") Integer idAdministrador, @RequestBody PerfilCadastroRequest request,
 			HttpServletResponse response) {
+		Perfil entity = service.cadastra(idAdministrador, request);
+
+		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(new PerfilResponse(entity));
+	}
+
+	@PutMapping("/{idPerfil}")
+	public ResponseEntity<?> atualizaPerfil(@RequestBody @Validated PerfilUpdateRequest request, @PathVariable Integer idPerfil, HttpServletResponse response) {
 		Perfil entity = service.atualizar(idPerfil, request);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
@@ -80,10 +92,4 @@ public class PerfilController {
 		return ResponseEntity.status(HttpStatus.OK).body(new PerfilResponse(entity));
 	}
 
-	@DeleteMapping("/{idPerfil}")
-	public ResponseEntity<?> deletarPerfil(@PathVariable Integer idPerfil) {
-		service.delete(idPerfil);
-
-		return ResponseEntity.ok().build();
-	}
 }

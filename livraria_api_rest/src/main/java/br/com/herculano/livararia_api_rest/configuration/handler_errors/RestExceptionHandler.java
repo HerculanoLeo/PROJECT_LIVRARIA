@@ -34,27 +34,28 @@ import br.com.herculano.utilities.templates.CommonMessageTemplate;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
-	
+
 	@Autowired
 	private CommonMessageTemplate message;
 
 	@Override
-	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
-			HttpHeaders headers, HttpStatus status, WebRequest request) {
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		String error = CommonMessageTemplate.getCodigo(message.getJsonMalformed(), null);
-		
+
 		return buildResponseEntity(new ApiError(status, error, ex));
 	}
-	
-	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-			HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+	@Override // TODO corrigir a internacionalizacao da ApiError
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		ApiError api = new ApiError(HttpStatus.BAD_REQUEST);
+		
 		api.setMessage(CommonMessageTemplate.getCodigo(message.getValidationError(), null));
 		List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
 		api.addValidationErrors(fieldErrors);
+		
 		List<ObjectError> globalErrors = ex.getBindingResult().getGlobalErrors();
 		api.addValidationError(globalErrors);
+		
 		return buildResponseEntity(api);
 	}
 
@@ -64,14 +65,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		api.setMessage(ex.getMessage());
 		return buildResponseEntity(api);
 	}
-	
+
 	@ExceptionHandler({ TrocaSenhaException.class, AccessDeniedException.class })
 	protected ResponseEntity<Object> handleTrocaSenhaException(Exception ex) {
 		ApiError api = new ApiError(HttpStatus.UNAUTHORIZED);
 		api.setMessage(ex.getMessage());
 		return buildResponseEntity(api);
 	}
-	
+
 	@ExceptionHandler({ ResourceForbiddenException.class })
 	protected ResponseEntity<Object> handleResourceForbiddenException(Exception ex) {
 		ApiError api = new ApiError(HttpStatus.FORBIDDEN);
@@ -99,7 +100,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return buildResponseEntity(new ApiError(HttpStatus.UNAUTHORIZED, error, ex));
 	}
-	
+
 	@ExceptionHandler({ Exception.class })
 	protected ResponseEntity<Object> handleException(Exception ex) {
 		ex.printStackTrace();

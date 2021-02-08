@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.herculano.livararia_api_rest.auth.token.AuthToken;
 import br.com.herculano.livararia_api_rest.configuration.security.TokenProvider;
 import br.com.herculano.livararia_api_rest.controller.request.LoginRequest;
-import br.com.herculano.livararia_api_rest.controller.response.UsuarioResponse;
+import br.com.herculano.livararia_api_rest.controller.response.AutenticacaoResponse;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
 
 @RestController
@@ -45,7 +45,7 @@ public class AutenticaoController {
 			
 			Usuario usuario = (Usuario) authentication.getPrincipal();
 			
-			Object principal = new UsuarioResponse(usuario);
+			Object principal = new AutenticacaoResponse(usuario);
 				
 			return ResponseEntity.ok(new AuthToken(token, expireToken, principal));
 		} catch (AuthenticationException e) {

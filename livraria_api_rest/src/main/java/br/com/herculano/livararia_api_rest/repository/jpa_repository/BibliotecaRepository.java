@@ -11,7 +11,7 @@ import br.com.herculano.livararia_api_rest.repository.custom.BibliotecaResposito
 
 public interface BibliotecaRepository extends JpaRepository<Biblioteca, Integer>, BibliotecaRespositoryCustom {
 
-	@Query("SELECT entity FROM Biblioteca entity"
+	@Query("SELECT DISTINCT entity FROM Biblioteca entity"
 			+ " LEFT JOIN UsuarioAdministrador a ON a.id = entity.administrador.id"
 			+ " LEFT JOIN UsuarioOperador o ON o.biblioteca.id = entity.id"
 			+ " WHERE (a.id = :a OR o.id = :a)")

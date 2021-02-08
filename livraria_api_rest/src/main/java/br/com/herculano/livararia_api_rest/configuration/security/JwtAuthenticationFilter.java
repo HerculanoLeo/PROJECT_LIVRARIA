@@ -71,7 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 						SecurityContextHolder.getContext().setAuthentication(authentication);
 
-						localeResolver.setLocale(req, res, new Locale(userDetails.getIdioma(), ""));
+						localeResolver.setLocale(req, res, new Locale(userDetails.getIdioma()));
 					}
 				}
 				chain.doFilter(req, res);

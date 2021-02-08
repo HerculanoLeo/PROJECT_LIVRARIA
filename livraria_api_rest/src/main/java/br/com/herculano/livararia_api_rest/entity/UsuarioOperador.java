@@ -8,7 +8,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import br.com.herculano.livararia_api_rest.constants.TiposUsuariosEnum;
-import br.com.herculano.livararia_api_rest.controller.request.OperadorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.OperadorCadastroRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

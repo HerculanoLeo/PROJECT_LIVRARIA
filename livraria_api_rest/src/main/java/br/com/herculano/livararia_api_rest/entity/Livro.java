@@ -16,7 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import br.com.herculano.livararia_api_rest.controller.request.LivroCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.livro.LivroCadastroRequest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

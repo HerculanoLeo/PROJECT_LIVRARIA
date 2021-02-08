@@ -10,16 +10,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.herculano.livararia_api_rest.constants.system_message.BibliotecaMessage;
-import br.com.herculano.livararia_api_rest.controller.request.AdministradorCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.AdministradorUpdateRequest;
-import br.com.herculano.livararia_api_rest.controller.request.BibliotecaCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.BibliotecaComAdministradorCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.BibliotecaConsultaRequest;
-import br.com.herculano.livararia_api_rest.controller.request.BibliotecaUpdateRequest;
-import br.com.herculano.livararia_api_rest.controller.request.OperadorCadastroRequest;
-import br.com.herculano.livararia_api_rest.controller.request.OperadorConsultaBibliotecaRequest;
-import br.com.herculano.livararia_api_rest.controller.request.OperadorConsultaRequest;
-import br.com.herculano.livararia_api_rest.controller.request.OperadorUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.AdministradorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.AdministradorUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.BibliotecaCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.BibliotecaComAdministradorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.BibliotecaConsultaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.BibliotecaUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.OperadorCadastroRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.OperadorConsultaBibliotecaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.OperadorConsultaRequest;
+import br.com.herculano.livararia_api_rest.controller.request.biblioteca.OperadorUpdateRequest;
 import br.com.herculano.livararia_api_rest.entity.Biblioteca;
 import br.com.herculano.livararia_api_rest.entity.UsuarioAdministrador;
 import br.com.herculano.livararia_api_rest.entity.UsuarioOperador;
@@ -95,10 +95,21 @@ public class BibliotecaService extends ServiceTemplate<Biblioteca, BibliotecaRep
 		return entities;
 	}
 	
-
 	public Page<UsuarioOperador> consultaOperadores(Integer idBiblioteca, OperadorConsultaBibliotecaRequest entityRequest,	Pageable page) {
 		OperadorConsultaRequest filter = OperadorConsultaRequest.builder()
 				.idBiblioteca(idBiblioteca)
+				.nomeOperador(entityRequest.getNomeOperador())
+				.documento(entityRequest.getDocumento())
+				.email(entityRequest.getEmail()).build();
+
+		Page<UsuarioOperador> entities = operadorService.consulta(filter, page);
+		
+		return entities;
+	}
+
+	public Page<UsuarioOperador> consultaOperadorAdministrador(Integer idAdministrador, OperadorConsultaBibliotecaRequest entityRequest, Pageable page) {
+		OperadorConsultaRequest filter = OperadorConsultaRequest.builder()
+				.idAdministrador(idAdministrador)
 				.nomeOperador(entityRequest.getNomeOperador())
 				.documento(entityRequest.getDocumento())
 				.email(entityRequest.getEmail()).build();
