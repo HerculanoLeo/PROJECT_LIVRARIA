@@ -67,11 +67,4 @@ public class AutorController {
 	}
 
 	// TODO Criar status inativo
-//	@DeleteMapping("/{id}")
-//	public ResponseEntity<AutorResponse> deleteAutor(@PathVariable Integer id) {
-//
-//		service.delete(id);
-//		
-//		return ResponseEntity.ok().build();
-//	}
 }

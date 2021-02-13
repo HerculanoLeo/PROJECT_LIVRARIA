@@ -16,9 +16,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LivroUpdateRequest {
 
-	@NotNull
-	private Integer idBiblioteca;
-
 	@NotBlank
 	private String titulo;
 	

@@ -39,9 +39,9 @@ public class PerfilRepositoryImpl implements PerfilRepositoryCustom {
 			params.put("a","%" + entityRequest.getNome().toUpperCase() + "%");
 		}
 
-		if (StringUtils.isNotBlank(entityRequest.getPermissao())) {
+		if (StringUtils.isNotBlank(entityRequest.getNomePermissao())) {
 			where = RepositoryUtils.generateWhere(where, "UPPER(p_p.id_permissao) LIKE :b");
-			params.put("b", "%" + entityRequest.getPermissao().toUpperCase() + "%");
+			params.put("b", "%" + entityRequest.getNomePermissao().toUpperCase() + "%");
 		}
 		
 		if (null != entityRequest.getIdAdministrador() && entityRequest.getIdAdministrador() > 0) {

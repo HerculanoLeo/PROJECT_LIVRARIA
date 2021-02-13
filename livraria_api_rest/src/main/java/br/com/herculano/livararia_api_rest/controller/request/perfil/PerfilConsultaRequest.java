@@ -9,6 +9,6 @@ public class PerfilConsultaRequest {
 
 	private String nome;
 	
-	private String permissao;
+	private String nomePermissao;
 	
 }

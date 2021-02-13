@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class PerfilPermissaoConsultaRequest {
 
-	private String authority;
+	private String codigo;
 
 }

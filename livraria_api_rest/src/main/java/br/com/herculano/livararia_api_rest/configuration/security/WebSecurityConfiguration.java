@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import br.com.herculano.livararia_api_rest.configuration.handler_errors.RestExceptionHandler;
 import br.com.herculano.livararia_api_rest.service.UsuarioService;
 
 @Configuration
@@ -25,9 +26,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private UsuarioService usuarioService;
-
+	
 	@Autowired
-	private JwtAuthenticationEntryPoint unauthorizedHandler;
+	private RestExceptionHandler restExceptionHandler;
 	
 	@Override
 	@Bean
@@ -50,7 +51,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return new BCryptPasswordEncoder();
 	}
 
-	// TODO revisar toda parte de seguranca da API
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
@@ -85,8 +85,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.PUT, "/biblioteca/{id}").access("@resourcesSecurity.isAtualizaBiblioteca(authentication, #id)")
 				.antMatchers(HttpMethod.GET, "/biblioteca/administrador/{id}").access("@resourcesSecurity.isConsultaAdministrador(authentication, #id)")
 				.antMatchers(HttpMethod.POST, "/biblioteca/administrador").hasRole("CADASTRAR_ADMINISTRADOR")
-				.antMatchers(HttpMethod.PUT, "/biblioteca/administrador/{id}").hasRole("@resourcesSecurity.isAtualizaAdministrador(authentication, #id)")
-				.antMatchers(HttpMethod.POST, "/biblioteca/administrador/{id}/biblioteca").hasRole("@resourcesSecurity.isCadastraNovaBibliotecaNoAdministrador(authentication, #id)")
+				.antMatchers(HttpMethod.PUT, "/biblioteca/administrador/{id}").access("@resourcesSecurity.isAtualizaAdministrador(authentication, #id)")
+				.antMatchers(HttpMethod.POST, "/biblioteca/administrador/{id}/biblioteca").access("@resourcesSecurity.isCadastraNovaBibliotecaNoAdministrador(authentication, #id)")
 				.antMatchers(HttpMethod.GET, "/biblioteca/operador").access("@resourcesSecurity.isConsultaTodosOperadores(authentication)")
 				.antMatchers(HttpMethod.GET, "/biblioteca/administrador/{id}/operador").access("@resourcesSecurity.isConsultaOperadoresIdAdministrador(authentication, #id)")
 				.antMatchers(HttpMethod.GET, "/biblioteca/{id}/operador").access("@resourcesSecurity.isConsultaOperadoresIdBiblioteca(authentication, #id)")
@@ -102,12 +102,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				//LIVRO
 				.antMatchers(HttpMethod.GET, "/livro").permitAll()
 				.antMatchers(HttpMethod.GET, "/livro/{id}").permitAll()
-				.antMatchers(HttpMethod.PUT, "/livro/{id}").access("@resourcesSecurity.isAtualizarLivor(authentication, #id)")
+				.antMatchers(HttpMethod.PUT, "/livro/{id}").access("@resourcesSecurity.isAtualizarLivro(authentication, #id)")
 				.antMatchers(HttpMethod.GET, "/livro/{id}/autor").permitAll()
 				
 				.anyRequest().authenticated().and().csrf().disable().exceptionHandling()
-				.authenticationEntryPoint(unauthorizedHandler).and().sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+				.authenticationEntryPoint(restExceptionHandler)
+				.and().sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+				.and()
+				.exceptionHandling().accessDeniedHandler(restExceptionHandler);
 		http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
 	}
 

@@ -31,50 +31,45 @@ public class LivroRepositoryImpl implements LivroRepositoryCustom {
 		String queryStr = "SELECT DISTINCT(l.*) "
 				+ " FROM tb_livro l "
 				+ " INNER JOIN tb_biblioteca b ON b.id = l.id_biblioteca "
-				+ " INNER JOIN tb_livro_autor l_a ON l_a.id_livro = l.id "
-				+ " INNER JOIN tb_autor a ON a.id = l_a.id_autor ";
+				+ " LEFT JOIN tb_livro_autor l_a ON l_a.id_livro = l.id "
+				+ " LEFT JOIN tb_autor a ON a.id = l_a.id_autor ";
 				
 		String where = "";
 		Map<String, Object> params = new HashMap<>();
 
-		if (null != entityRequest.getId() && entityRequest.getId() > 0) {
-			where = RepositoryUtils.generateWhere(where, "l.id = :a ");
-			params.put("a", entityRequest.getId());
-		}
-		
 		if (StringUtils.isNotBlank(entityRequest.getTitulo())) {
-			where = RepositoryUtils.generateWhere(where, "UPPER(l.titulo) LIKE :b ");
-			params.put("b", "%" + entityRequest.getTitulo().toUpperCase() + "%");
+			where = RepositoryUtils.generateWhere(where, "UPPER(l.titulo) LIKE :a ");
+			params.put("a", entityRequest.getTitulo().toUpperCase());
 		}
 		
 		if (null != entityRequest.getISBN()) {
-			where = RepositoryUtils.generateWhere(where, "l.isbn = :c ");
-			params.put("c", entityRequest.getISBN());
+			where = RepositoryUtils.generateWhere(where, "l.isbn = :b ");
+			params.put("b", entityRequest.getISBN());
 		}
 		
 		if (null != entityRequest.getIdBiblioteca() && entityRequest.getIdBiblioteca() > 0) {
-			where = RepositoryUtils.generateWhere(where, "l.id_biblioteca = :d ");
-			params.put("d", entityRequest.getIdBiblioteca());
+			where = RepositoryUtils.generateWhere(where, "l.id_biblioteca = :c ");
+			params.put("c", entityRequest.getIdBiblioteca());
 		}
 		
 		if (null != entityRequest.getDataLancamentoInicio()) {
-			where = RepositoryUtils.generateWhere(where, "l.dt_lancamento >= :e ");
-			params.put("e", entityRequest.getDataLancamentoInicio());
+			where = RepositoryUtils.generateWhere(where, "l.dt_lancamento >= :d ");
+			params.put("d", entityRequest.getDataLancamentoInicio());
 		}
 		
 		if (null != entityRequest.getDataLancamentoFim()) {
-			where = RepositoryUtils.generateWhere(where, "l.dt_lancamento <= :f ");
-			params.put("f", entityRequest.getDataLancamentoFim());
+			where = RepositoryUtils.generateWhere(where, "l.dt_lancamento <= :e ");
+			params.put("e", entityRequest.getDataLancamentoFim());
 		}
 		
 		if (StringUtils.isNotBlank(entityRequest.getNomeBiblioteca())) {
-			where = RepositoryUtils.generateWhere(where, "UPPER(b.nome) LIKE :g ");
-			params.put("g", "%" + entityRequest.getNomeBiblioteca().toUpperCase() + "%");
+			where = RepositoryUtils.generateWhere(where, "UPPER(b.nome) LIKE :f ");
+			params.put("f", "%" + entityRequest.getNomeBiblioteca().toUpperCase() + "%");
 		}
 		
 		if (StringUtils.isNotBlank(entityRequest.getNomeAutor())) {
-			where = RepositoryUtils.generateWhere(where, "UPPER(a.nome) LIKE :h ");
-			params.put("h", "%" + entityRequest.getNomeBiblioteca().toUpperCase() + "%");
+			where = RepositoryUtils.generateWhere(where, "UPPER(a.nome) LIKE :g ");
+			params.put("g", "%" + entityRequest.getNomeBiblioteca().toUpperCase() + "%");
 		}
 
 		queryStr += where;
@@ -100,7 +95,7 @@ public class LivroRepositoryImpl implements LivroRepositoryCustom {
 	@SuppressWarnings("unchecked")
 	public List<Livro> consultaPorIdAutor(Integer idAutor) {
 		String queryStr = "SELECT liv.* FROM tb_livro liv "
-				+ "INNER JOIN tb_livro_autor liv_aut ON liv_aut.id_livro = liv.id ";
+				+ "LEFT JOIN tb_livro_autor liv_aut ON liv_aut.id_livro = liv.id ";
 
 		String where = "";
 

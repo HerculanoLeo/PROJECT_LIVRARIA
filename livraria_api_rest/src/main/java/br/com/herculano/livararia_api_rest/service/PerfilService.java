@@ -98,7 +98,7 @@ public class PerfilService extends ServiceTemplate<Perfil, PerfilRepository, Per
 		List<Permissao> entities = new ArrayList<>();
 		if (null != permissoes && !permissoes.isEmpty()) {
 			for (PerfilPermissaoConsultaRequest permissao : permissoes) {
-				Permissao entity = permissaoService.consultaPorCodigo(permissao.getAuthority());
+				Permissao entity = permissaoService.consultaPorCodigo(permissao.getCodigo());
 
 				if (tipoPerfil.equals(TiposUsuariosEnum.ROOT.getValor())) {
 

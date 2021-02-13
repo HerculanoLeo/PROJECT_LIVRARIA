@@ -20,4 +20,7 @@ public class OperadorUpdateRequest {
 	@NotBlank
 	private String documento;
 
+	@NotBlank
+	private String idioma;
+
 }

@@ -216,13 +216,15 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 	public UsuarioOperador atualizarOperador(Integer idOperador, OperadorUpdateRequest entityRequest) {
 		UsuarioOperador entity = operadorService.consultaPorId(idOperador);
 
-		validaEmailDisponivel(entityRequest.getEmail());
-
 		if (!entity.getEmail().equals(entityRequest.getEmail())) {
 			validaEmailDisponivel(entityRequest.getEmail());
 
 			entity.setEmail(entityRequest.getEmail());
 		}
+		
+		entity.setNome(entityRequest.getNome());
+		entity.setDocumento(entityRequest.getDocumento());
+		entity.setIdioma(entityRequest.getIdioma());
 
 		super.save(entity);
 

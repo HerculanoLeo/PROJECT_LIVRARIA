@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.herculano.livararia_api_rest.controller.request.perfil.PerfilCadastroRequest;
 import br.com.herculano.livararia_api_rest.controller.request.perfil.PerfilConsultaRequest;
 import br.com.herculano.livararia_api_rest.controller.request.perfil.PerfilUpdateRequest;
+import br.com.herculano.livararia_api_rest.controller.response.PerfilConsultaResponse;
 import br.com.herculano.livararia_api_rest.controller.response.PerfilResponse;
 import br.com.herculano.livararia_api_rest.controller.response.PermissaoResponse;
 import br.com.herculano.livararia_api_rest.entity.Perfil;
@@ -44,10 +45,10 @@ public class PerfilController {
 
 	@GetMapping
 	@PreAuthorize("@resourcesSecurity.isAcessoPerfis(authentication, #entityRequest)")
-	public ResponseEntity<Page<PerfilResponse>> consultaPerfilPorFiltro(PerfilConsultaRequest entityRequest, Pageable page) {
+	public ResponseEntity<Page<PerfilConsultaResponse>> consultaPerfilPorFiltro(PerfilConsultaRequest entityRequest, Pageable page) {
 		Page<Perfil> entity = service.consultaPorFiltro(entityRequest, page);
 
-		return ResponseEntity.ok(entity.map(PerfilResponse::new));
+		return ResponseEntity.ok(entity.map(PerfilConsultaResponse::new));
 	}
 
 	@GetMapping("/permissoes")
@@ -61,7 +62,7 @@ public class PerfilController {
 	public ResponseEntity<PerfilResponse> consultaPerfilPorId(@PathVariable Integer idPerfil) {
 		Perfil entity = service.consultaPorId(idPerfil);
 
-		return ResponseEntity.status(HttpStatus.OK).body(new PerfilResponse(entity));
+		return ResponseEntity.ok(new PerfilResponse(entity));
 	}
 
 	@PostMapping
@@ -73,7 +74,7 @@ public class PerfilController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(new PerfilResponse(entity));
 	}
 
-	@PostMapping("/{idAdministrador}")
+	@PostMapping("/{idAdministrador}") //TODO testar quando tiver biblioteca cadastrada.
 	public ResponseEntity<?> cadastraPerfilComAdministrador(@PathVariable("idAdministrador") Integer idAdministrador, @RequestBody PerfilCadastroRequest request,
 			HttpServletResponse response) {
 		Perfil entity = service.cadastra(idAdministrador, request);

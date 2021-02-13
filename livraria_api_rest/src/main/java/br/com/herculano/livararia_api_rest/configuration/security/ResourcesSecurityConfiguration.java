@@ -13,7 +13,6 @@ import br.com.herculano.livararia_api_rest.entity.Livro;
 import br.com.herculano.livararia_api_rest.entity.Perfil;
 import br.com.herculano.livararia_api_rest.entity.Permissao;
 import br.com.herculano.livararia_api_rest.entity.Usuario;
-import br.com.herculano.livararia_api_rest.entity.UsuarioAdministrador;
 import br.com.herculano.livararia_api_rest.entity.UsuarioOperador;
 import br.com.herculano.livararia_api_rest.service.AutorService;
 import br.com.herculano.livararia_api_rest.service.LivroService;
@@ -26,7 +25,7 @@ public class ResourcesSecurityConfiguration {
 
 	@Autowired
 	private PerfilService perfilService;
-	
+
 	@Autowired
 	private UsuarioService usuarioService;
 
@@ -41,61 +40,69 @@ public class ResourcesSecurityConfiguration {
 
 	// Acessos Usuarios
 	public boolean isAcessoDadosUsuario(Authentication authentication, Integer idUsuario) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
+			
+			if (usuario.getId().equals(idUsuario)) {
+				return true;
+			}
 
-		if (usuario.isRoot() && usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CONSULTA_USUARIO_ID").build())) {
-			return true;
-		}
-
-		if (usuario.getId().equals(idUsuario)) {
-			return true;
+			if (usuario.isRoot() && usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CONSULTA_USUARIO_ID").build())) {
+				return true;
+			}
 		}
 
 		return false;
 	}
 
 	public boolean isAtualizaDadosUsuarioCliente(Authentication authentication, Integer idUsuario) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
+			
+			if (usuario.getId().equals(idUsuario)) {
+				return true;
+			}
 
-		if (usuario.isRoot() && usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_ATUALIZA_USUARIO_CLIENTE").build())) {
-			return true;
-		}
-
-		if (usuario.getId().equals(idUsuario)) {
-			return true;
+			if (usuario.isRoot() && usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_ATUALIZA_USUARIO_CLIENTE").build())) {
+				return true;
+			}
 		}
 
 		return false;
 	}
 
 	public boolean isAtualizaDadosUsuarioRoot(Authentication authentication, Integer idUsuario) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
+			
+			if (usuario.getId().equals(idUsuario)) {
+				return true;
+			}
 
-		if (usuario.isRoot() && usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_USUARIO_ROOT").build())) {
-			return true;
-		}
-
-		if (usuario.getId().equals(idUsuario)) {
-			return true;
+			if (usuario.isRoot() && usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_USUARIO_ROOT").build())) {
+				return true;
+			}
 		}
 
 		return false;
 	}
 
 	public boolean isAtualizaPerfilUsuario(Authentication authentication, UsuarioAtualizaPerfilRequest entityRequest) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
 
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_ATUALIZA_PERFIL_USUARIO").build())) {
-			if (usuario.isRoot()) {
-				return true;
-			}
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_ATUALIZA_PERFIL_USUARIO").build())) {
+				if (usuario.isRoot()) {
+					return true;
+				}
 
-			Usuario entity = usuarioService.consultaPorId(entityRequest.getIdUsuario());
+				Usuario entity = usuarioService.consultaPorId(entityRequest.getIdUsuario());
 
-			if (usuario.isBiblioteca() && entity.isBiblioteca()) {
-				
-				if(entity instanceof UsuarioOperador) {
-					return ((UsuarioOperador) entity).getBiblioteca().getAdministrador().getId().equals(usuario.getIdUsuarioAdministrador());
+				if (usuario.isBiblioteca()) {
+					
+					if (entity instanceof UsuarioOperador) {
+						return ((UsuarioOperador) entity).getBiblioteca().getAdministrador().getId().equals(usuario.getIdUsuarioAdministrador());
+					}
 				}
 			}
 		}
@@ -105,43 +112,47 @@ public class ResourcesSecurityConfiguration {
 
 	// Acesso Perfil
 	public boolean isAcessoPerfis(Authentication authentication, PerfilConsultaRequest entityRequest) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
-		
-		if (usuario.isRoot()) {
-			return true;
-		}
-		
-		if(usuario.isBiblioteca()) {
-			if(null == entityRequest.getIdAdministrador()) {
-				entityRequest.setIdAdministrador(usuario.getIdUsuarioAdministrador());
-				
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
+
+			if (usuario.isRoot()) {
 				return true;
 			}
-			
-			if(entityRequest.getIdAdministrador().equals(usuario.getIdUsuarioAdministrador())) {
-				return true;
+
+			if (usuario.isBiblioteca()) {
+				if (null == entityRequest.getIdAdministrador()) {
+					entityRequest.setIdAdministrador(usuario.getIdUsuarioAdministrador());
+
+					return true;
+				}
+
+				if (entityRequest.getIdAdministrador().equals(usuario.getIdUsuarioAdministrador())) {
+					return true;
+				}
 			}
 		}
-		
+
 		return false;
 	}
 
 	public boolean isAcessoIdPerfil(Authentication authentication, Integer idPerfil) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
 
-		if (usuario.isRoot() && usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CONSULTA_PERFIL_ID").build())) {
-			return true;
-		}
-
-		if (usuario.getPerfil().getId().equals(idPerfil)) {
-			return true;
-		}
-
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CONSULTA_PERFIL_ID").build())) {
-			Perfil perfil = perfilService.consultaPorId(idPerfil);
-
-			if (usuario.getIdUsuarioAdministrador().equals(perfil.getAdministrador().getId())) {
+			if (usuario.getPerfil().getId().equals(idPerfil)) {
 				return true;
+			}
+
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CONSULTA_PERFIL_ID").build())) {
+				if (usuario.isRoot()) {
+					return true;
+				}
+
+				Perfil perfil = perfilService.consultaPorId(idPerfil);
+
+				if (usuario.getIdUsuarioAdministrador().equals(perfil.getAdministrador().getId())) {
+					return true;
+				}
 			}
 		}
 
@@ -149,19 +160,21 @@ public class ResourcesSecurityConfiguration {
 	}
 
 	public boolean isCadastroPerfil(Authentication authentication, Integer idAdministrador) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
 
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_PERFIL").build())) {
-			if (usuario.isRoot()) {
-				return true;
-			}
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_PERFIL").build())) {
+				if (usuario.isRoot()) {
+					return true;
+				}
 
-			if (usuario.isOperador()) {
-				return ((UsuarioOperador) usuario).getBiblioteca().getAdministrador().getId().equals(idAdministrador);
-			}
+				if (usuario.isOperador()) {
+					return ((UsuarioOperador) usuario).getBiblioteca().getAdministrador().getId().equals(idAdministrador);
+				}
 
-			if (usuario.isAdministrador()) {
-				return usuario.getId().equals(idAdministrador);
+				if (usuario.isAdministrador()) {
+					return usuario.getId().equals(idAdministrador);
+				}
 			}
 		}
 
@@ -170,15 +183,17 @@ public class ResourcesSecurityConfiguration {
 
 	// Acesso Biblioteca
 	public boolean isAtualizaBiblioteca(Authentication authentication, Integer idBiblioteca) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
 
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_BIBLIOTECA").build())) {
-			if (usuario.isRoot()) {
-				return true;
-			}
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_BIBLIOTECA").build())) {
+				if (usuario.isRoot()) {
+					return true;
+				}
 
-			if (usuario.isBiblioteca() && usuario.getIdsBiblioteca().contains(idBiblioteca)) {
-				return true;
+				if (usuario.isBiblioteca() && usuario.getIdsBiblioteca().contains(idBiblioteca)) {
+					return true;
+				}
 			}
 		}
 
@@ -186,85 +201,15 @@ public class ResourcesSecurityConfiguration {
 	}
 
 	public boolean isConsultaAdministrador(Authentication authentication, Integer idAdministrador) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
 
-		if (usuario instanceof UsuarioAdministrador) {
-			return usuario.getId().equals(idAdministrador);
-		}
-
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CONSULTA_ADMINSITRADOR_POR_ID").build())) {
-			if (usuario.isRoot()) {
-				return true;
+			if (usuario.isAdministrador()) {
+				return usuario.getId().equals(idAdministrador);
 			}
 
-			if (usuario.getIdUsuarioAdministrador().equals(idAdministrador)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public boolean isAtualizaAdministrador(Authentication authentication, Integer idAdministrador) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
-
-		if (usuario.isAdministrador()) {
-			return usuario.getId().equals(idAdministrador);
-		}
-
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_ATUALIZA_ADMINSITRADOR").build())) {
-			if (usuario.isRoot()) {
-				return true;
-			}
-
-			if (usuario.getIdUsuarioAdministrador().equals(idAdministrador)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public boolean isCadastraNovaBibliotecaNoAdministrador(Authentication authentication, Integer idAdministrador) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
-
-		if (usuario.isAdministrador()) {
-			return usuario.getId().equals(idAdministrador);
-		}
-
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_BIBLIOTECA").build())) {
-			if (usuario.isRoot()) {
-				return true;
-			}
-
-			if (usuario.getIdUsuarioAdministrador().equals(idAdministrador)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public boolean isConsultaTodosOperadores(Authentication authentication) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
-
-		if (usuario.isRoot() && usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CONSULTA_OPERADORES").build())) {
-			return true;
-		}
-
-		return false;
-	}
-
-	public boolean isConsultaOperadoresIdAdministrador(Authentication authentication, Integer idAdministrador) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
-
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CONSULTA_OPERADORES").build())) {
-			if (usuario.isRoot()) {
-				return true;
-			}
-
-			if (usuario.isBiblioteca()) {
-				if (usuario.getId().equals(idAdministrador)) {
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CONSULTA_ADMINSITRADOR_POR_ID").build())) {
+				if (usuario.isRoot()) {
 					return true;
 				}
 
@@ -277,21 +222,103 @@ public class ResourcesSecurityConfiguration {
 		return false;
 	}
 
-	public boolean isConsultaOperadoresIdBiblioteca(Authentication authentication, Integer idBiblioteca) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+	public boolean isAtualizaAdministrador(Authentication authentication, Integer idAdministrador) {
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
 
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CONSULTA_OPERADORES").build())) {
-			if (usuario.isRoot()) {
-				return true;
-			}
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_ATUALIZA_ADMINSITRADOR").build())) {
+				if (usuario.isAdministrador()) {
+					return usuario.getId().equals(idAdministrador);
+				}
 
-			if (usuario.isBiblioteca()) {
-				if (usuario.isAdministrador() && usuario.getIdsBiblioteca().contains(idBiblioteca)) {
+				if (usuario.isRoot()) {
 					return true;
 				}
 
-				if (usuario.getIdsBiblioteca().contains(idBiblioteca)) {
+				if (usuario.getIdUsuarioAdministrador().equals(idAdministrador)) {
 					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public boolean isCadastraNovaBibliotecaNoAdministrador(Authentication authentication, Integer idAdministrador) {
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
+
+			if (usuario.isAdministrador()) {
+				return usuario.getId().equals(idAdministrador);
+			}
+
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_BIBLIOTECA").build())) {
+				if (usuario.isRoot()) {
+					return true;
+				}
+
+				if (usuario.getIdUsuarioAdministrador().equals(idAdministrador)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public boolean isConsultaTodosOperadores(Authentication authentication) {
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
+
+			if (usuario.isRoot() && usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CONSULTA_OPERADORES").build())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean isConsultaOperadoresIdAdministrador(Authentication authentication, Integer idAdministrador) {
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
+
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CONSULTA_OPERADORES").build())) {
+				if (usuario.isRoot()) {
+					return true;
+				}
+
+				if (usuario.isBiblioteca()) {
+					if (usuario.getId().equals(idAdministrador)) {
+						return true;
+					}
+
+					if (usuario.getIdUsuarioAdministrador().equals(idAdministrador)) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public boolean isConsultaOperadoresIdBiblioteca(Authentication authentication, Integer idBiblioteca) {
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
+
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CONSULTA_OPERADORES").build())) {
+				if (usuario.isRoot()) {
+					return true;
+				}
+
+				if (usuario.isBiblioteca()) {
+					if (usuario.isAdministrador() && usuario.getIdsBiblioteca().contains(idBiblioteca)) {
+						return true;
+					}
+
+					if (usuario.getIdsBiblioteca().contains(idBiblioteca)) {
+						return true;
+					}
 				}
 			}
 		}
@@ -300,44 +327,48 @@ public class ResourcesSecurityConfiguration {
 	}
 
 	public boolean isConsultaIdOperador(Authentication authentication, Integer idOperador) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
 
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CONSULTA_OPERADORES").build())) {
-			if (usuario.isRoot()) {
-				return true;
-			}
-
-			if (usuario.isBiblioteca()) {
-				UsuarioOperador operador = operadorService.consultaPorId(idOperador);
-
-				if (usuario.isAdministrador() && operador.getIdUsuarioAdministrador().equals(usuario.getId())) {
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CONSULTA_OPERADORES").build())) {
+				if (usuario.isRoot()) {
 					return true;
 				}
 
-				if (usuario.getIdsBiblioteca().contains(operador.getBiblioteca().getId())) {
-					return true;
+				if (usuario.isBiblioteca()) {
+					UsuarioOperador operador = operadorService.consultaPorId(idOperador);
+
+					if (usuario.isAdministrador() && operador.getIdUsuarioAdministrador().equals(usuario.getId())) {
+						return true;
+					}
+
+					if (usuario.getIdsBiblioteca().contains(operador.getBiblioteca().getId())) {
+						return true;
+					}
 				}
 			}
 		}
 
-		return true;
+		return false;
 	}
 
 	public boolean isCadastroOperador(Authentication authentication, Integer idBiblioteca) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
 
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_OPERADOR").build())) {
-			if (usuario.isRoot()) {
-				return true;
-			}
-
-			if (usuario.isBiblioteca()) {
-				if (usuario.isAdministrador() && usuario.getIdsBiblioteca().contains(idBiblioteca)) {
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_OPERADOR").build())) {
+				if (usuario.isRoot()) {
 					return true;
 				}
 
-				if (usuario.getIdsBiblioteca().contains(idBiblioteca)) {
-					return true;
+				if (usuario.isBiblioteca()) {
+					if (usuario.isAdministrador() && usuario.getIdsBiblioteca().contains(idBiblioteca)) {
+						return true;
+					}
+
+					if (usuario.getIdsBiblioteca().contains(idBiblioteca)) {
+						return true;
+					}
 				}
 			}
 		}
@@ -346,26 +377,28 @@ public class ResourcesSecurityConfiguration {
 	}
 
 	public boolean isAtualizaOperador(Authentication authentication, Integer idOperador) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
 
-		if (usuario.getId().equals(idOperador)) {
-			return true;
-		}
-
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_OPERADOR").build())) {
-			if (usuario.isRoot()) {
+			if (usuario.getId().equals(idOperador)) {
 				return true;
 			}
 
-			if (usuario.isBiblioteca()) {
-				UsuarioOperador usuarioOperador = operadorService.consultaPorId(idOperador);
-
-				if (usuario.isAdministrador() && usuario.getIdsBiblioteca().contains(usuarioOperador.getBiblioteca().getId())) {
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_OPERADOR").build())) {
+				if (usuario.isRoot()) {
 					return true;
 				}
 
-				if (usuario.getIdsBiblioteca().contains(usuarioOperador.getBiblioteca().getId())) {
-					return true;
+				if (usuario.isBiblioteca()) {
+					UsuarioOperador usuarioOperador = operadorService.consultaPorId(idOperador);
+
+					if (usuario.isAdministrador() && usuario.getIdsBiblioteca().contains(usuarioOperador.getBiblioteca().getId())) {
+						return true;
+					}
+
+					if (usuario.getIdsBiblioteca().contains(usuarioOperador.getBiblioteca().getId())) {
+						return true;
+					}
 				}
 			}
 		}
@@ -375,20 +408,22 @@ public class ResourcesSecurityConfiguration {
 
 	// Acesso Autor
 	public boolean isCadastroAutor(Authentication authentication, AutorCadastroRequest entityRequest) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
 
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_AUTOR").build())) {
-			if (usuario.isRoot()) {
-				return true;
-			}
-
-			if (usuario.isBiblioteca() && usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_AUTOR").build())) {
-				if (usuario.isAdministrador() && usuario.getIdsBiblioteca().contains(entityRequest.getIdBiblioteca())) {
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_AUTOR").build())) {
+				if (usuario.isRoot()) {
 					return true;
 				}
 
-				if (usuario.getIdsBiblioteca().contains(entityRequest.getIdBiblioteca())) {
-					return true;
+				if (usuario.isBiblioteca()) {
+					if (usuario.isAdministrador() && usuario.getIdsBiblioteca().contains(entityRequest.getIdBiblioteca())) {
+						return true;
+					}
+
+					if (usuario.getIdsBiblioteca().contains(entityRequest.getIdBiblioteca())) {
+						return true;
+					}
 				}
 			}
 		}
@@ -397,22 +432,24 @@ public class ResourcesSecurityConfiguration {
 	}
 
 	public boolean isAtualizarAutor(Authentication authentication, Integer idAutor) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
 
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_AUTOR").build())) {
-			if (usuario.isRoot()) {
-				return true;
-			}
-
-			if (usuario.isBiblioteca()) {
-				Autor autor = autorService.consultaPorId(idAutor);
-
-				if (usuario.isAdministrador() && usuario.getIdsBiblioteca().contains(autor.getBiblioteca().getId())) {
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_AUTOR").build())) {
+				if (usuario.isRoot()) {
 					return true;
 				}
 
-				if (usuario.getIdsBiblioteca().contains(autor.getBiblioteca().getId())) {
-					return true;
+				if (usuario.isBiblioteca()) {
+					Autor autor = autorService.consultaPorId(idAutor);
+
+					if (usuario.isAdministrador() && usuario.getIdsBiblioteca().contains(autor.getBiblioteca().getId())) {
+						return true;
+					}
+
+					if (usuario.getIdsBiblioteca().contains(autor.getBiblioteca().getId())) {
+						return true;
+					}
 				}
 			}
 		}
@@ -422,20 +459,22 @@ public class ResourcesSecurityConfiguration {
 
 	// Acesso Livro
 	public boolean isCadastroLivro(Authentication authentication, LivroCadastroRequest entityRequest) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
 
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_LIVRO").build())) {
-			if (usuario.isRoot()) {
-				return true;
-			}
-
-			if (usuario.isBiblioteca()) {
-				if (usuario.isAdministrador() && usuario.getIdsBiblioteca().contains(entityRequest.getIdBiblioteca())) {
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_LIVRO").build())) {
+				if (usuario.isRoot()) {
 					return true;
 				}
 
-				if (usuario.getIdsBiblioteca().contains(entityRequest.getIdBiblioteca())) {
-					return true;
+				if (usuario.isBiblioteca()) {
+					if (usuario.isAdministrador() && usuario.getIdsBiblioteca().contains(entityRequest.getIdBiblioteca())) {
+						return true;
+					}
+
+					if (usuario.getIdsBiblioteca().contains(entityRequest.getIdBiblioteca())) {
+						return true;
+					}
 				}
 			}
 		}
@@ -444,27 +483,28 @@ public class ResourcesSecurityConfiguration {
 	}
 
 	public boolean isAtualizarLivro(Authentication authentication, Integer idLivro) {
-		Usuario usuario = (Usuario) authentication.getPrincipal();
+		if (!authentication.getPrincipal().equals("anonymousUser")) {
+			Usuario usuario = (Usuario) authentication.getPrincipal();
 
-		if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_LIVRO").build())) {
-			if (usuario.isRoot()) {
-				return true;
-			}
-
-			if (usuario.isBiblioteca()) {
-				Livro livro = livroService.consultaPorId(idLivro);
-
-				if (usuario.isAdministrador() && usuario.getIdsBiblioteca().contains(livro.getBiblioteca().getId())) {
+			if (usuario.getAuthorities().contains(Permissao.builder().codigo("ROLE_CADASTRO_LIVRO").build())) {
+				if (usuario.isRoot()) {
 					return true;
 				}
 
-				if (usuario.getIdsBiblioteca().contains(livro.getBiblioteca().getId())) {
-					return true;
+				if (usuario.isBiblioteca()) {
+					Livro livro = livroService.consultaPorId(idLivro);
+
+					if (usuario.isAdministrador() && usuario.getIdsBiblioteca().contains(livro.getBiblioteca().getId())) {
+						return true;
+					}
+
+					if (usuario.getIdsBiblioteca().contains(livro.getBiblioteca().getId())) {
+						return true;
+					}
 				}
 			}
 		}
 
 		return false;
 	}
-
 }

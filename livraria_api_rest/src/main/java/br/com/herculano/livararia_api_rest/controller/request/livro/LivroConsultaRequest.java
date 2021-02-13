@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LivroConsultaRequest {
 	
-	private Integer id;
-	
 	private String titulo;
 	
 	private Long ISBN;

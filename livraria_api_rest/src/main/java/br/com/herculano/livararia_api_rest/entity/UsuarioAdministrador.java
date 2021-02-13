@@ -31,7 +31,7 @@ public class UsuarioAdministrador extends Usuario {
 	private List<Biblioteca> bibliotecas;
 
 	public UsuarioAdministrador(AdministradorCadastroRequest entityRequest) {
-		super(entityRequest.getNome(), entityRequest.getNome(), entityRequest.getSenha(), TiposUsuariosEnum.ADMINISTRADOR.getValor(), entityRequest.getIdioma(), entityRequest.getPerfil());
+		super(entityRequest.getNome(), entityRequest.getEmail(), entityRequest.getSenha(), TiposUsuariosEnum.ADMINISTRADOR.getValor(), entityRequest.getIdioma(), entityRequest.getPerfil());
 		this.documento = entityRequest.getDocumento();
 	}
 

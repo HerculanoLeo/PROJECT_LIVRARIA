@@ -29,8 +29,8 @@ public class AutorRepositoryImpl implements AutorRepositoryCustom {
 	@SuppressWarnings("unchecked")
 	public Page<Autor> consultaPorFiltro(AutorConsultaRequest entity, Pageable page) {
 		String queryStr = "SELECT DISTINCT(a.*) FROM tb_autor a "
-				+ " INNER JOIN tb_livro_autor l_a ON l_a.id_autor = a.id "
-				+ " INNER JOIN tb_livro l ON l.id = l_a.id_livro" 
+				+ " LEFT JOIN tb_livro_autor l_a ON l_a.id_autor = a.id "
+				+ " LEFT JOIN tb_livro l ON l.id = l_a.id_livro" 
 				+ " INNER JOIN tb_biblioteca b ON b.id = a.id_biblioteca";
 
 		String where = "";
