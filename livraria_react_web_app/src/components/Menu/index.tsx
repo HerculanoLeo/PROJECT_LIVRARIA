@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 
-import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faHome, faSignOutAlt, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronRight, faChevronUp, faHome, faSignOutAlt, faUser } from "@fortawesome/free-solid-svg-icons";
 
-import "../../styles/components/menu.css";
+import MenuItem from "./MenuItem";
+import SubMenu from "./SubMenu";
+
+import "../../styles/components/Menu/menu.css";
 
 const urlImg = "https://image.freepik.com/fotos-gratis/paisagem-natural-em-um-jardim-botanico_35355-5948.jpg";
 
 const Menu: React.FC = () => {
+  
   const [isVisibleMenu, setVisibleMenu] = useState(false);
   const [isVisibleUsuarioMenu, setVisibleUsuarioMenu] = useState(false);
 
@@ -32,44 +35,21 @@ const Menu: React.FC = () => {
           </div>
 
           <div className={`menu-usuario ${isVisibleUsuarioMenu ? "menu-usuario-expanded" : "menu-usuario-contracted"}`}>
-            <div className="menu-item">
-              <Link to="/conta">
-                <div className="div-svg">
-                  <FontAwesomeIcon icon={faUser} size="sm" />
-                </div>
-                Conta
-              </Link>
-            </div>
+            <MenuItem to="/conta" icon={faUser} value="Conta" />
 
-            <div className="menu-item">
-              <Link to="/">
-                <div className="div-svg">
-                  <FontAwesomeIcon icon={faSignOutAlt} size="sm" />
-                </div>
-                <span>Sair</span>
-              </Link>
-            </div>
+            <MenuItem to="/" icon={faSignOutAlt} value="Sair" />
           </div>
         </div>
 
         <div className="menu">
-          <div className="menu-item">
-            <Link to="/">
-              <div className="div-svg">
-                <FontAwesomeIcon icon={faHome} size="sm" />
-              </div>
-              Home
-            </Link>
-          </div>
+          <MenuItem to="/" icon={faHome} value="Home" />
 
-          <div className="menu-item">
-            <Link to="/">
-              <div className="div-svg">
-                <FontAwesomeIcon icon={faChevronUp} size="sm" />
-              </div>
-              Home
-            </Link>
-          </div>
+          <SubMenu value="Biblioteca" >
+              <MenuItem to="/conta" icon={faHome} value="Livros" />
+              <MenuItem to="/" icon={faHome} value="Autores" />
+          </SubMenu>
+
+          <MenuItem to="/" icon={faHome} value="Pedidos" />
         </div>
       </div>
     </>

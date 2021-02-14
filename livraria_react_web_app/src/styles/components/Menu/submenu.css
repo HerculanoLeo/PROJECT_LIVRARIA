@@ -1,0 +1,46 @@
+.submenu {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+
+    max-height: 24px;
+    
+    cursor: pointer;
+    overflow: hidden;
+    transition: max-height 0.5s;
+  }
+  
+  .submenu-expanded {
+    max-height: 500px;
+  }
+  
+  .submenu-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+  
+    margin: 0 25px;
+  }
+  
+  .submenu-icon {
+    transform: rotate(0deg);
+    transition: transform 0.3s;
+  }
+  
+  .submenu-expanded .submenu-icon {
+    transform: rotate(-180deg);
+    transition: transform 0.3s;
+  }
+  
+  .submenu-items {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    
+    margin-left: 10px;
+    margin-top: 3px;
+  }
+  
