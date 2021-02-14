@@ -9,22 +9,3 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
-
-.layout-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-.content-container {
-  margin-top: 55px;
-  display: flex;
-  flex-direction: column;
-  justify-content: stretch;
-  align-items: stretch;
-  height: 100%;
-}
-
-.content {
-  flex: 1;
-}
