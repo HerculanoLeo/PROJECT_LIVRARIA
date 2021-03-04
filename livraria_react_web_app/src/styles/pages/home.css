@@ -1,3 +1,37 @@
-container {
-    display: flex;
+.home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding: 10px;
+}
+
+.card-container {
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+
+  width: 100%;
+  max-width: 1556px;
+}
+
+@media (min-width: 1920px) {
+  .card-container {
+    grid-template-columns: 20% 20% 20% 20% 20%;
+    max-width: 1945px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .card-container {
+    grid-template-columns: 50% 50%;
+    max-width: 680px;
+  }
+}
+
+@media (max-width: 640px) {
+  .card-container {
+    grid-template-columns: 100%;
+    max-width: 350px;
+  }
 }

@@ -1,12 +1,15 @@
-import React from 'react';
+import React from "react";
 
-import Routes from './routes/routes';
+import { Provider } from "react-redux";
+import store from "./redux/store";
 
-import './styles/App.css';
+import Routes from "./routes";
 
 function App() {
   return (
-    <Routes />
+    <Provider store={store}>
+      <Routes />
+    </Provider>
   );
 }
 

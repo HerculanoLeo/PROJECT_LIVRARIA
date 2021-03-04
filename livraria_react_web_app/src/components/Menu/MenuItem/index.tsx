@@ -4,7 +4,7 @@ import { FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { Link } from "react-router-dom";
 
-import "../../../styles/components/Menu/menuitem.css";
+import { MenuItemStyled, MenuIcon } from './styled';
 
 interface MenuItemProps {
   to: string;
@@ -14,18 +14,18 @@ interface MenuItemProps {
 }
 
 const MenuItem: React.FC<MenuItemProps> = (props: MenuItemProps) => {
-  if (null != props.rendered && props.rendered === false) {
+  if (props.rendered === false) {
     return <></>;
   } else {
     return (
-      <div className="menu-item">
+      <MenuItemStyled>
         <Link to={props.to}>
-          <div className="div-svg">
+          <MenuIcon>
             <FontAwesomeIcon icon={props.icon} size="sm" />
-          </div>
+          </MenuIcon>
           {props.value}
         </Link>
-      </div>
+      </MenuItemStyled>
     );
   }
 };

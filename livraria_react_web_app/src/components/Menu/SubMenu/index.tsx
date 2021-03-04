@@ -3,7 +3,7 @@ import React, { ReactNode, useState } from "react";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import '../../../styles/components/Menu/submenu.css'
+import { Submenu, SubmenuTitle, SubmenuValue, SubmenuIcon, SubmenuItems } from "./styled";
 
 interface SubMenuProps {
   children?: ReactNode;
@@ -14,15 +14,15 @@ const SubMenu: React.FC<SubMenuProps> = (props: SubMenuProps) => {
   const [isVisibleSubMenu, setVisibleSubMenu] = useState(false);
 
   return (
-    <div className={`submenu ${isVisibleSubMenu ? "submenu-expanded" : ""} `}>
-      <div onClick={() => setVisibleSubMenu(!isVisibleSubMenu)} className="submenu-title">
-        <span>{props.value}</span>
-        <div className="submenu-icon">
+    <Submenu isVisibleSubMenu={isVisibleSubMenu}>
+      <SubmenuTitle onClick={() => setVisibleSubMenu(!isVisibleSubMenu)}>
+        <SubmenuValue>{props.value}</SubmenuValue>
+        <SubmenuIcon isVisibleSubMenu={isVisibleSubMenu}>
           <FontAwesomeIcon icon={faChevronDown} size="sm" color="#000" />
-        </div>
-      </div>
-      <div className="submenu-items">{props.children}</div>
-    </div>
+        </SubmenuIcon>
+      </SubmenuTitle>
+      <SubmenuItems>{props.children}</SubmenuItems>
+    </Submenu>
   );
 };
 

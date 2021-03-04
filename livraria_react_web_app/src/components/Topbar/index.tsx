@@ -1,12 +1,15 @@
 import React from "react";
 
-import "../../styles/components/topbar.css";
+import { TopbarContainer, TopbarLogo } from "./styled";
+
+const img =
+  "https://images.educamaisbrasil.com.br/content/banco_de_imagens/guia-de-estudo/D/uma-montanha-e-classifica-como-paisagem-natural-estatica.jpg";
 
 const Topbar: React.FC = () => {
   return (
-    <div className="topbar-container">
-      <div className="topbar-logo" />
-    </div>
+    <TopbarContainer>
+      <TopbarLogo img={img} />
+    </TopbarContainer>
   );
 };
 
