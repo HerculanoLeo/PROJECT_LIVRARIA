@@ -1,6 +1,19 @@
 import { AuthenticationUserState } from "../../interfaces/User/authenticationUserState";
-import { LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT } from "../actions/actionLoginTypes";
-import { AuthenticationRequestDispatchTypes, AuthenticationSuccessDispatchTypes } from "../dispatchTypes/authenticationDispatchTypes";
+import { LoginResponse } from "../../interfaces/User/login";
+import { LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT } from "../actions/Login/actionLoginTypes";
+
+export type AuthenticationSuccessDispatchTypes = {
+  type: string;
+  payload: LoginResponse;
+};
+
+export type AuthenticationRequestDispatchTypes = {
+  type: string;
+};
+
+export type LoginDispatch = (
+  args: AuthenticationSuccessDispatchTypes | AuthenticationRequestDispatchTypes
+) => AuthenticationSuccessDispatchTypes;
 
 const intialState: AuthenticationUserState = {} as AuthenticationUserState;
 

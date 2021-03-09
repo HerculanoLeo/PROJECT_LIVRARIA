@@ -7,8 +7,7 @@ import { ApplicationState } from "../redux/reducers";
 import BibliotecaRoutes from "../routes/bibliotecaBibliotecaRoute";
 import AuthenticationRoute from "./authenticationRoute";
 
-const Routes: React.FC<AuthenticationUserState> = ({usuario, token, expireToken}) => {
-
+const Routes: React.FC<AuthenticationUserState> = ({ usuario, token, expireToken }) => {
   const isAutheticated = (): Boolean => {
     const now = new Date();
 
@@ -19,10 +18,7 @@ const Routes: React.FC<AuthenticationUserState> = ({usuario, token, expireToken}
     }
   };
 
-  return (
-  <BrowserRouter>
-    {isAutheticated() ? <BibliotecaRoutes /> : <AuthenticationRoute />}
-  </BrowserRouter>);
+  return <BrowserRouter>{isAutheticated() ? <BibliotecaRoutes /> : <AuthenticationRoute />}</BrowserRouter>;
 };
 
 const mapStateToProps = ({ authentication }: ApplicationState): AuthenticationUserState => ({
