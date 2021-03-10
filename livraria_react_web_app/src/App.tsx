@@ -1,18 +1,18 @@
 import React from "react";
 
 import { Provider } from "react-redux";
+import Toasts from "./components/Toasts";
 import store from "./redux/store";
 
 import Routes from "./routes";
-import Toast from './components/Toast'
 
-function App() {
+const App: React.FC = () => {
   return (
     <Provider store={store}>
-      <Toast />
+      <Toasts />
       <Routes />
     </Provider>
   );
-}
+};
 
 export default App;

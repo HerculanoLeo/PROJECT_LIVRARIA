@@ -11,9 +11,9 @@ interface ToastProgressBarProps {
 export const ToastProgressBar = styled.div<ToastProgressBarProps>`
   height: 10px;
   background-color: #fff;
-  animation: progressAnimationStrike ${(props) => `${props.time}s`};
+  animation: progressBarAnimationStrike ${(props) => `${props.time}s`};
 
-  @keyframes progressAnimationStrike {
+  @keyframes progressBarAnimationStrike {
     from {
       width: 100%;
     }
@@ -24,9 +24,7 @@ export const ToastProgressBar = styled.div<ToastProgressBarProps>`
 `;
 
 export const ToastContainer = styled.div<ToastContainerProps>`
-  position: fixed;
-  top: 10px;
-  right: 10px;
+  position: relative;
 
   display: flex;
   flex-direction: row;
@@ -35,7 +33,7 @@ export const ToastContainer = styled.div<ToastContainerProps>`
 
   height: 110px;
   width: 380px;
-
+  margin: 5px 10px;
   border-radius: 4px;
   border: none;
 
@@ -44,9 +42,9 @@ export const ToastContainer = styled.div<ToastContainerProps>`
 
   background-color: ${(props) => `${props.color}`};
 
-  animation: progressAnimationStrike 0.5s;
+  animation: progressToastAnimationStrike 0.5s;
 
-  @keyframes progressAnimationStrike {
+  @keyframes progressToastAnimationStrike {
     from {
       right: -400px;
     }

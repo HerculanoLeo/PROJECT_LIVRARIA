@@ -1,7 +1,6 @@
 import { userService } from "../../../services/userService";
 import { LoginDispatch } from "../../reducers/login";
 import { toastError } from "../Toast/actionToast";
-import { TOAST_ERROR } from "../Toast/actionToastTypes";
 import { LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT } from "./actionLoginTypes";
 
 export function loginRequest(email: string, password: string) {
@@ -14,7 +13,7 @@ export function loginRequest(email: string, password: string) {
       },
       (error) => {
         dispatch({ type: LOGIN_FAILURE });
-        dispatch(toastError(JSON.stringify(error)));
+        dispatch(toastError(error.message));
       }
     );
   };

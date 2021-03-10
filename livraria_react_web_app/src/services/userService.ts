@@ -1,5 +1,6 @@
-import { LoginRequest, LoginResponse } from "../interfaces/User/login";
 import { api } from "./api";
+import { LoginRequest, LoginResponse } from "../interfaces/User/login";
+import { ApiError } from '../interfaces/ErroResponse'
 
 export const userService = {
   login,
@@ -14,9 +15,14 @@ async function login(loginRequest: LoginRequest): Promise<LoginResponse> {
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
-      console.log(error.response.data);
+
+      const serverResponse = error.response.data as ApiError;
+
+      console.log(serverResponse.apierror.message);
       console.log(error.response.status);
       console.log(error.response.headers);
+
+      throw new Error(serverResponse.apierror.message);
     } else if (error.request) {
       // The request was made but no response was received
       // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -28,6 +34,6 @@ async function login(loginRequest: LoginRequest): Promise<LoginResponse> {
     }
     console.log(error.config);
 
-    throw error;
+    throw new Error("Teste de Erro");
   }
 }

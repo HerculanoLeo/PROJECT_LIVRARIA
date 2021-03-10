@@ -31,10 +31,12 @@ export default function AuthenticationReducer(
 
       const AuthenticationUserState: AuthenticationUserState = {
         loggingIn: true,
-        tipo: payload.tipo,
-        token: payload.token,
-        expireToken: new Date(payload.expireToken),
-        usuario: payload.usuario,
+        autentication: {
+          tipo: payload.tipo,
+          token: payload.token,
+          expireToken: new Date(payload.expireToken),
+          usuario: payload.usuario,
+        },
       };
       return AuthenticationUserState;
     }
