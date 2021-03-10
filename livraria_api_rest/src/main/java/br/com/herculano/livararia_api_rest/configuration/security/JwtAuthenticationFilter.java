@@ -80,6 +80,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			}
 		} else {
 			logger.warn("couldn't find bearer string, will ignore the header");
+			
+			localeResolver.setLocale(req, res, req.getLocale());
+			
 			chain.doFilter(req, res);
 		}
 	}
