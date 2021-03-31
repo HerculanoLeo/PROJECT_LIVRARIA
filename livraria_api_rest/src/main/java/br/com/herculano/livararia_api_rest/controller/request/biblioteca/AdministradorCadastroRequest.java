@@ -40,7 +40,7 @@ public class AdministradorCadastroRequest {
 		this.documento = entityRequest.getDocumento();
 		this.email = entityRequest.getEmail();
 		this.senha = entityRequest.getSenha();
-		this.confirmeSenha = entityRequest.getRepetirSenha();
+		this.confirmeSenha = entityRequest.getConfirmeSenha();
 		this.idioma = entityRequest.getIdioma();
 	}
 	

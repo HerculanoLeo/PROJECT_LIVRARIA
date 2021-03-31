@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,6 +50,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String header = req.getHeader(HEADER_STRING);
 		String username = null;
 		String authToken = null;
+		
+		String acceptLanguage = req.getHeader("Accept-Language");
+
+		if(StringUtils.isNotBlank(acceptLanguage)) {
+			localeResolver.setLocale(req, res, new Locale(acceptLanguage.split(",")[0]));
+		} else {
+			localeResolver.setLocale(req, res, req.getLocale());
+		}
 
 		if (header != null && header.startsWith(TOKEN_PREFIX)) {
 
@@ -70,8 +79,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 						logger.info("authenticated user " + username + ", setting security context");
 
 						SecurityContextHolder.getContext().setAuthentication(authentication);
-
-						localeResolver.setLocale(req, res, new Locale(userDetails.getIdioma()));
+						
+						if(!userDetails.getIdioma().equals(acceptLanguage)) {
+							localeResolver.setLocale(req, res, new Locale(userDetails.getIdioma()));
+						}
 					}
 				}
 				chain.doFilter(req, res);
@@ -80,8 +91,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			}
 		} else {
 			logger.warn("couldn't find bearer string, will ignore the header");
-			
-			localeResolver.setLocale(req, res, req.getLocale());
 			
 			chain.doFilter(req, res);
 		}

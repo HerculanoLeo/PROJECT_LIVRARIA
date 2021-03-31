@@ -13,7 +13,8 @@ import br.com.herculano.livararia_api_rest.repository.custom.UsuarioRespositoryC
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer>, UsuarioRespositoryCustom {
 
-	Optional<Usuario> findByEmail(String email);
+	@Query("SELECT entity FROM Usuario entity WHERE LOWER(entity.email) = :email")
+	Optional<Usuario> findByEmail(@Param("email") String email);
 
 	@Query("SELECT entity FROM Usuario entity "
 			+ "INNER JOIN Biblioteca bib ON bib.administrador.id = entity.id "

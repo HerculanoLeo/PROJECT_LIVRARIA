@@ -71,7 +71,7 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 
 	@Override
 	public Usuario loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<Usuario> optional = getRepository().findByEmail(username);
+		Optional<Usuario> optional = getRepository().findByEmail(username.toLowerCase());
 
 		if (!optional.isPresent()) {
 			Object[] args = new Object[] { username };
@@ -309,7 +309,7 @@ public class UsuarioService extends ServiceTemplate<Usuario, UsuarioRepository, 
 	}
 
 	public Usuario consultaPorEmail(String email) {
-		Optional<Usuario> optionalUsuario = getRepository().findByEmail(email);
+		Optional<Usuario> optionalUsuario = getRepository().findByEmail(email.toLowerCase());
 
 		if (!optionalUsuario.isPresent()) {
 			Object[] args = { email };

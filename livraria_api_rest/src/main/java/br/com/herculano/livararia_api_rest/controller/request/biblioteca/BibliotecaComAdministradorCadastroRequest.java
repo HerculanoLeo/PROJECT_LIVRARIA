@@ -26,7 +26,7 @@ public class BibliotecaComAdministradorCadastroRequest {
 	private String senha;
 
 	@NotBlank
-	private String repetirSenha;
+	private String confirmeSenha;
 
 	@NotBlank
 	private String nomeBiblioteca;

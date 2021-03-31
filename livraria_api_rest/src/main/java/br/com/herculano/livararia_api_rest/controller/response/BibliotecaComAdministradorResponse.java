@@ -12,12 +12,12 @@ public class BibliotecaComAdministradorResponse {
 	
 	private String nome;
 	
-	private UsuarioAdministradorResponse usuarioAdministrador;
+	private UsuarioAdministradorResponse administrador;
 	
 	public BibliotecaComAdministradorResponse(Biblioteca entity) {
 		this.id = entity.getId();
 		this.nome = entity.getNome();
-		this.usuarioAdministrador = new UsuarioAdministradorResponse(entity.getAdministrador());
+		this.administrador = new UsuarioAdministradorResponse(entity.getAdministrador());
 	}
 	
 }
