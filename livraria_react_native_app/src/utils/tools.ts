@@ -6,12 +6,12 @@ export const getLocale = () => {
 
       console.log('locale', locale);
 
-      return locale
+      return locale;
   } else {
       const locale = NativeModules.I18nManager.localeIdentifier;
 
       console.log('locale', locale);
 
-      return locale
+      return locale;
   }
 }

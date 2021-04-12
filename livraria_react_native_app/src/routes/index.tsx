@@ -14,13 +14,13 @@ import User from '../interfaces/User';
 import { loadStored } from '../redux/actions/Stored';
 import SplashScreen from 'react-native-splash-screen';
 
-interface indexRouteProps {
+interface IndexRouteProps {
   expireToken: Date;
   usuario: User;
   isLoading: boolean;
 }
 
-const Routes: React.FC<indexRouteProps> = ({ usuario, expireToken, isLoading }) => {
+const Routes: React.FC<IndexRouteProps> = ({ usuario, expireToken, isLoading }) => {
   const Stack = createStackNavigator();
 
   const dispatch = useDispatch();
@@ -35,9 +35,10 @@ const Routes: React.FC<indexRouteProps> = ({ usuario, expireToken, isLoading }) 
     }
   }, [isLoading]);
 
-  const isAutenticado = () => {
+  const isAutheticated = () => {
     const now = new Date();
 
+    // return true;
     return (usuario && expireToken) ? expireToken > now : false;
   };
 
@@ -47,7 +48,7 @@ const Routes: React.FC<indexRouteProps> = ({ usuario, expireToken, isLoading }) 
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{ cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}>
-            {isAutenticado() ? (
+            {isAutheticated() ? (
               <Stack.Screen
                 options={{ headerShown: false }}
                 name="AuthenticatedRoute"
@@ -67,7 +68,7 @@ const Routes: React.FC<indexRouteProps> = ({ usuario, expireToken, isLoading }) 
   );
 };
 
-const mapPropsToState = ({ authentication, stored }: ApplicationState): indexRouteProps => ({
+const mapPropsToState = ({ authentication, stored }: ApplicationState): IndexRouteProps => ({
   usuario: authentication.usuario,
   expireToken: authentication.expireToken,
   isLoading: stored.isLoading

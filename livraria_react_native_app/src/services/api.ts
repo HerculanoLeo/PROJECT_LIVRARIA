@@ -1,10 +1,11 @@
 import axios from 'axios';
+
 import { API } from '../constants';
 import { logoutRequest } from '../redux/actions/Login';
 import { warnMessage } from '../redux/actions/Message';
 import store from '../redux/store'
 
-export const api = axios.create({ baseURL: API.baseUrl, headers: API.baseHeaders, timeout: 10000 });
+export const api = axios.create({ baseURL: API.baseUrl, headers: API.baseHeaders, timeout: 5000 });
 
 api.interceptors.response.use((response) => {
   return response;

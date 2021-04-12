@@ -20,7 +20,8 @@ export const LayoutScrollViewContainer = styled.ScrollView`
   padding: 0px 12px 0 12px;
 `;
 
-export const LayoutContentContainer = styled.SafeAreaView`
+export const LayoutContentContainer = styled.KeyboardAvoidingView`
+  flex: 1;
   margin-bottom: 20px;
 `;
 

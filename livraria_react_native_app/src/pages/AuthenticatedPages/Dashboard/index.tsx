@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { View } from 'react-native';
 
-// import { Container } from './styles';
 
 const DashboardPage: React.FC = () => {
-  return <View />;
+
+  return (
+    <>
+    </>
+  )
 }
 
 export default DashboardPage;

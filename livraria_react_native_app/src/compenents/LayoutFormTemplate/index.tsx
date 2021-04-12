@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {Animated, Dimensions, PanResponder, StyleSheet} from 'react-native';
+import React, { useEffect } from 'react';
+import { Animated, Dimensions, PanResponder, Platform, StyleSheet } from 'react-native';
 
 import {
   faCheckCircle,
@@ -7,17 +7,16 @@ import {
   faExclamationTriangle,
   faTimesCircle,
 } from '@fortawesome/free-solid-svg-icons';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {connect, useDispatch} from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { connect, useDispatch } from 'react-redux';
 
 import {
   ERROR_MESSAGE,
   SUCCESS_MESSAGE,
   WARN_MESSAGE,
 } from '../../interfaces/Message';
-import {cleanMessage} from '../../redux/actions/Message';
-import {ApplicationState} from '../../redux/reducers';
-
+import { cleanMessage } from '../../redux/actions/Message';
+import { ApplicationState } from '../../redux/reducers';
 import {
   SubmitButtonBlue,
   SubmitButtonGray,
@@ -41,7 +40,7 @@ import {
   MessageCard,
 } from './styled';
 
-interface LayoutTemplateProps {}
+interface LayoutTemplateProps { }
 
 interface LayoutFormTitleProps {
   title: string;
@@ -77,14 +76,16 @@ export const LayoutFormTemplate: React.FC<LayoutTemplateProps> = ({
 }) => {
   return (
     <LayoutContainer>
-      <LayoutScrollViewContainer alwaysBounceVertical={false} keyboardShouldPersistTaps={'handled'}>
-        <LayoutContentContainer>{children}</LayoutContentContainer>
-      </LayoutScrollViewContainer>
+      <LayoutContentContainer behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <LayoutScrollViewContainer alwaysBounceVertical={false} keyboardShouldPersistTaps={'handled'}>
+          {children}
+        </LayoutScrollViewContainer>
+      </LayoutContentContainer>
     </LayoutContainer>
   );
 };
 
-export const LayoutFormTitle: React.FC<LayoutFormTitleProps> = ({title}) => {
+export const LayoutFormTitle: React.FC<LayoutFormTitleProps> = ({ title }) => {
   return (
     <FormTitleContainer>
       <FormTitle>{title}</FormTitle>
@@ -121,8 +122,8 @@ export const LayoutFormInput: React.FC<LayoutFormInputProps> = ({
 }) => {
   return (
     <InputContainer>
-      <InputLabel>{label}{description && (<InputDescription> ({description})</InputDescription>)}</InputLabel>
-      
+      <InputLabel>{label}{description && (<InputDescription>{` ${description}`}</InputDescription>)}</InputLabel>
+
       <InputRow style={styles.shadowInput} isError={isError ? true : false}>
         {children}
       </InputRow>
@@ -153,14 +154,14 @@ export const LayoutFormButtonSubmitGray: React.FC<LayoutFormButtonSubmitProps> =
   );
 };
 
-const _LayoutFormMassage: React.FC<LayoutFormMassage> = ({type, message}) => {
+const _LayoutFormMassage: React.FC<LayoutFormMassage> = ({ type, message }) => {
   const witdhScreen = Dimensions.get('screen').width;
 
   const dispatch = useDispatch();
 
   const MessageCardAnimeted = Animated.createAnimatedComponent(MessageCard);
 
-  const pan = new Animated.ValueXY({x: -1000, y: 0});
+  const pan = new Animated.ValueXY({ x: -1000, y: 0 });
 
   const position = new Animated.Value(0.5);
 
@@ -172,7 +173,7 @@ const _LayoutFormMassage: React.FC<LayoutFormMassage> = ({type, message}) => {
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
     onPanResponderMove: (ev, gh) => {
-      pan.setValue({x: gh.dx, y: 0});
+      pan.setValue({ x: gh.dx, y: 0 });
       position.setValue(gh.moveX / witdhScreen);
     },
     onPanResponderRelease: (ev, gh) => {
@@ -181,11 +182,11 @@ const _LayoutFormMassage: React.FC<LayoutFormMassage> = ({type, message}) => {
       if (percentOfScreen > 0.7 || percentOfScreen < 0.1) {
 
         dispatch(cleanMessage());
-        
+
       } else {
         position.setValue(0.5);
         Animated.spring(pan, {
-          toValue: {x: 0, y: 0},
+          toValue: { x: 0, y: 0 },
           useNativeDriver: true,
         }).start();
       }
@@ -194,7 +195,7 @@ const _LayoutFormMassage: React.FC<LayoutFormMassage> = ({type, message}) => {
 
   useEffect(() => {
     Animated.spring(pan, {
-      toValue: {x: 0, y: 0},
+      toValue: { x: 0, y: 0 },
       useNativeDriver: true,
     }).start();
   }, [type, message]);
@@ -203,28 +204,28 @@ const _LayoutFormMassage: React.FC<LayoutFormMassage> = ({type, message}) => {
     switch (type) {
       case SUCCESS_MESSAGE: {
         return {
-          color: '#84ff84AD',
+          color: '#84ff84BD',
           icon: faCheckCircle,
         };
       }
 
       case WARN_MESSAGE: {
         return {
-          color: '#ecff7dAD',
+          color: '#ecff7dBD',
           icon: faExclamationTriangle,
         };
       }
 
       case ERROR_MESSAGE: {
         return {
-          color: '#ff7676BF',
+          color: '#ff7676BD',
           icon: faTimesCircle,
         };
       }
 
       default: {
         return {
-          color: '#86fff9AB',
+          color: '#86fff9BD',
           icon: faExclamationCircle,
         };
       }
@@ -237,7 +238,7 @@ const _LayoutFormMassage: React.FC<LayoutFormMassage> = ({type, message}) => {
         <MessageCardAnimeted
           color={colorType().color}
           style={{
-            transform: [{translateX: pan.x}, {translateY: pan.y}],
+            transform: [{ translateX: pan.x }, { translateY: pan.y }],
             opacity: opacity,
           }}
           {...panResponder.panHandlers}>
@@ -251,12 +252,16 @@ const _LayoutFormMassage: React.FC<LayoutFormMassage> = ({type, message}) => {
   }
 };
 
-const mapMessageProps = ({message}: ApplicationState): LayoutFormMassage => ({
+const mapStateToProps = ({ message }: ApplicationState): LayoutFormMassage => ({
   type: message.type,
   message: message.message,
 });
 
-export const LayoutFormMassage = connect(mapMessageProps)(_LayoutFormMassage);
+const mapDispatchsToProps = ({ }) => ({
+
+})
+
+export const LayoutFormMassage = connect(mapStateToProps)(_LayoutFormMassage);
 
 const styles = StyleSheet.create({
   shadowInput: {
