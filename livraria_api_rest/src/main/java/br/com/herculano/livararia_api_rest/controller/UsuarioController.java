@@ -62,17 +62,16 @@ public class UsuarioController {
 	@GetMapping("/{idUsuario}")
 	public ResponseEntity<?> consultaPorIdUsuario(@PathVariable Integer idUsuario) {
 		Usuario entity = service.consultaPorId(idUsuario);
-		
-		if(entity.isCliente()) {
+
+		if (entity.isCliente()) {
 			return ResponseEntity.ok(new UsuarioClienteResponse((UsuarioCliente) entity));
-		} else {
-			return ResponseEntity.ok(new UsuarioResponse(entity));
 		}
+
+		return ResponseEntity.ok(new UsuarioResponse(entity));
 	}
 
 	@PostMapping
-	public ResponseEntity<UsuarioClienteResponse> cadastraUsuario(@RequestBody @Validated UsuarioClienteCadastroRequest request,
-			HttpServletResponse response) {
+	public ResponseEntity<UsuarioClienteResponse> cadastraUsuario(@RequestBody @Validated UsuarioClienteCadastroRequest request, HttpServletResponse response) {
 		UsuarioCliente entity = service.cadastraCliente(request);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
@@ -81,8 +80,7 @@ public class UsuarioController {
 	}
 
 	@PostMapping("/root")
-	public ResponseEntity<?> cadastraUsuarioRoot(@RequestBody @Validated UsuarioRootCadastroRequest request,
-			HttpServletResponse response) {
+	public ResponseEntity<?> cadastraUsuarioRoot(@RequestBody @Validated UsuarioRootCadastroRequest request, HttpServletResponse response) {
 		Usuario entity = service.cadastraRoot(request);
 
 		publisher.publishEvent(new CreatedEvent(entity, response, entity.getId().toString()));
@@ -93,22 +91,22 @@ public class UsuarioController {
 	@PutMapping("/{idUsuario}")
 	public ResponseEntity<?> atualizaCleinte(@PathVariable("idUsuario") Integer idUsuario, @RequestBody @Validated UsuarioClienteUpdateRequest request) {
 		UsuarioCliente entity = service.atualizaCliente(idUsuario, request);
-		
+
 		return ResponseEntity.status(HttpStatus.OK).body(new UsuarioClienteResponse(entity));
 	}
-	
+
 	@PutMapping("/root/{idUsuario}")
 	public ResponseEntity<?> atualizaRoot(@PathVariable("idUsuario") Integer idUsuario, @RequestBody @Validated UsuarioRootUpdateRequest request) {
 		Usuario entity = service.atualizaRoot(idUsuario, request);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new UsuarioResponse(entity));
 	}
-	
+
 	@PutMapping("/perfil")
 	@PreAuthorize("@resourcesSecurity.isAtualizaPerfilUsuario(authentication, #entityRequest)")
 	public ResponseEntity<?> atualizaPerfil(@RequestBody UsuarioAtualizaPerfilRequest entityRequest) {
 		service.atualizaPerfil(entityRequest);
-		
+
 		return ResponseEntity.ok().build();
 	}
 

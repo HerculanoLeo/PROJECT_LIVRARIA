@@ -39,7 +39,6 @@ public class AutorRepositoryImpl implements AutorRepositoryCustom {
 		if (StringUtils.isNotBlank(entity.getNome())) {
 			where = RepositoryUtils.generateWhere(where, " UPPER(a.nome) LIKE :a");
 			params.put("a", "%" + entity.getNome().toUpperCase() + "%");
-
 		}
 
 		if (StringUtils.isNotBlank(entity.getNomeLivro())) {

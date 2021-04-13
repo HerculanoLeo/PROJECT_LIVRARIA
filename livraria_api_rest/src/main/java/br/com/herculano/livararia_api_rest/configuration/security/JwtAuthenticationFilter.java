@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String acceptLanguage = req.getHeader("Accept-Language");
 
 		if(StringUtils.isNotBlank(acceptLanguage)) {
-			localeResolver.setLocale(req, res, new Locale(acceptLanguage.split(",")[0]));
+			localeResolver.setLocale(req, res, new Locale(acceptLanguage.split(",")[0].replace("-", "_")));
 		} else {
 			localeResolver.setLocale(req, res, req.getLocale());
 		}
