@@ -1,4 +1,4 @@
-import { ToastProps, ToastState } from "../../interfaces/Toast/toast";
+import { ToastProps, ToastState } from "../../interfaces/Toast";
 import { TOAST_ADD, TOAST_REMOVE } from "../actions/Toast/actionToastTypes";
 
 export type ToastDispatchTypes = {

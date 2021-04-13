@@ -1,3 +1,6 @@
+import i18next from 'i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+
 export interface TimerProps {
   cancel: () => void;
   pause: () => void;
@@ -5,10 +8,10 @@ export interface TimerProps {
 }
 
 export function Timer(fn: any, countdown: number): TimerProps {
-  var ident: any;
-  var complete = false;
-  var total_time_run: number;
-  var start_time = new Date().getTime();
+  let ident: any;
+  let complete = false;
+  let total_time_run: number;
+  let start_time = new Date().getTime();
 
   function _time_diff(date1: number, date2?: number): number {
     return date2 ? date2 - date1 : new Date().getTime() - date1;
@@ -39,4 +42,12 @@ export function Timer(fn: any, countdown: number): TimerProps {
   ident = setTimeout(fn, countdown);
 
   return { cancel: cancel, pause: pause, resume: resume };
+}
+
+export const getLocale = () => {
+  i18next.use(LanguageDetector).init();
+
+  const language = i18next.language;
+  
+  return language;
 }

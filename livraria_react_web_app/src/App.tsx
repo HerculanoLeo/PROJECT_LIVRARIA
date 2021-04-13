@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Provider } from "react-redux";
-import Toasts from "./components/Toasts";
+import Toasts from "./components/LayoutTemplate/Toasts";
 import store from "./redux/store";
 
 import Routes from "./routes";

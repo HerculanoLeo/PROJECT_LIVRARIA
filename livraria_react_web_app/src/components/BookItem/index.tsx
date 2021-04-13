@@ -8,10 +8,7 @@ interface LivroItemProps {
 }
 
 const BookItem: React.FC<LivroItemProps> = (props: LivroItemProps) => {
-
-
-
-    return (
+  return (
     <BookCard>
       <BookPhoto img={props.img} />
       <BookDetails>

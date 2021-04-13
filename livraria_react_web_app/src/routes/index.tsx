@@ -1,30 +1,44 @@
 import React from "react";
 
 import { connect } from "react-redux";
-
 import { BrowserRouter } from "react-router-dom";
-import { AuthenticationUserState } from "../interfaces/User/authenticationUserState";
-import { ApplicationState } from "../redux/reducers";
 
-import BibliotecaRoutes from "../routes/bibliotecaBibliotecaRoute";
+import User from "../interfaces/User";
+import { ApplicationState } from "../redux/reducers";
+import AuthenticatedRoutes from "./authenticatedRoute";
 import AuthenticationRoute from "./authenticationRoute";
 
-const Routes: React.FC<AuthenticationUserState> = ({ autentication }) => {
-  const isAutheticated = (): Boolean => {
+interface indexRouteProps {
+  expireToken: Date;
+  usuario: User;
+  isLoading: boolean;
+}
+
+const Routes: React.FC<indexRouteProps> = ({ usuario, expireToken, isLoading }) => {
+
+  const isAutheticated = () => {
     const now = new Date();
 
-    if (autentication && autentication.expireToken.getMilliseconds() < now.getMilliseconds()) {
-      return true;
-    } else {
-      return false;
-    }
+    return (usuario && expireToken) ? expireToken > now : false;
   };
 
-  return <BrowserRouter>{isAutheticated() ? <BibliotecaRoutes /> : <AuthenticationRoute />}</BrowserRouter>;
+
+  return (
+    <>
+      {isLoading ? <></> : (
+        <BrowserRouter>
+          {isAutheticated() ? <AuthenticatedRoutes /> : <AuthenticationRoute />}
+        </BrowserRouter>
+      )}
+    </>
+  )
 };
 
-const mapStateToProps = ({ authentication }: ApplicationState): AuthenticationUserState => ({
-  ...authentication,
+const mapStateToProps = ({ authentication }: ApplicationState): indexRouteProps => ({
+  usuario: authentication.usuario,
+  expireToken: authentication.expireToken,
+  // isLoading: stored.isLoading,
+  isLoading: false,
 });
 
 export default connect(mapStateToProps)(Routes);

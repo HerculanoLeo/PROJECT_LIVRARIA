@@ -1,11 +1,16 @@
 import React from "react";
-import { Route, Switch } from "react-router-dom";
-import LoginPage from "../pages/Login";
+import { Redirect, Route, Switch } from "react-router-dom";
+
+import LoginPage from "../pages/Authentication/Login";
 
 const AuthenticationRoute: React.FC = () => {
   return (
-    <Switch>
-      <Route path="/" component={LoginPage} />
+    <Switch >
+      <Route path="/login" component={LoginPage} />
+      
+      <Route>
+        <Redirect to="/login" />
+      </Route>
     </Switch>
   );
 };
