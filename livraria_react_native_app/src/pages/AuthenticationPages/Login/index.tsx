@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View } from 'react-native';
-
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import CheckBox from '@react-native-community/checkbox';
 import { useNavigation } from '@react-navigation/core';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
+import { useDispatch } from 'react-redux';
 
 import {
   ForgotPasswordButton,
@@ -19,7 +18,6 @@ import {
   RememberMeText,
   RegisterButtonContainer,
 } from './styled';
-import { useDispatch } from 'react-redux';
 import { LayoutFormButtonSubmitBlue, LayoutFormButtonSubmitGray, LayoutFormInput, LayoutFormTemplate } from '../../../compenents/LayoutFormTemplate';
 import { InputStyled, PasswordHideButton, SubmitButtonContainer } from '../../../compenents/LayoutFormTemplate/styled';
 import { loginRequest } from '../../../redux/actions/Login';

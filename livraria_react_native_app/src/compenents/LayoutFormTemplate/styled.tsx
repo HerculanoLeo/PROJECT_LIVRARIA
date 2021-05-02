@@ -80,14 +80,14 @@ export const InputDescription = styled.Text`
 
 export const InputStyled = styled.TextInput`
   flex: 1;
-  padding: 8px 15px;
+  padding: 10px 20px;
   font-size: 14px;
   color: #000;
 `;
 
 export const InputMaskStyled = styled(TextInputMask)`
   flex: 1;
-  padding: 8px 15px;
+  padding: 10px 20px;
   font-size: 14px;
   color: #000;
 `;
@@ -152,7 +152,7 @@ export const TextButtonBlack = styled.Text`
 export const MessageContainer = styled.View`
   flex: 1;
   position: absolute;
-  top: 10px;
+  top: 40px;
   z-index: 1;
   min-height: 60px;
   width: 100%;

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "android": "gulp set --env=staging && react-native run-android",
-    "ios": "gulp set --env=staging && react-native run-ios",
+    "ios": "gulp set --env=staging && react-native run-ios --simulator='iPhone 11'",
     "start": "gulp set --env=staging && react-native start --reset-cache",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",

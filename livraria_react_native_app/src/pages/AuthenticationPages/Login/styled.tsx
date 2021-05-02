@@ -32,12 +32,14 @@ export const CheckboxContainer = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
+  margin: 0 0 0 8px;
 `;
 
 export const RememberMeText = styled.Text`
   text-align: center;
   font-weight: bold;
   font-size: 14px;
+  margin: 0 0 0 5px;
 `;
 
 export const ForgotPasswordButton = styled.TouchableOpacity`

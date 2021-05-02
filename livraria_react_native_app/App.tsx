@@ -1,7 +1,6 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import {StatusBar} from 'react-native';
-
+import {Platform, StatusBar} from 'react-native';
 import {Provider} from 'react-redux';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
@@ -16,7 +15,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <SafeAreaProvider>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'} />
         <LayoutFormMassage />
         <Routes />
       </SafeAreaProvider>
