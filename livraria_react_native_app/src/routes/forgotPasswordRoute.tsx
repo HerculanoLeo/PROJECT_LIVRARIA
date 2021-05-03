@@ -1,18 +1,17 @@
 import React from 'react';
-
 import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
 
-import ForgotPasswordPage from '../pages/AuthenticationPages/ForgotPassword';
-import ValidateCodePage from '../pages/AuthenticationPages/ForgotPassword/ValidateCode';
-import ResetPasswordPage from '../pages/AuthenticationPages/ForgotPassword/ResetPassword';
+import ForgotPasswordPage from '../pages/Authentication/ForgotPassword';
+import ValidateCodePage from '../pages/Authentication/ForgotPassword/ValidateCode';
+import ResetPasswordPage from '../pages/Authentication/ForgotPassword/ResetPassword';
 import ForgotPasswordContextProvaider from '../contexts/ForgotPasswordContext';
 
-const ForgotPasswordRoute: React.FC = () => {
-  const Stack = createStackNavigator();
+const Stack = createStackNavigator();
 
+const ForgotPasswordRoute: React.FC = () => {
   return (
     <ForgotPasswordContextProvaider>
       <Stack.Navigator

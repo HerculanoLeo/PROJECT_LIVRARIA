@@ -2,7 +2,7 @@ import AutenticacaoService from '../../../services/AuthenticationService';
 import UserService from '../../../services/UserService';
 import store from '../../store';
 import { errorMessage } from '../Message';
-import { saveUserDateFromStored } from '../Stored';
+import { removeUserDateFromStored, saveUserDateFromStored } from '../Stored';
 import {
   LoginDispatch,
   LOGIN_FAILURE,
@@ -50,5 +50,9 @@ export function updateUserData() {
 }
 
 export function logoutRequest() {
-  return { type: LOGOUT };
+  return async (dispatch: any) => {
+    await removeUserDateFromStored();
+
+    return dispatch({ type: LOGOUT });
+  }
 }

@@ -16,7 +16,7 @@ api.interceptors.response.use((response) => {
     console.log(error.response.headers);
 
     if (error.response.status === 403) {
-      store.dispatch(logoutRequest());
+      store.dispatch(logoutRequest() as any);
 
       store.dispatch(warnMessage('Seção expirada.', true));
     }

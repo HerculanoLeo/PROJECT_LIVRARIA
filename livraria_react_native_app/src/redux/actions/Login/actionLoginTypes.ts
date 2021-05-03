@@ -1,4 +1,4 @@
-import {LoginResponse} from '../../../interfaces/Login';
+import { LoginResponse } from '../../../interfaces/Login';
 import User from '../../../interfaces/User';
 
 export type AuthenticationSuccessDispatchTypes = {

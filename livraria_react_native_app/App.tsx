@@ -1,15 +1,15 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import {Platform, StatusBar} from 'react-native';
-import {Provider} from 'react-redux';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import { Platform, StatusBar } from 'react-native';
+import { Provider } from 'react-redux';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import Routes from './src/routes';
 import store from './src/redux/store';
-import {BASE_URL, ENV} from '@env';
-import { LayoutFormMassage } from './src/compenents/LayoutFormTemplate';
+import { BASE_URL, ENV } from '@env';
+import LayoutFormMassage from './src/components/LayoutTemplate/LayoutFormMassage';
 
-const App = () => {
+const App: React.FC = () => {
   console.log(ENV, BASE_URL);
 
   return (

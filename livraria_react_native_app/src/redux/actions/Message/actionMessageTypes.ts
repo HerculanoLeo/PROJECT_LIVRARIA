@@ -1,4 +1,4 @@
-import {MessageState} from '../../../interfaces/Message';
+import { MessageState } from '../../../interfaces/Message';
 
 export type MessageDispatchTypes = {
   type: string;

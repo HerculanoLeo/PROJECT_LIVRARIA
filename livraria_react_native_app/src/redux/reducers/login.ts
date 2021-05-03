@@ -1,11 +1,19 @@
 import { AuthenticationUserState } from '../../interfaces/User';
 import { api } from '../../services/api';
-import { AuthenticationRequestDispatchTypes, AuthenticationSuccessDispatchTypes, AuthenticationUpdateUserDispatchTypes, LOGIN_FAILURE, LOGIN_SUCCESS, LOGOUT, UPDATE_USER } from '../actions/Login/actionLoginTypes';
+import {
+  AuthenticationRequestDispatchTypes,
+  AuthenticationSuccessDispatchTypes,
+  AuthenticationUpdateUserDispatchTypes,
+  LOGIN_FAILURE,
+  LOGIN_SUCCESS,
+  LOGOUT,
+  UPDATE_USER
+} from '../actions/Login/actionLoginTypes';
 
-const intialState: AuthenticationUserState = {} as AuthenticationUserState;
+const initialState: AuthenticationUserState = {} as AuthenticationUserState;
 
 export default function AuthenticationReducer(
-  state: AuthenticationUserState = intialState, action: AuthenticationSuccessDispatchTypes | AuthenticationRequestDispatchTypes | AuthenticationUpdateUserDispatchTypes): AuthenticationUserState {
+  state: AuthenticationUserState = initialState, action: AuthenticationSuccessDispatchTypes | AuthenticationRequestDispatchTypes | AuthenticationUpdateUserDispatchTypes): AuthenticationUserState {
   switch (action.type) {
     case LOGIN_SUCCESS: {
       const payload = (<AuthenticationSuccessDispatchTypes>action).payload;
@@ -22,19 +30,19 @@ export default function AuthenticationReducer(
     }
 
     case LOGIN_FAILURE: {
-      return intialState;
+      return initialState;
     }
 
     case LOGOUT: {
       api.defaults.headers['Authorization'] = null;
 
-      return intialState;
+      return initialState;
     }
 
     case UPDATE_USER: {
       const user = (<AuthenticationUpdateUserDispatchTypes>action).payload;
 
-      return {...state, usuario: user }
+      return { ...state, usuario: user }
     }
 
     default: {

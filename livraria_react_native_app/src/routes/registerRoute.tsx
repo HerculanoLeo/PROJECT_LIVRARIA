@@ -1,28 +1,25 @@
 import React from 'react';
-
 import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
 
-import ForgotPasswordContextProvaider from '../contexts/ForgotPasswordContext';
-import RegisterPage from '../pages/AuthenticationPages/Register';
-import ClientRegisterScreens from '../pages/AuthenticationPages/Register/Client';
-import LibraryRegisterScreens from '../pages/AuthenticationPages/Register/Library';
+import Register from '../pages/Authentication/Register';
+import ClientRegisterScreens from '../pages/Authentication/Register/Client';
+import LibraryRegisterScreens from '../pages/Authentication/Register/Library';
+
+const Stack = createStackNavigator();
 
 const RegisterRoute: React.FC = () => {
-  const Stack = createStackNavigator();
-
   return (
     <Stack.Navigator
       screenOptions={{
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}>
-
       <Stack.Screen
         options={{ headerShown: true, headerTitle: '' }}
-        name="RegisterPage"
-        component={RegisterPage}
+        name="Register"
+        component={Register}
       />
 
       <Stack.Screen
@@ -36,7 +33,6 @@ const RegisterRoute: React.FC = () => {
         name="LibraryRegisterScreens"
         component={LibraryRegisterScreens}
       />
-
     </Stack.Navigator>
   );
 };

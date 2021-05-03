@@ -1,19 +1,19 @@
 import { FINISH_LOAD_STORED, LOADING_STORED, StoredDispatchTypes, StoredState } from "../actions/Stored/actionStoredTypes";
 
-const intialState: StoredState = {
-  isLoading: true,
+const initialState: StoredState = {
+  isLoadingStored: true,
 };
 
-export default function StoredReducer(state: StoredState = intialState, action: StoredDispatchTypes): StoredState {
+export default function StoredReducer(state: StoredState = initialState, action: StoredDispatchTypes): StoredState {
   switch (action.type) {
     case LOADING_STORED: {
       return {
-        isLoading: true,
+        isLoadingStored: true,
       };
     }
 
     case FINISH_LOAD_STORED: {
-      return { isLoading: false };
+      return { isLoadingStored: false };
     }
 
     default: {

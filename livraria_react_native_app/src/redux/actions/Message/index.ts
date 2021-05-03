@@ -1,5 +1,5 @@
-import {MessageState} from '../../../interfaces/Message';
-import {CLEAN_MESSAGE, MessageDispatchTypes, SEND_MESSAGE} from './actionMessageTypes';
+import { MessageState } from '../../../interfaces/Message';
+import { CLEAN_MESSAGE, MessageDispatchTypes, SEND_MESSAGE } from './actionMessageTypes';
 
 export function successMessage(message: string, isPersistenceMessage: boolean = false): MessageDispatchTypes {
   const payload: MessageState = {
@@ -38,9 +38,9 @@ export function infoMessage(message: string, isPersistenceMessage: boolean = fal
 }
 
 export function sendMessage(payload: MessageState): MessageDispatchTypes {
-  return {type: SEND_MESSAGE, payload};
+  return { type: SEND_MESSAGE, payload };
 }
 
 export function cleanMessage(): MessageDispatchTypes {
-  return {type: CLEAN_MESSAGE, payload: {} as MessageState};
+  return { type: CLEAN_MESSAGE, payload: {} as MessageState };
 }

@@ -1,28 +1,27 @@
 import React, { useEffect } from 'react';
-
 import { connect, useDispatch } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
+import SplashScreen from 'react-native-splash-screen';
 
 import AuthenticationRoute from './authenticationRoute';
 import AuthenticatedRoute from './authenticatedRoute';
-import { ApplicationState } from '../redux/reducers/index';
+import { ApplicationState } from '../redux/reducers';
 import User from '../interfaces/User';
 import { loadStored } from '../redux/actions/Stored';
-import SplashScreen from 'react-native-splash-screen';
 
 interface IndexRouteProps {
   expireToken: Date;
   usuario: User;
-  isLoading: boolean;
+  isLoadingStored: boolean;
 }
 
-const Routes: React.FC<IndexRouteProps> = ({ usuario, expireToken, isLoading }) => {
-  const Stack = createStackNavigator();
+const Stack = createStackNavigator();
 
+const Routes: React.FC<IndexRouteProps> = ({ usuario, expireToken, isLoadingStored  }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -30,10 +29,10 @@ const Routes: React.FC<IndexRouteProps> = ({ usuario, expireToken, isLoading }) 
   }, [])
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoadingStored) {
       SplashScreen.hide();
     }
-  }, [isLoading]);
+  }, [isLoadingStored]);
 
   const isAutheticated = () => {
     const now = new Date();
@@ -44,7 +43,7 @@ const Routes: React.FC<IndexRouteProps> = ({ usuario, expireToken, isLoading }) 
 
   return (
     <>
-      {isLoading ? <></> : (
+      {isLoadingStored ? <></> : (
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{ cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}>
@@ -71,7 +70,7 @@ const Routes: React.FC<IndexRouteProps> = ({ usuario, expireToken, isLoading }) 
 const mapPropsToState = ({ authentication, stored }: ApplicationState): IndexRouteProps => ({
   usuario: authentication.usuario,
   expireToken: authentication.expireToken,
-  isLoading: stored.isLoading
+  isLoadingStored: stored.isLoadingStored
 });
 
 export default connect(mapPropsToState)(Routes);

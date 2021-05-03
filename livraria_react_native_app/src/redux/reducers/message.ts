@@ -1,9 +1,9 @@
 import {MessageState} from '../../interfaces/Message';
 import { CLEAN_MESSAGE, MessageDispatchTypes, SEND_MESSAGE } from '../actions/Message/actionMessageTypes';
 
-const intialState: MessageState = {} as MessageState;
+const initialState: MessageState = {} as MessageState;
 
-export default function MessageReducer(state: MessageState = intialState, action: MessageDispatchTypes): MessageState {
+export default function MessageReducer(state: MessageState = initialState, action: MessageDispatchTypes): MessageState {
   switch (action.type) {
     case SEND_MESSAGE: {
       return {
@@ -14,7 +14,7 @@ export default function MessageReducer(state: MessageState = intialState, action
     }
 
     case CLEAN_MESSAGE: {
-      return intialState;
+      return initialState;
     }
 
     default: {

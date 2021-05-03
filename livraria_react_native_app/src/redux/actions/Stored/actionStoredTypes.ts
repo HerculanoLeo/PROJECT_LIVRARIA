@@ -4,7 +4,7 @@ export const LOADING_STORED = 'LOADING_STORED';
 export const FINISH_LOAD_STORED = 'FINISH_LOAD_STORED';
 
 export interface StoredState {
-  isLoading: boolean
+  isLoadingStored: boolean
 }
 
 export type StoredDispatchTypes = {

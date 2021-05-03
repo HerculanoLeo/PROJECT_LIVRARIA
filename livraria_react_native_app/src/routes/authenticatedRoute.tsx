@@ -1,11 +1,10 @@
 import React, { Dispatch, useEffect } from 'react';
-
-import {CardStyleInterpolators, createStackNavigator} from '@react-navigation/stack';
+import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/core';
 
 import { cleanMessage } from '../redux/actions/Message';
-import DashboardPage from '../pages/AuthenticatedPages/Dashboard';
+import Dashboard from '../pages/Authenticated/Dashboard';
 import store from '../redux/store';
 
 const AuthenticatedRoute: React.FC = () => {
@@ -25,11 +24,11 @@ const AuthenticatedRoute: React.FC = () => {
   }, []);
 
   return (
-    <Stack.Navigator screenOptions={{cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS}}>
+    <Stack.Navigator screenOptions={{ cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}>
       <Stack.Screen
-        options={{headerShown: false}}
-        name="DashboardPage"
-        component={DashboardPage}
+        options={{ headerShown: false }}
+        name="Dashboard"
+        component={Dashboard}
       />
     </Stack.Navigator>
   );
