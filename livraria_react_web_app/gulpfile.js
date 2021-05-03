@@ -3,7 +3,6 @@ const args = require("yargs").argv;
 const rename = require('gulp-rename');
 const clean = require('gulp-clean');
 
-
 gulp.task('del', function () {
   return gulp.src('.env', {read: false, allowEmpty: true})
     .pipe(clean());

@@ -1,5 +1,4 @@
-
-import UserService from "../../../services/UserService";
+import UserService from "../../../services/userService";
 import { cleanMessage, messageError } from "../Message";
 import { LoginDispatch, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT } from "./actionLoginTypes";
 
