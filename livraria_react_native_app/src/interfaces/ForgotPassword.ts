@@ -8,7 +8,6 @@ export interface ForgotPasswordData {
   email: string;
   nome: string;
   dataValidade?: Date
-  
 }
 
 export interface ValidateResetPasswordCode {

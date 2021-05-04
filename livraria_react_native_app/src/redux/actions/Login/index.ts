@@ -1,29 +1,33 @@
 import AutenticacaoService from '../../../services/AuthenticationService';
 import UserService from '../../../services/UserService';
 import store from '../../store';
+import { endLoading, startLoading } from '../Loading';
 import { errorMessage } from '../Message';
 import { removeUserDateFromStored, saveUserDateFromStored } from '../Stored';
 import {
-  LoginDispatch,
-  LOGIN_FAILURE,
   LOGIN_SUCCESS,
   LOGOUT,
   UPDATE_USER,
 } from './actionLoginTypes';
 
 export function loginRequest(email: string, password: string, rememberMe: boolean) {
-  return (dispatch: LoginDispatch) => {
-    AutenticacaoService.login({ email, password }).then(user => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(startLoading({ isBlockScreen: true, isActivityIndicator: true }));
+
+      const user = await AutenticacaoService.login({ email, password });
+
       if (rememberMe) {
         saveUserDateFromStored(user);
       }
 
       dispatch({ type: LOGIN_SUCCESS, payload: user });
-    }).catch((error) => {
-      dispatch({ type: LOGIN_FAILURE });
+    } catch (error) {
       dispatch(errorMessage(error.message, false));
-    });
-  };
+    } finally {
+      dispatch(endLoading());
+    }
+  }
 }
 
 export function updateUserData() {

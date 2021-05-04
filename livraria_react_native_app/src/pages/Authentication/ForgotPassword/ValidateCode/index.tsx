@@ -14,6 +14,7 @@ import LayoutFormDescription from '../../../../components/LayoutTemplate/LayoutF
 import LayoutFormInput from '../../../../components/LayoutTemplate/LayoutFormInput';
 import LayoutFormTemplate from '../../../../components/LayoutTemplate/LayoutFormTemplate';
 import LayoutFormTitle from '../../../../components/LayoutTemplate/LayoutFormTitle';
+import { endLoading, startLoading } from '../../../../redux/actions/Loading';
 
 interface InputProps {
   code: string;
@@ -38,6 +39,8 @@ const ValidateCodePage: React.FC = () => {
   const submit = (formData: InputProps) => {
     formSchema.validate(formData).then(async ({ code }) => {
       try {
+        dispatchRedux(startLoading({ isActivityIndicator: true, isBlockScreen: false }));
+
         const { nome, email, dataValidade } = await UserService.validateResetPasswordCode({ code, email: state.email });
 
         dispatch({ type: 'code', data: { code, nome, email, dataValidade: new Date(dataValidade) } });
@@ -49,6 +52,8 @@ const ValidateCodePage: React.FC = () => {
         }
       } catch (error) {
         dispatchRedux(errorMessage(error.message));
+      } finally {
+        dispatchRedux(endLoading());
       }
     }).catch((err) => {
       setError('code', err);

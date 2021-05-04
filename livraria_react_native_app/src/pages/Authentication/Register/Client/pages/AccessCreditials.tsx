@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import * as yup from 'yup';
+import { useDispatch } from "react-redux";
 
 import { InputStyled, SubmitButtonContainer, PasswordHideButton } from "../../../../../components/LayoutTemplate/styled";
 import { RegisterClientContext } from "../../../../../contexts/RegisterClientContext";
@@ -13,6 +14,7 @@ import LayoutFormButtonSubmitBlue from "../../../../../components/LayoutTemplate
 import LayoutFormInput from "../../../../../components/LayoutTemplate/LayoutFormInput";
 import LayoutFormTemplate from "../../../../../components/LayoutTemplate/LayoutFormTemplate";
 import LayoutFormTitle from "../../../../../components/LayoutTemplate/LayoutFormTitle";
+import { endLoading, startLoading } from "../../../../../redux/actions/Loading";
 
 
 interface InputsProps {
@@ -27,7 +29,7 @@ const AccessCreditials: React.FC = () => {
 
   const [hidePassword, setHidePassword] = useState(true);
   const [hideConfirmPassword, setHideConfirmPassword] = useState(true);
-
+  const dispatchRedux = useDispatch();
   const { state, dispatch } = useContext(RegisterClientContext);
 
   const {
@@ -64,10 +66,14 @@ const AccessCreditials: React.FC = () => {
       ...data
     }
 
-    formSchema.validate(formData, { abortEarly: false }).then(({ email, senha, confirmeSenha }) => {
-      dispatch({ type: 'accessCreditials', data: { email, senha, confirmeSenha } });
+    formSchema.validate(formData, { abortEarly: false }).then(async ({ email, senha, confirmeSenha }) => {
+      try {
+        dispatchRedux(startLoading({ isActivityIndicator: true, isBlockScreen: true }));
 
-      UserService.registerClient({ ...state, email, senha, confirmeSenha, idioma: getLocale() }).then((value) => {
+        dispatch({ type: 'accessCreditials', data: { email, senha, confirmeSenha } });
+
+        await UserService.registerClient({ ...state, email, senha, confirmeSenha, idioma: getLocale() });
+
         navigation.reset({
           index: 1,
           routes: [
@@ -79,10 +85,8 @@ const AccessCreditials: React.FC = () => {
               }
             }
           ],
-        })
-
-
-      }).catch((err) => {
+        });
+      } catch (error) {
         navigation.reset({
           index: 1,
           routes: [
@@ -90,12 +94,15 @@ const AccessCreditials: React.FC = () => {
               name: 'RegisterResult',
               params: {
                 result: false,
-                message: err.message
+                message: error.message
               }
             }
           ],
         });
-      })
+
+      } finally {
+        dispatchRedux(endLoading());
+      }
     }).catch((errors) => {
       errors.inner.forEach((err: any) => {
         setError(err.path, { message: err.message });

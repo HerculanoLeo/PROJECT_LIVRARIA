@@ -8,12 +8,13 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 import { InputStyled, PasswordHideButton, SubmitButtonContainer } from '../../../../components/LayoutTemplate/styled';
 import { ForgotPasswordContext } from '../../../../contexts/ForgotPasswordContext';
-import { errorMessage, successMessage, warnMessage } from '../../../../redux/actions/Message';
+import { errorMessage, successMessage } from '../../../../redux/actions/Message';
 import UserService from '../../../../services/UserService';
 import LayoutFormButtonSubmitBlue from '../../../../components/LayoutTemplate/LayoutFormButtonSubmitBlue';
 import LayoutFormInput from '../../../../components/LayoutTemplate/LayoutFormInput';
 import LayoutFormTemplate from '../../../../components/LayoutTemplate/LayoutFormTemplate';
 import LayoutFormTitle from '../../../../components/LayoutTemplate/LayoutFormTitle';
+import { endLoading, startLoading } from '../../../../redux/actions/Loading';
 
 interface InputProps {
   senha: string;
@@ -28,7 +29,7 @@ const ResetPasswordPage: React.FC = () => {
   const dispatchRedux = useDispatch();
   const navigation = useNavigation();
 
-  const { state, dispatch } = useContext(ForgotPasswordContext);
+  const { state } = useContext(ForgotPasswordContext);
 
   const formSchema = yup.object().shape({
     senha: yup.string().min(4, 'Senha deve ter ao menos 4 caracteres.').required('Senha não pode estar vazio.'),
@@ -54,6 +55,8 @@ const ResetPasswordPage: React.FC = () => {
   const submit = (formData: InputProps) => {
     formSchema.validate(formData, { abortEarly: false }).then(async ({ senha, confirmaSenha }) => {
       try {
+        dispatchRedux(startLoading({ isActivityIndicator: true, isBlockScreen: false }));
+
         await UserService.resetPasswordWithCode({ code: state.code, email: state.email, senha, confirmaSenha });
 
         dispatchRedux(successMessage('Senha trocada com sucesso.', true));
@@ -61,6 +64,8 @@ const ResetPasswordPage: React.FC = () => {
         navigation.navigate('LoginPage');
       } catch (error) {
         dispatchRedux(errorMessage(error.message));
+      } finally {
+        dispatchRedux(endLoading());
       }
     }).catch((errors) => {
       errors.inner.forEach((err: any) => {

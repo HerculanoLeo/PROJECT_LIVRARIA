@@ -9,6 +9,5 @@ export default interface Administrator {
   tipo: string;
   tipoDescricao: string;
   perfil: Profile;
-
   bibliotecas?: Library
 }

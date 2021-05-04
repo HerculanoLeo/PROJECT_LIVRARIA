@@ -8,6 +8,7 @@ import Routes from './src/routes';
 import store from './src/redux/store';
 import { BASE_URL, ENV } from '@env';
 import LayoutFormMassage from './src/components/LayoutTemplate/LayoutFormMassage';
+import { LayoutContainer } from './src/components/LayoutTemplate/styled';
 
 const App: React.FC = () => {
   console.log(ENV, BASE_URL);

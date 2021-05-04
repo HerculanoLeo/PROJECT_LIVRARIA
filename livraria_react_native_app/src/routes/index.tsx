@@ -12,6 +12,7 @@ import AuthenticatedRoute from './authenticatedRoute';
 import { ApplicationState } from '../redux/reducers';
 import User from '../interfaces/User';
 import { loadStored } from '../redux/actions/Stored';
+import LayoutActivityIndicator from '../components/LayoutTemplate/LayoutActivityIndicator';
 
 interface IndexRouteProps {
   expireToken: Date;
@@ -21,7 +22,7 @@ interface IndexRouteProps {
 
 const Stack = createStackNavigator();
 
-const Routes: React.FC<IndexRouteProps> = ({ usuario, expireToken, isLoadingStored  }) => {
+const Routes: React.FC<IndexRouteProps> = ({ usuario, expireToken, isLoadingStored }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -43,6 +44,7 @@ const Routes: React.FC<IndexRouteProps> = ({ usuario, expireToken, isLoadingStor
 
   return (
     <>
+      <LayoutActivityIndicator />
       {isLoadingStored ? <></> : (
         <NavigationContainer>
           <Stack.Navigator

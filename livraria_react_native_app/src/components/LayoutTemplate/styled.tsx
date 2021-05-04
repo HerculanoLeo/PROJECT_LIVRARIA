@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import { TextInputMask } from 'react-native-masked-text';
+import { Dimensions, Platform } from 'react-native';
 
 interface InputRowProps {
   isError?: boolean;
@@ -7,6 +8,10 @@ interface InputRowProps {
 
 interface MessageCardProps {
   color: string;
+}
+
+interface ActivityIndicatorContainerProps {
+  isBlockScreen: boolean;
 }
 
 export const LayoutContainer = styled.SafeAreaView`
@@ -178,4 +183,22 @@ export const TextMessage = styled.Text`
   color: #000000;
   font-size: 14px;
   text-align: center;
+`;
+
+export const ActivityIndicatorContainer = styled.View<ActivityIndicatorContainerProps>`
+  position: absolute;
+  z-index: 999;
+  left: ${({ isBlockScreen }) => { return isBlockScreen ? `0`: '40%' }};
+  padding: ${() => { return Platform.OS === 'ios' ? ' 40px 0 0 0' : '10px 0 0 0' }};
+  width: ${({ isBlockScreen }) => { return isBlockScreen ? '100%' : '20%' }};
+  height: ${({ isBlockScreen }) => { return isBlockScreen ? '100%' : '20%' }};
+  background-color: #00000000;
+  align-items: center;
+  justify-content: flex-start;
+`;
+
+export const ActivityIndicatorIconContainer = styled.View`
+  background-color: ${() => { return Platform.OS === 'ios' ? '#FFFFFF00' : '#FFFFFF' }};;
+  border-radius: 20px;
+  padding: 5px;
 `;

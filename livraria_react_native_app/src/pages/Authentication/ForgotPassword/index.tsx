@@ -13,6 +13,7 @@ import LayoutFormDescription from '../../../components/LayoutTemplate/LayoutForm
 import LayoutFormInput from '../../../components/LayoutTemplate/LayoutFormInput';
 import LayoutFormTemplate from '../../../components/LayoutTemplate/LayoutFormTemplate';
 import LayoutFormTitle from '../../../components/LayoutTemplate/LayoutFormTitle';
+import { endLoading, startLoading } from '../../../redux/actions/Loading';
 
 interface InputProps {
   email: string
@@ -36,6 +37,8 @@ const ForgotPasswordPage: React.FC = () => {
   const submit = (formData: InputProps) => {
     formSchema.validate(formData).then(async ({ email }) => {
       try {
+        dispatchRedux(startLoading({ isActivityIndicator: true, isBlockScreen: false }));
+
         await UserService.changePassword({ email });
 
         dispatch({ type: 'email', email })
@@ -43,6 +46,8 @@ const ForgotPasswordPage: React.FC = () => {
         navigation.navigate('ValidateCodePage');
       } catch (error) {
         dispatchRedux(errorMessage(error.message, false));
+      } finally {
+        dispatchRedux(endLoading());
       }
     }).catch((err) => {
       setError('email', err);

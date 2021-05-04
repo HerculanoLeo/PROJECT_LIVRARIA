@@ -4,15 +4,17 @@ import { faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/native";
 import * as yup from 'yup';
+import { useDispatch } from "react-redux";
 
 import { InputStyled, PasswordHideButton, SubmitButtonContainer } from "../../../../../components/LayoutTemplate/styled";
-import {RegisterLibraryContext} from "../../../../../contexts/RegisterLibraryContext";
+import { RegisterLibraryContext } from "../../../../../contexts/RegisterLibraryContext";
 import LibraryService from "../../../../../services/LibraryService";
 import { getLocale } from "../../../../../utils/tools";
 import LayoutFormButtonSubmitBlue from "../../../../../components/LayoutTemplate/LayoutFormButtonSubmitBlue";
 import LayoutFormInput from "../../../../../components/LayoutTemplate/LayoutFormInput";
 import LayoutFormTemplate from "../../../../../components/LayoutTemplate/LayoutFormTemplate";
 import LayoutFormTitle from "../../../../../components/LayoutTemplate/LayoutFormTitle";
+import { endLoading, startLoading } from "../../../../../redux/actions/Loading";
 
 interface InputsProps {
   nome: string;
@@ -27,7 +29,7 @@ const AccessCreditials: React.FC = () => {
 
   const [hidePassword, setHidePassword] = useState(true);
   const [hideConfirmPassword, setHideConfirmPassword] = useState(true);
-
+  const dispatchRedux = useDispatch();
   const { state, dispatch } = useContext(RegisterLibraryContext);
 
   const {
@@ -64,10 +66,14 @@ const AccessCreditials: React.FC = () => {
       ...data
     }
 
-    formSchema.validate(formData, { abortEarly: false }).then(({ email, senha, confirmeSenha }) => {
-      dispatch({ type: 'accessCreditials', data: { email, senha, confirmeSenha } });
+    formSchema.validate(formData, { abortEarly: false }).then(async ({ email, senha, confirmeSenha }) => {
+      try {
+        dispatchRedux(startLoading({ isActivityIndicator: true, isBlockScreen: true }));
 
-      LibraryService.registerLibraryWithAdministrator({ ...state, email, senha, confirmeSenha, idioma: getLocale() }).then((value) => {
+        dispatch({ type: 'accessCreditials', data: { email, senha, confirmeSenha } });
+
+        await LibraryService.registerLibraryWithAdministrator({ ...state, email, senha, confirmeSenha, idioma: getLocale() });
+
         navigation.reset({
           index: 1,
           routes: [
@@ -79,10 +85,8 @@ const AccessCreditials: React.FC = () => {
               }
             }
           ],
-        })
-
-
-      }).catch((err) => {
+        });
+      } catch (error) {
         navigation.reset({
           index: 1,
           routes: [
@@ -90,12 +94,14 @@ const AccessCreditials: React.FC = () => {
               name: 'RegisterResult',
               params: {
                 result: false,
-                message: err.message
+                message: error.message
               }
             }
           ],
         });
-      })
+      } finally {
+        dispatchRedux(endLoading());
+      }
     }).catch((errors) => {
       errors.inner.forEach((err: any) => {
         setError(err.path, { message: err.message });
